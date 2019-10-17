@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="A page containing, surprisingly, words.">
+    <meta name="author" content="Me.">
+
+    <base href="/words/">
+
+	<link rel="stylesheet" href="/static/css/basic.css">
+
+    <link rel="icon" href="/static/favicon.png">
+
+	<title>fsoc/words</title>
+</head>
+<body>
+	<main>
+        <h3><a href="..">fsoc</a>/words</h3>
+
+        <p>
+            For contact information see <a href='/'>the index</a>.
+        </p>
+
+        <p>
+            If you come across any errors in the following posts please feel free to 
+            send me an email about it. All content on this site is released to the 
+            public domain unless otherwise noted.
+        </p>
+
+		<div class="light-seperator"></div>
+
+		
+			<div class="item">
+				<h3>
+					<a href="./using-words-to-write-words/">Using Words to Write Words</a>
+					<span class="date" title="2018-09-19">2018-09-19</span>
+				</h3>
+			</div>
+		
+			<div class="item">
+				<h3>
+					<a href="./the-beauty-of-valgrinds-memcheck/">The Beauty of Valgrind's 'memcheck'</a>
+					<span class="date" title="2018-08-29">2018-08-29</span>
+				</h3>
+			</div>
+		
+			<div class="item">
+				<h3>
+					<a href="./terminal-control-codes-in-c/">Terminal Control Codes in C</a>
+					<span class="date" title="2018-07-26">2018-07-26</span>
+				</h3>
+			</div>
+		
+			<div class="item">
+				<h3>
+					<a href="./cheating-in-osu!mania/">Cheating in osu!mania</a>
+					<span class="date" title="2018-07-15">2018-07-15</span>
+				</h3>
+			</div>
+		
+			<div class="item">
+				<h3>
+					<a href="./building-a-brainfuck-interpreter/">Building a Brainfuck Interpreter</a>
+					<span class="date" title="2018-06-14">2018-06-14</span>
+				</h3>
+			</div>
+		
+			<div class="item">
+				<h3>
+					<a href="./so-i-have-a-blog-now/">So I Have a Blog Now</a>
+					<span class="date" title="2018-06-10">2018-06-10</span>
+				</h3>
+			</div>
+		
+	</main>
+
+	<script src="./static/js/utils.js"></script>	
+	<script>
+
+		const items = document.getElementsByClassName("item");
+
+		for (const item of items) {
+			const span = item.children[0].children[1];
+			const date = new Date(span.getAttribute("title"));
+
+			span.innerHTML = prettyDate(date);
+		}
+
+	</script>
+
+	<link rel="stylesheet" href="./static/css/markdown.css">	
+</body>
+
+</html>
