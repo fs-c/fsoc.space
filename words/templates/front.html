@@ -4,18 +4,19 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="A page containing, surprisingly, words.">
-    <meta name="author" content="Me.">
+    <meta name="author" content="fsoc">
 
     <base href="/words/">
 
 	<link rel="stylesheet" href="/static/css/basic.css">
+	<link rel="stylesheet" href="./static/css/words.css">
 
     <link rel="icon" href="/static/favicon.png">
 
 	<title>fsoc/words</title>
 </head>
 <body>
-	<main>
+    <header>
         <h3><a href="..">fsoc</a>/words</h3>
 
         <p>
@@ -23,38 +24,24 @@
         </p>
 
         <p>
-            If you come across any errors in the following posts please feel free to 
-            send me an email about it. All content on this site is released to the 
-            public domain unless otherwise noted.
+            If you come across any errors in the following posts please feel free 
+            to send me an email about it. All content on this site is released to 
+            the public domain unless otherwise noted.
         </p>
+    </header>
 
-		<div class="light-seperator"></div>
-
-		{{#items}}
-			<div class="item">
-				<h3>
-					<a href="./{{slug}}/">{{title}}</a>
-					<span class="date" title="{{date}}">{{date}}</span>
-				</h3>
-			</div>
-		{{/items}}
-	</main>
-
-	<script src="./static/js/utils.js"></script>	
-	<script>
-
-		const items = document.getElementsByClassName("item");
-
-		for (const item of items) {
-			const span = item.children[0].children[1];
-			const date = new Date(span.getAttribute("title"));
-
-			span.innerHTML = prettyDate(date);
-		}
-
-	</script>
-
-	<link rel="stylesheet" href="./static/css/markdown.css">	
+	<main class='large'>
+        <nav class='items'>{{#items}}
+            <div>
+                <h3>
+                    <a href="./{{slug}}/">{{title}}</a>
+                    <time class="date" datetime="{{date}}">
+                        <small>{{date}}</small>
+                    </time>
+                </h3>
+            </div>
+        {{/items}}</nav>
+    </main>
 </body>
 
 </html>

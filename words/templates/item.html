@@ -5,27 +5,31 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="A page containing, surprisingly, words.">
-	<meta name="author" content="Me.">
+    <meta name="author" content="fsoc">
+    
+    <base href="/words/">
 
-	<link rel="icon" href="../static/favicon.png">
-	<link rel="stylesheet" href="../static/css/markdown.css">
-	<link rel="stylesheet" href="../static/css/highlighting.css">
+    <link rel="stylesheet" href="/static/css/basic.css">
+	<link rel="stylesheet" href="./static/css/words.css">
+
+    <link rel="icon" href="/static/favicon.png">
 
 	<title>{{title}}</title>
 </head>
 
 <body>
-	<div class="markdown-body">
-		{{#hidden}}
+    <header class='large'>
+        {{#hidden}}
 			You are viewing a <i>hidden</i> document. It is not indexed and
 			only available through this link.
 		{{/hidden}}
 
 		<h1>{{title}}</h1>
+    </header>
 
+    <main class='large'>
 		{{{content}}}
-	</div>
-
+    </main>
 </body>
 
 </html>

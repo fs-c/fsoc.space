@@ -5,21 +5,26 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="A page containing, surprisingly, words.">
-	<meta name="author" content="Me.">
+    <meta name="author" content="fsoc">
+    
+    <base href="/words/">
 
-	<link rel="icon" href="../static/favicon.png">
-	<link rel="stylesheet" href="../static/css/markdown.css">
-	<link rel="stylesheet" href="../static/css/highlighting.css">
+    <link rel="stylesheet" href="/static/css/basic.css">
+	<link rel="stylesheet" href="./static/css/words.css">
+
+    <link rel="icon" href="/static/favicon.png">
 
 	<title>Building a Brainfuck Interpreter</title>
 </head>
 
 <body>
-	<div class="markdown-body">
-		
+    <header class='large'>
+        
 
 		<h1>Building a Brainfuck Interpreter</h1>
+    </header>
 
+    <main class='large'>
 		<blockquote><p><strong>Brainfuck</strong> is an <a href="https://en.wikipedia.org/wiki/Esoteric_programming_language">esoteric programming language</a> created in 1993 by <a href="https://en.wikipedia.org/w/index.php?title=Urban_M%C3%BCller&amp;action=edit&amp;redlink=1">Urban Müller</a>, and notable for its extreme minimalism. The language consists of only eight simple commands and an <a href="https://en.wikipedia.org/wiki/Instruction_pointer">instruction pointer</a>. While it is fully <a href="https://en.wikipedia.org/wiki/Turing_completeness">Turing complete</a>, it is not intended for practical use, but to challenge and amuse <a href="https://en.wikipedia.org/wiki/Programmers">programmers</a>. Brainfuck simply requires one to break commands into microscopic steps.
 </p>
 <p>From the <a href="https://en.wikipedia.org/wiki/Brainfuck">Wikipedia Article</a> on brainfuck
@@ -199,8 +204,7 @@ case ']':
 <p>My go-to brainfuck snippet to test if my loop implementations work, is the following: <code class="prettyprint">, [ -&gt; +&lt; ] . </code>. It will, in essence, copy a single character from stdin to stdout by looping from 0 to the value of the character, and incrementing the next cell by one for every loop execution.
 </p>
 
-	</div>
-
+    </main>
 </body>
 
 </html>

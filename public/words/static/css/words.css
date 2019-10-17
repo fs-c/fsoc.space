@@ -1,0 +1,16 @@
+.large {
+    max-width: 800px;
+}
+
+nav.items > * {
+    margin-bottom: 0.5em;
+}
+
+img {
+    width: 100%;
+    height: auto;
+}
+
+pre {
+    padding: 0.5em;
+}

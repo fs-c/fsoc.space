@@ -5,21 +5,26 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="A page containing, surprisingly, words.">
-	<meta name="author" content="Me.">
+    <meta name="author" content="fsoc">
+    
+    <base href="/words/">
 
-	<link rel="icon" href="../static/favicon.png">
-	<link rel="stylesheet" href="../static/css/markdown.css">
-	<link rel="stylesheet" href="../static/css/highlighting.css">
+    <link rel="stylesheet" href="/static/css/basic.css">
+	<link rel="stylesheet" href="./static/css/words.css">
+
+    <link rel="icon" href="/static/favicon.png">
 
 	<title>Using Words to Write Words</title>
 </head>
 
 <body>
-	<div class="markdown-body">
-		
+    <header class='large'>
+        
 
 		<h1>Using Words to Write Words</h1>
+    </header>
 
+    <main class='large'>
 		<p>I recently wrote <a href="https://github.com/lw2904/words">a thing</a>. It's a really simple static site generator built, 
 </p>
 <blockquote><p>Because I don't see why I should have to use giants like Hugo or Jekyll if I just want to insert some parsed markdown into simple templates, and sacrifice easy tweaking and fine tuning while I'm at it.
@@ -140,8 +145,7 @@ cd $STAGING_PATH
 # Copy site to the server
 scp -r public/* user@server:/var/www/site/
 </code></pre>
-	</div>
-
+    </main>
 </body>
 
 </html>
