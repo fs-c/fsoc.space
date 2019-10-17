@@ -2,8 +2,12 @@
     max-width: 800px;
 }
 
-nav.items > * {
+.item {
     margin-bottom: 0.5em;
+}
+
+.item * {
+    font-weight: normal;
 }
 
 img {
@@ -12,5 +16,9 @@ img {
 }
 
 pre {
-    padding: 0.5em;
+    color: #F5F8FA;
+    background-color: #202B33;
+
+    padding: 0.75em;
+    border-radius: 0.25em;
 }
