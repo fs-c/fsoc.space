@@ -21,6 +21,8 @@
 }
 
 a { color: inherit; }
+a:hover { text-decoration: none; }
+
 small { font-weight: lighter; }
 h1, h2, h3, h4, h5 { margin: 0; }
 
@@ -34,6 +36,8 @@ body {
 
     margin: 0px;
     padding: 50px;
+
+    color: #202B33;
 }
 
 main, header {
