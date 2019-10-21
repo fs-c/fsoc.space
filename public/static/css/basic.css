@@ -19,6 +19,6 @@ body {
 }
 
 main, header {
-    max-width: 400px;
+    max-width: 800px;
     font-size: 1.125em;
 }
