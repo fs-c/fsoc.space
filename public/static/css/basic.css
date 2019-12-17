@@ -12,13 +12,29 @@ body {
     font-kerning: normal;
     font-feature-settings: "liga";
 
+    font-size: 0.9rem;
+
     margin: 0px;
-    padding: 50px;
+    padding: 20px;
 
     color: #202B33;
+}
+
+@media (min-width: 700px) {
+    body {
+        font-size: 1.4rem;
+
+        padding: 50px;
+    }
 }
 
 main, header {
     max-width: 800px;
     font-size: 1.125em;
+}
+
+pre {
+    overflow: auto;
+    word-wrap: normal;
+    white-space: pre;
 }
