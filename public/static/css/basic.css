@@ -32,9 +32,3 @@ main, header {
     max-width: 800px;
     font-size: 1.125em;
 }
-
-pre {
-    overflow: auto;
-    word-wrap: normal;
-    white-space: pre;
-}
