@@ -1,6 +1,6 @@
 { "title": "Running Animal Crossing on a PC", "date": "2020-04-13" }
 
-_Unless you are willing to resort to [online piracy](https://en.wikipedia.org/w/index.php?title=Online_piracy&oldid=947274838) you are required to own a Nintendo Switch and a copy of Animal Crossing: New Horizons to follow this guide. Do remember that this is the internet, though -- there's very few things you can't find here and certainly not the kind of things that are required for this process._
+_Unless you are willing to resort to online piracy you are required to own a Nintendo Switch and a copy of Animal Crossing: New Horizons to follow this guide. Do remember that this is the internet, though -- there's very few things you can't find here and certainly not the kind of things that are required for this process._
 
 _The contents of this guide deal with experimental technology and may be outdated at the time you're reading this, although I will try to keep it updated._
 
