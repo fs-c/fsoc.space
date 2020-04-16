@@ -1,4 +1,4 @@
-[fsoc.space](https://fsoc.space)
+This is the `workbench` branch of the repository where all the work happens. The [`master`](https://github.com/LW2904/fsoc.space/tree/master) branch is hosted through GitHub Pages on [fsoc.space](https://fsoc.space).
 
-- `public/` Main 'landing page', also serves as index for all other content
-- `words/` - Used to build `words/public` with [`words`](https://github.com/LW2904/words), which is hosted on [fsoc.space/words](https://fsoc.space/words). Therefore also contains blog posts in raw format.
+- `static/` contains files that are directly copied to the `master` branch
+- `words/` is used to build the folder of the same name on the `master` branch, using [`words`](https://github.com/LW2904/words) (this is where all blog posts live) 
