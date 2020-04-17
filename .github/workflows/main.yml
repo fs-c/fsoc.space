@@ -34,8 +34,9 @@ jobs:
         cd workbench/words/
         mv ../../words-ubuntu-latest .
         ./words-ubuntu-latest --public ../../staging/words
-        cd ../..
-        find -L . -type f -name "staging/*.html" -exec bash -c 'sed -i "1 i<!-- Built on `date` -->" $0' {} \;
+        cd ../../staging
+        find -L . -type f -name "*.html" -exec bash -c 'sed -i "1 i<!-- Built on `date` -->" $0' {} \;
+        cd ..
 
     - name: Check out master
       uses: actions/checkout@v2
