@@ -32,12 +32,12 @@ jobs:
     - name: Build words into staging
       run: |
         cd workbench/words/
-        mv ~/words-ubuntu-latest .
-        ./words-ubuntu-latest --public ~/staging/words
+        mv ../../words-ubuntu-latest .
+        ./words-ubuntu-latest --public ../../staging/words
     
     - name: Prepend build time to HTML files
       run: |
-        cd ~/staging
+        cd ../../staging
         find -L . -type f -name "*.html" -exec bash -c \
           'sed -i "1 i<!-- Built on `date` -->" $0' {} \;
 
