@@ -35,7 +35,7 @@ jobs:
         cd workbench/words/
         mv ../../words-ubuntu-latest .
         ./words-ubuntu-latest --public ../../staging/words
-        ls -la staging
+        ls -la ~/staging
     
     - name: Check out master
       uses: actions/checkout@v2
