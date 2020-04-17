@@ -35,7 +35,7 @@ jobs:
         mv ../../words-ubuntu-latest .
         ./words-ubuntu-latest --public ../../staging/words
         cd ../..
-        echo '<!-- Rebuilt on `date` -->' | cat - staging/words/index.html > temp && mv temp staging/words/index.html
+        echo "<!-- Rebuilt on `date` -->" | cat - staging/words/index.html > temp && mv temp staging/words/index.html
     
     - name: Check out master
       uses: actions/checkout@v2
