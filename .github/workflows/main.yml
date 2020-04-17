@@ -52,6 +52,7 @@ jobs:
         cd master
         git config --local user.email "root@fsoc.space"
         git config --local user.name "fsoc"
+        git add -A
         git commit -m "Rebuilt with ${GITHUB_SHA::8} (run ${{ github.run_number }})" -a
     
     - name: Push changes to master
