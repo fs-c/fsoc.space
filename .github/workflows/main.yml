@@ -21,7 +21,9 @@ jobs:
         path: 'workbench'
 
     - name: Move static files to staging
-      run: mv workbench/public/* staging/
+      run: |
+        mv workbench/public/* staging/
+        ls -la staging
     
     - name: Download the latest words build
       run: |
@@ -33,6 +35,7 @@ jobs:
         cd workbench/words/
         mv ../../words-ubuntu-latest .
         ./words-ubuntu-latest --public ../../staging/words
+        ls -la staging
     
     - name: Check out master
       uses: actions/checkout@v2
@@ -48,7 +51,7 @@ jobs:
         cd master
         git config --local user.email "root@fsoc.space"
         git config --local user.name "fsoc"
-        git commit -m "Rebuilt with ${GITHUB_SHA::8}\n\nRun number ${{ github.run_number }}" -a
+        git commit -m "Rebuilt with ${GITHUB_SHA::8} (run ${{ github.run_number }})" -a
     
     - name: Push changes to master
       uses: ad-m/github-push-action@master
