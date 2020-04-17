@@ -35,8 +35,8 @@ jobs:
         mv ../../words-ubuntu-latest .
         ./words-ubuntu-latest --public ../../staging/words
         cd ../..
-        echo "<!-- Rebuilt on `date` -->" | cat - staging/words/index.html > temp && mv temp staging/words/index.html
-    
+        find -L . -type f -name "staging/*.html" -exec bash -c 'sed -i "1 i<!-- Built on `date` -->" $0' {} \;
+
     - name: Check out master
       uses: actions/checkout@v2
       with:
