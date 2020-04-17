@@ -1,0 +1,55 @@
+name: build-to-master
+
+on:
+  push:
+    branches: [ workbench ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Prepare staging
+      run: mkdir staging
+
+    - name: Check out the workbench
+      uses: actions/checkout@v2
+      with:
+        ref: 'workbench'
+        path: 'workbench'
+
+    - name: Move static files to staging
+      run: mv workbench/public/* staging/
+    
+    - name: Download the latest words build
+      run: |
+        wget https://github.com/lw2904/words/releases/latest/download/words-ubuntu-latest
+        chmod +x words-ubuntu-latest
+
+    - name: Build words into staging
+      run: |
+        cd workbench/words/
+        mv ../../words-ubuntu-latest .
+        ./words-ubuntu-latest --public ../../staging
+    
+    - name: Check out master
+      uses: actions/checkout@v2
+      with:
+        ref: 'master'
+        path: 'master'
+
+    - name: Replace master with staging
+      run: |
+        mv master/CNAME staging
+        rm -rf master/*
+        mv staging/* master
+        cd master
+        git config --local user.email "root@fsoc.space"
+        git config --local user.name "fsoc"
+        git commit -m "Rebuilt with ${${{ github.sha }}:0:9}" -a
+    
+    - name: Push changes to master
+      uses: ad-m/github-push-action@master
+      with:
+        directory: 'master'
+        github_token: ${{ secrets.GITHUB_TOKEN }}
