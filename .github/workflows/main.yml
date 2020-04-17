@@ -10,7 +10,9 @@ jobs:
 
     steps:
     - name: Prepare staging
-      run: mkdir staging
+      run: |
+        mkdir staging
+        mkdir staging/words
 
     - name: Check out the workbench
       uses: actions/checkout@v2
@@ -30,7 +32,7 @@ jobs:
       run: |
         cd workbench/words/
         mv ../../words-ubuntu-latest .
-        ./words-ubuntu-latest --public ../../staging
+        ./words-ubuntu-latest --public ../../staging/words
     
     - name: Check out master
       uses: actions/checkout@v2
@@ -46,7 +48,7 @@ jobs:
         cd master
         git config --local user.email "root@fsoc.space"
         git config --local user.name "fsoc"
-        git commit -m "Rebuilt with ${${{ github.sha }}:0:9}" -a
+        git commit -m "Rebuilt with ${GITHUB_SHA::8}\n\nRun number ${{ github.run_number }}" -a
     
     - name: Push changes to master
       uses: ad-m/github-push-action@master
