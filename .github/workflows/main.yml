@@ -37,8 +37,7 @@ jobs:
     
     - name: Prepend build time to HTML files
       run: |
-        ls -ld $(find .)
-        cd ../../staging
+        cd staging
         find -L . -type f -name "*.html" -exec bash -c \
           'sed -i "1 i<!-- Built on `date` -->" $0' {} \;
 
