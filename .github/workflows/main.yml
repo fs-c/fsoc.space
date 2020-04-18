@@ -23,7 +23,7 @@ jobs:
     - name: Move static files to staging
       run: |
         mv workbench/public/* staging/
-    
+
     - name: Download the latest words build
       run: |
         wget https://github.com/lw2904/words/releases/latest/download/words-ubuntu-latest
@@ -37,6 +37,7 @@ jobs:
     
     - name: Prepend build time to HTML files
       run: |
+        pwd
         cd ../../staging
         find -L . -type f -name "*.html" -exec bash -c \
           'sed -i "1 i<!-- Built on `date` -->" $0' {} \;
