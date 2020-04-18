@@ -55,6 +55,7 @@ jobs:
 
     - name: Commit changes to master
       run: |
+        cd master
         git config --local user.email "root@fsoc.space"
         git config --local user.name "fsoc"
         git add -A
