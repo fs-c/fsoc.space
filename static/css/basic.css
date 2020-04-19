@@ -21,15 +21,16 @@ body {
     background-color: white;
 }
 
-@media (min-width: 700px) {
-    body {
-        font-size: 1.4rem;
-
-        padding: 50px;
-    }
-}
-
 main, header {
     max-width: 800px;
-    font-size: 1.125em;
+    font-size: 1rem;
+}
+@media (min-width: 700px) {
+    body {
+        padding: 50px;
+    }
+
+    main, header {
+        font-size: 1.2rem;
+    }
 }
