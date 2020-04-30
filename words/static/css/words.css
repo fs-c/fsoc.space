@@ -27,7 +27,38 @@ pre {
     margin-right: auto;
 }
 
+.item-body > header {
+    display: flex;
+    flex-direction: column;
+}
+
+.item-body h1 {
+    align-self: center;
+}
+
 a.back {
     font-weight: normal;
     font-size: small;
+}
+
+.item-body .item-top-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.align-end {
+    align-self: flex-end;
+}
+
+.item-body p {
+    text-align: justify;
+}
+
+.item-body hr {
+    width: 100%;
+}
+
+.item-body hr.invisible {
+    border: 0;
 }
