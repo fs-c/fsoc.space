@@ -1,0 +1,100 @@
+<!-- Built on Sat Aug  1 17:28:33 UTC 2020 -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="A page containing, surprisingly, words.">
+    <meta name="author" content="fsoc">
+
+    <base href="/words/">
+
+    <link rel="stylesheet" href="/static/css/basic.css">
+	<link rel="stylesheet" href="./static/css/words.css">
+
+    <link rel="icon" href="/static/favicon.ico">
+
+	<title>C++ Unit Testing With CMake and Catch2</title>
+</head>
+
+<body class="item-body">
+    <header>
+        
+        <div class="item-top-bar">
+            <span><i><a href="/words">back</a></i></span>
+            <div class="align-end"><i>2020-08-01</i></div>
+        </div>
+
+        <hr class="invisible" />
+        <h1>
+            C++ Unit Testing With CMake and Catch2
+        </h1>
+        <hr/>
+    </header>
+
+    <main>
+		<p>...and precompiled headers!
+</p>
+<p>I've used CMake for around a year or so and programmed in C++ for maybe half of that time as of right now, and recently I've finally had a chance to write unit tests for a project of mine. Previous projects were either <a href="https://github.com/fs-c/vt-space">too simple</a> or <a href="https://github.com/fs-c/maniac">too reliant</a> <a href="https://github.com/fs-c/peko">on third party software</a> to warrant the effort but this one really lent itself to it.
+</p>
+<h2 id="problem-statement"> Problem Statement</h2>
+<p>I wanted the workflow for building and testing the project to be
+</p>
+<pre class="prettyprint"><code>cd build
+cmake ..
+make
+make test
+</code></pre><p>and I wanted to see the test output when running <code class="prettyprint">make test</code>. This disqualified utilities like <code class="prettyprint">CTest</code> since they hide the ouput of the test driver without proving an option to show it.
+</p>
+<p>I didn't realize this until I actually ran a test for the first time, but I also want test compiles and runs to be fast. This is why I spent quite a bit of time on figuring out how to precompile the Catch2 header.
+</p>
+<h2 id="solution"> Solution</h2>
+<p>The unit test folder is split up in two groups: (1) the Catch2 <code class="prettyprint">main</code> function and (2) the actual tetst.
+</p>
+<pre class="prettyprint"><code>└── tests
+    ├── catch.h
+    ├── CMakeLists.txt
+    ├── main.cpp
+    └── tests.cpp
+</code></pre><p><em>Directory listing of the `tests` folder in my project.</em>
+</p>
+<p><code class="prettyprint">main.cpp</code> contains the following two lines
+</p>
+<pre class="prettyprint"><code>#define CATCH_CONFIG_MAIN
+#include "catch.h"
+</code></pre><p>while <code class="prettyprint">tests.cpp</code> contains the <code class="prettyprint">TEST_CASE</code>s.
+</p>
+<p>The <code class="prettyprint">CMakeLists.txt</code> in the <code class="prettyprint">tests/</code> folder contains the following code:
+</p>
+<pre class="prettyprint"><code># This exclusively contains the catch2 main define, separated because precompiling
+# headers would be a problem otherwise.
+add_library(tests-main STATIC main.cpp)
+
+# This contains the actual tests.
+add_executable(tests-run tests.cpp)
+
+target_link_libraries(tests-run tests-main)
+
+target_compile_definitions(tests-run PRIVATE CATCH_CONFIG_FAST_COMPILE
+	CATCH_CONFIG_DISABLE_MATCHERS)
+
+# Important if you don't want the test compile to take &gt;5s every time.
+target_precompile_headers(tests-run PRIVATE catch.h)
+
+add_custom_target(test "tests-run" "-d yes")
+</code></pre><p>The comments in the first couple of lines reveal that the Catch2 <code class="prettyprint">main</code> has to be its own file in order to allow headers to be precompiled. The reason for this is sneaky and (in my opinion) borders on being a bug: If <code class="prettyprint">CATCH_CONFIG_MAIN</code> is defined, <code class="prettyprint">#include "catch.h"</code> expands with the implementation code (which would usually reside in <code class="prettyprint">.cpp</code> files), otherwise it expands without it.
+</p>
+<p>Precompiling would therefore cause the same implementation code to be expanded for all instances of <code class="prettyprint">#include "catch.h"</code> and not just the one time it should usually be expanded, leading to linking errors.
+</p>
+<p>In the above CMake code, this problem is sidestepped by compiling Catch2's <code class="prettyprint">main</code> as a library which is then linked to the actual tests. I got this idea from a <a href="http://mochan.info/c++/2019/11/12/pre-compiled-headers-gcc-clang-cmake.html">blog post</a> by Mochan Shrestha, and it works beautifully so far.
+</p>
+<p>The last line looks simple, and it really is simple: it adds a custom target called <code class="prettyprint">target</code> which builds and runs <code class="prettyprint">tests-run</code>.
+</p>
+<p>That's it. <code class="prettyprint">make test</code> works as expected. Test compilation is slow for the first compile but really quick afterwards.
+</p>
+
+    </main>
+</body>
+
+</html>
