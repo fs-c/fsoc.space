@@ -20,15 +20,19 @@ jobs:
         ref: 'workbench'
         path: 'workbench'
 
+    # This is horrible and I know it but I don't have the time to properly set this
+    # up at the moment
     - name: Generate directory listing for static files
       run: |
         npm i mustache
         wget https://raw.githubusercontent.com/fs-c/files/master/src/index.js
+        wget https://raw.githubusercontent.com/fs-c/files/master/src/index.mustache
         cd workbench/public/files
         node ../../../index.js
         cd ../../..
         rm -r node_modules
         rm index.js
+        rm index.mustache
 
     - name: Move static files to staging
       run: |
