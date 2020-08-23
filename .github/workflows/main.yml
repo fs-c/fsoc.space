@@ -20,6 +20,16 @@ jobs:
         ref: 'workbench'
         path: 'workbench'
 
+    - name: Generate directory listing for static files
+      run: |
+        npm i mustache
+        wget https://raw.githubusercontent.com/fs-c/files/master/src/index.js
+        cd workbench/public/files
+        node ../../../index.js
+        cd ../../..
+        rm -r node_modules
+        rm index.js
+
     - name: Move static files to staging
       run: |
         mv workbench/public/* staging/
