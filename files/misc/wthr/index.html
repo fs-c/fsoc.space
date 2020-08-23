@@ -1,41 +1,18 @@
-<!-- Built on Sun Aug 23 09:50:55 UTC 2020 -->
-<select id="select">
-	<option value="">Weather types</option>
-	<option value="sunshine">Sunshine</option>
-	<option value="rain">Rain</option>
-</select>
+<!-- Built on Sun Aug 23 10:01:02 UTC 2020 -->
+<!DOCTYPE html>
+<html lang="en">
 
-<p id="text">Please select a weather type</p>
+<head>
+    <title>Index of &#x2F;misc&#x2F;wthr</title>
+</head>
 
-<img id="image" src=""/>
+<body>
+    <h1>Index of &#x2F;misc&#x2F;wthr</h1>
 
-<script>
+    <a href="..">..</a><br/>
+        <a href="./index.html">index.html</a><br/>
+        <a href="./rain.png">rain.png</a><br/>
+        <a href="./sun.png">sun.png</a><br/>
+</body>
 
-	const image = document.getElementById("image");
-	const select = document.getElementById("select");
-	const paragraph = document.getElementById("text");
-
-	function setWeather() {
-		/* Get the currently selected value */
-		const choice = select.value;
-
-		if (choice === "sunshine") {
-			paragraph.textContent = "Your eyes will die today.";
-
-			image.src = "./sun.png";
-		} else if (choice === "rain") {
-			paragraph.textContent = "Rain is falling outside today.";
-
-			image.src = "./rain.png";			
-		} else {
-			/* The selected weather type doesn't match any we know */
-			paragraph.textContent = "Please select a weather type.";
-
-			image.src = "";
-		}
-	}
-
-	/* Call the setWeather function once the selected option changes */
-	select.addEventListener("change", setWeather);
-
-</script>
+</html>
