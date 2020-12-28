@@ -20,11 +20,11 @@ The following is taken from the `words` README and gives a full overview of the 
 │   ├── ...
 │   .
 │
-├── public		# The static page will be built to this folder and it is
-│ 			# deleted and recreated in every run
+├── public      # The static page will be built to this folder and it is
+│               # deleted and recreated in every run
 │
-├── static		# This folder and all of its contents will be copied to
-│   │			# public/static on building
+├── assets		# This folder and all of its contents will be copied to
+│   │			# public/assets on building
 │   ├── css
 │   │   ├── highlighting.css
 │   │   └── markdown.css
