@@ -1,4 +1,4 @@
-<!-- Built on Fri Sep 11 14:37:07 UTC 2020 -->
+<!-- Built on Mon Dec 28 19:17:08 UTC 2020 -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,10 +10,10 @@
 
     <base href="/words/">
 
-    <link rel="stylesheet" href="/static/css/basic.css">
-	<link rel="stylesheet" href="./static/css/words.css">
+    <link rel="stylesheet" href="/assets/css/basic.css">
+	<link rel="stylesheet" href="./assets/css/words.css">
 
-    <link rel="icon" href="/static/favicon.ico">
+    <link rel="icon" href="/assets/favicon.ico">
 
 	<title>Using Words to Write Words</title>
 </head>
@@ -53,11 +53,11 @@
 │   ├── ...
 │   .
 │
-├── public		# The static page will be built to this folder and it is
-│ 			# deleted and recreated in every run
+├── public      # The static page will be built to this folder and it is
+│               # deleted and recreated in every run
 │
-├── static		# This folder and all of its contents will be copied to
-│   │			# public/static on building
+├── assets		# This folder and all of its contents will be copied to
+│   │			# public/assets on building
 │   ├── css
 │   │   ├── highlighting.css
 │   │   └── markdown.css
@@ -155,6 +155,10 @@ cd $STAGING_PATH
 scp -r public/* user@server:/var/www/site/
 </code></pre>
     </main>
+
+    <footer>
+        <a href='/legal'>Impressum, Datenschutz</a>
+    </footer>
 </body>
 
 </html>
