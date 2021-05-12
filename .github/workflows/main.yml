@@ -76,7 +76,7 @@ jobs:
         git commit -m "Rebuilt with ${GITHUB_SHA::8} (run ${{ github.run_number }})" -a
     
     - name: Push changes to remote master
-      uses: ad-m/github-push-action@master
+      uses: ad-m/github-push-action@v0.5.0
       with:
         directory: 'master'
         github_token: ${{ secrets.GITHUB_TOKEN }}
