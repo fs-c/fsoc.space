@@ -25,8 +25,8 @@ jobs:
     - name: Generate directory listing for static files
       run: |
         npm i mustache
-        wget https://raw.githubusercontent.com/fs-c/files/master/src/index.js
-        wget https://raw.githubusercontent.com/fs-c/files/master/src/index.mustache
+        wget https://raw.githubusercontent.com/fs-c/files/directory-listing/src/index.js
+        wget https://raw.githubusercontent.com/fs-c/files/directory-listing/src/index.mustache
         cd workbench/public/files
         node ../../../index.js
         cd ../../..
