@@ -656,9 +656,9 @@ code.ty::after, .prose code::after {
 .static {
 	position: static;
 }
-.my-2 {
-	margin-top: 0.5rem;
-	margin-bottom: 0.5rem;
+.my-4 {
+	margin-top: 1rem;
+	margin-bottom: 1rem;
 }
 .mx-auto {
 	margin-left: auto;
@@ -666,6 +666,9 @@ code.ty::after, .prose code::after {
 }
 .mt-4 {
 	margin-top: 1rem;
+}
+.mb-3 {
+	margin-bottom: 0.75rem;
 }
 .mb-2 {
 	margin-bottom: 0.5rem;
@@ -678,6 +681,9 @@ code.ty::after, .prose code::after {
 }
 .contents {
 	display: contents;
+}
+.hidden {
+	display: none;
 }
 .h-5 {
 	height: 1.25rem;
@@ -706,15 +712,33 @@ code.ty::after, .prose code::after {
 .gap-2 {
 	gap: 0.5rem;
 }
-.space-y-2 > :not([hidden]) ~ :not([hidden]) {
-	--tw-space-y-reverse: 0;
-	margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
-	margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
-}
 .space-x-4 > :not([hidden]) ~ :not([hidden]) {
 	--tw-space-x-reverse: 0;
 	margin-right: calc(1rem * var(--tw-space-x-reverse));
 	margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
+}
+.divide-y > :not([hidden]) ~ :not([hidden]) {
+	--tw-divide-y-reverse: 0;
+	border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
+	border-bottom-width: calc(1px * var(--tw-divide-y-reverse));
+}
+.overflow-hidden {
+	overflow: hidden;
+}
+.overflow-ellipsis {
+	text-overflow: ellipsis;
+}
+.whitespace-nowrap {
+	white-space: nowrap;
+}
+.rounded {
+	border-radius: 0.25rem;
+}
+.border {
+	border-width: 1px;
+}
+.border-b {
+	border-bottom-width: 1px;
 }
 .border-t {
 	border-top-width: 1px;
@@ -727,8 +751,19 @@ code.ty::after, .prose code::after {
 	padding-top: 0.5rem;
 	padding-bottom: 0.5rem;
 }
-.font-mono {
-	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+.px-4 {
+	padding-left: 1rem;
+	padding-right: 1rem;
+}
+.py-1 {
+	padding-top: 0.25rem;
+	padding-bottom: 0.25rem;
+}
+.pb-1 {
+	padding-bottom: 0.25rem;
+}
+.text-center {
+	text-align: center;
 }
 .text-sm {
 	font-size: 0.875rem;
@@ -744,4 +779,10 @@ code.ty::after, .prose code::after {
 .text-gray-500 {
 	--tw-text-opacity: 1;
 	color: rgba(113, 113, 122, var(--tw-text-opacity));
+}
+@media (min-width: 640px) {
+
+	.sm\:inline-block {
+		display: inline-block;
+	}
 }
