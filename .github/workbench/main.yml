@@ -2,7 +2,8 @@ name: build-to-master
 
 on:
   push:
-    branches: [ workbench ]
+    branches:
+      - workbench
 
 jobs:
   build:
