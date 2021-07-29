@@ -1,0 +1,44 @@
+name: build-to-master
+
+on:
+  push:
+    branches: [ workbench ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out working version
+      uses: actions/checkout@v2
+      with:
+        ref: 'workbench'
+        path: 'workbench'
+    
+    - name: Run build
+      run: |
+        cd workbench
+        npm i
+        npm run build
+    - name: Check out master
+      uses: actions/checkout@v2
+      with:
+        ref: 'master'
+        path: 'master'
+
+    - name: Replace master with the built files
+      run: |
+        rm -rf master/*
+        mv workbench/* master
+    - name: Commit changes to master
+      run: |
+        cd master
+        git config --local user.email "root@fsoc.space"
+        git config --local user.name "fsoc"
+        git add -A
+        git commit -m "Rebuilt with ${GITHUB_SHA} (run ${{ github.run_number }})" -a
+    - name: Push changes to remote master
+      uses: ad-m/github-push-action@v0.5.0
+      with:
+        directory: 'master'
+        github_token: ${{ secrets.GITHUB_TOKEN }}
