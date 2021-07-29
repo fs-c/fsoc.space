@@ -3,7 +3,6 @@ import path from 'path';
 import fse from 'fs-extra';
 import byteSize from 'byte-size';
 import { formatISO } from 'date-fns';
-import * as childProcess from 'child_process';
 
 import { Header } from '../_app';
 import { Folder, Document } from '../../icons';
@@ -17,30 +16,33 @@ const Directory = ({ entries }) => (<>
     <Header title={'files'} />
 
     <div className={'container'}>
-        <ul className={'space-y-2'}>
+        <ul className={'rounded border border-gray-300 divide-y'}>
             {process.env.__DHOW_ROUTE_PATH !== `${filesPath}/` ? (
-                <li className={'text-gray-700'}>
-                    <a href={path.normalize(process.env.__DHOW_ROUTE_PATH + '/..')}>
-                        back
+                <li className={'text-gray-700 px-4 py-1'}>
+                    <div className={'text-center h-5 w-5'}>
+
+                    <a href={path.normalize(process.env.__DHOW_ROUTE_PATH + '/..')}
+                        className={'font-bold'}
+                    >
+                        ..
                     </a>
+                    </div>
                 </li>
             ) : (<></>)}
 
             {entries.map((entry) => (<>
-                <li className={'flex flex-row space-x-4'}>
+                <li className={'px-4 flex flex-row space-x-4 py-1 items-center'}>
                     <div className={'flex items-center justify-center'}>
                         {entry.isDirectory ? (<Folder />) : (<Document />)}
                     </div>
 
-                    <p className={'flex-grow'}>
-                        <a href={entry.href}>
-                            {entry.name}
-                        </a>
-                    </p>
+                    <a href={entry.href} className={'whitespace-nowrap overflow-ellipsis overflow-hidden flex-grow'}>
+                        {entry.name}
+                    </a>
 
                     {entry.isDirectory ? (<></>) : (<>
-                        <p className={'text-gray-500 text-sm'}>
-                            <span className={'mr-2'}>
+                        <p className={'text-gray-500 text-sm whitespace-nowrap'}>
+                            <span className={'mr-2 hidden sm:inline-block'}>
                                 {byteSize(entry.size)}
                             </span>
 
@@ -60,7 +62,7 @@ export default Directory;
 // Don't force having the submodule initialized in development since it might be 
 // huge, just use a dummy directory with some files and folders for testing
 const contentName =
-    process.env.NODE_ENV === 'production' ? 'files' : 'dummy-files'
+    process.env.NODE_ENV === 'production' ? 'files' : 'files'
 const contentPath = path.resolve('public', contentName);
 
 export const getProps = async (relativePath) => {
