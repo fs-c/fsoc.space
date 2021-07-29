@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply font-sans;
+
+        /* Make sure that the body takes up at least the whole screen, vertically */
+        min-height: 100vh;
+
+        /* Allow for nice header-content-footer spacing even when content is <100vh */
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+@layer components {
+    .ty, .prose {
+        @apply text-gray-700;
+    }
+
+    a.ty, .prose a {
+        @apply text-gray-900 underline font-medium;
+    }
+
+    code.ty, .prose code {
+        @apply text-gray-900 font-semibold text-sm;
+    }
+
+    code.ty::before, .prose code::before {
+        content: "`";
+    }
+
+    code.ty::after, .prose code::after {
+        content: "`";
+    }
+
+    .prose p {
+        @apply w-full mb-2;
+    }
+
+    .prose ul > li {
+        float: left;
+        position: relative;
+        padding-left: 1.75em;
+    }
+
+    .prose ul > li::before {
+        content: "";
+        position: absolute;
+        @apply bg-gray-500;
+        border-radius: 50%;
+        width: 0.375em;
+        height: 0.375em;
+        top: calc(0.875em - 0.1875em);
+        left: 0.25em;
+    }
+
+    .container {
+        @apply max-w-2xl w-full px-4 mx-auto;
+    }
+}

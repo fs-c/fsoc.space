@@ -1,3 +1,3 @@
-words-*
-.env
-temp
+node_modules
+
+out
