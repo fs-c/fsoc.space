@@ -1,0 +1,17 @@
+1u5:  Auskunft über Aktivitäten, Vorlieben und Hobbys geben
+1u6:  Sich jmd. vorstellen (Lebens- und Wohnituation, Beruf, Familie, ...)
+1u10: Orte, Wege und Wegfindung (auch Verkehrsmittel) beschreiben
+1u12: Tagesablauf schildern (Zeit, Ort)
+1u12: Räume beschreiben
+1u13: Stadt/Region beschreiben
+1u13: Wetter beschreiben
+1u14: Meinung ausdrücken
+1u14, 1u15, 2u8: Personen und deren Aussehen und Charaktere beschreiben
+1u16: Über Ferien berichten
+
+2u1: Über Sport, Spiel und Freizeit sprechen
+2u2: Zusammenleben beschreiben
+2u4: Sich über den Schulalltag unterhalten
+2u5: Sagen, was einem wichtig ist (Unmut u. Wünsche ausdrücken)
+2u6: Sich über das Wohnumfeld unterhalten (Veranstaltungen, Stadtviertel, ...)
+2u10: Üver die berufliche Zukunft sprechen
