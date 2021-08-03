@@ -3,7 +3,7 @@ export const Header = ({ hero = false, title, className = '' }) => (<>
         {hero ? (
             <img src={'/assets/logo.svg'} alt={'fsoc'} className={'mx-auto'} />
         ) : (<>
-            <div className={'prose'}>
+            <div className={'prose text-black'}>
                 <a href={'/'}>fsoc</a>{title ? <> / <span className={''}>{title}</span></> : <></>}
             </div>
         </>)}
@@ -22,9 +22,9 @@ const Footer = () => (<>
 </>);
 
 const App = ({ Component, pageProps = {} }) => (<>
-    <main className={`flex-grow ${pageProps.wrapperClassName || ''}`}>
+    <div className={`flex-grow ${pageProps.wrapperClassName || ''}`}>
         <Component {...pageProps} />
-    </main>
+    </div>
 
     <Footer />
 </>);

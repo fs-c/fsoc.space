@@ -6,7 +6,7 @@ description: Setting up simple and quick (!) C++ unit testing using CMake, Catch
 
 ...and precompiled headers!
 
-I've used CMake for around a year or so and programmed in C++ for maybe half of that time as of right now, and recently I've finally had a chance to write unit tests for a project of mine. Previous projects were either [too simple](https://github.com/fs-c/vt-space) or [too reliant](https://github.com/fs-c/maniac) [on third party software](https://github.com/fs-c/peko) to warrant the effort but this one really lent itself to it.
+I've used CMake for around a year or so and programmed in C++ for maybe half of that time as of right now, and recently I've finally had a chance to write unit tests for a project of mine. Previous projects were either [too simple](https://github.com/fs-c/vt-space) or [too reliant](https://github.com/fs-c/maniac) [on third party software](https://github.com/fs-c/peko) to warrant the effort but that project really lent itself to it.
 
 ## Problem Statement
 

@@ -1,5 +1,5 @@
 ---
-title: Cheating in osu!mania
+title: Cheating in osu!mania on Linux
 date: 2018-07-15
 description: Walkthrough of developing a cheat program for osu!mania, a gamemode of the popular rythm game osu!, from the ground up and on Linux.
 ---
@@ -73,8 +73,6 @@ which can be parsed into two actions.
 [ { time: 1000, down: true, key: 'd' },
   { time: 1128, down: false, key: 'd' } ]
 ```
-
-_For readability I’ve borrowed from the JSON syntax here._
 
 An important calculation to consider in the CSV to `hitpoint` conversion is that of the `column` property. We know that `x` determines the column, and the documentation provides us with the following formula:
 
