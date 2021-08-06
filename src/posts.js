@@ -1,19 +1,14 @@
 import path from 'path';
-import marked from 'marked';
+import smdp from '@fsoc/smdp';
 import parseFrontMatter from 'gray-matter';
 import { readFile, readdir } from 'fs/promises';
 
-import hljs from 'highlight.js';
-
 const contentDirectory = 'posts';
 
-marked.setOptions({
-    renderer: new marked.Renderer(),
-    highlight: (code, lang) => {
-        const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-        return hljs.highlight(code, { language }).value;
-    },
-});
+const cache = { posts: [] };
+
+const getIsoDate = (date) => date.toISOString();
+const getHumanDate = (date) => `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 
 export const getPosts = async () => {
     const files = (await readdir(contentDirectory))
@@ -24,18 +19,34 @@ export const getPosts = async () => {
         const fileContent = await readFile(filePath);
         const frontMatter = parseFrontMatter(fileContent);
 
-        frontMatter.content = marked(frontMatter.content);
+        const content = smdp.parse(frontMatter.content);
+
+        const isoDate = getIsoDate(frontMatter.data.date);
+        const humanDate = getHumanDate(frontMatter.data.date);
 
         posts.push({
             path: filePath,
             slug: path.parse(filePath).name,
-            ...frontMatter,
+            content,
+            ...frontMatter.data,
+            isoDate, humanDate,
+            filePath,
         });
     }
+
+    posts.sort((a, b) => b.date - a.date);
+
+    cache.posts = posts;
 
     return posts;
 };
 
 export const getPost = async (slug) => {
+    for (const post of cache.posts) {
+        if (post.slug === slug) {
+            return post;
+        }
+    }
+
     return (await getPosts()).filter((post) => post.slug === slug)[0];
 };

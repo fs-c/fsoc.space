@@ -9,20 +9,16 @@ const Posts = ({ posts }) => (<>
             {posts.map((post) => (<>
                 <li>
                     <h1 className={'prose'}>
-                        <a href={process.env.__DHOW_ROUTE_PATH + '/' + post.slug}>{post.data.title}</a>
+                        <a href={process.env.__DHOW_ROUTE_PATH + '/' + post.slug}>{post.title}</a>
                         <small className={'text-sm ml-2'}>
-                            <time datetime={post.data.date.toISOString()}>
-                                {post.data.date.getFullYear()}-{post.data.date.getMonth() + 1}-{post.data.date.getDate()}
+                            <time datetime={post.isoDate}>
+                                {post.humanDate}
                             </time>
                         </small>
                     </h1>
 
                     <p className={'text-sm text-gray-700'}>
-                        {post.data.description}
-                    </p>
-
-                    <p>
-                        {post.slug}
+                        {post.description}
                     </p>
                 </li>
             </>))}
@@ -31,7 +27,7 @@ const Posts = ({ posts }) => (<>
 </>);
 
 export const getProps = async () => {
-    return { posts: await getPosts() };
+    return { posts: (await getPosts()).filter((p) => p.listed !== false), title: 'fsoc.space/words' };
 }
 
 export default Posts;

@@ -4,7 +4,7 @@ const Home = () => {
     return (<>
         <Header hero />
 
-        <main className={'flex flex-col items-center prose container'}>
+        <main className={'flex flex-col prose container'}>
             <p>
                 Hey there, I'm Laurenz Weixlbaumer, a software developer living in Austria. Online, 
                 I mainly go by <code>fsoc</code>. I build things, usually by writing things.

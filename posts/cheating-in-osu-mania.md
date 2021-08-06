@@ -262,4 +262,5 @@ int main()
 	return 0;
 }
 ```
+
 The full code of this project can be found on [github.com/lw2904/maniac](https://github.com/lw2904/maniac), note that the code is not a one on one match to the examples in this post since parts were refactored in order to reach Windows portability.
