@@ -8,7 +8,7 @@ Laurenz Weixlbaumer
 Hittmairstraße 64
 4020 Linz
 Austria`;
-    
+
     return (<>
         <Header title={'imprint'} />
 

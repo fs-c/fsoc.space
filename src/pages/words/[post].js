@@ -10,21 +10,17 @@ const Post = ({ title, description, content, slug, humanDate, filePath }) => (<>
         <meta name={'description'} content={description} />
     </Head>
 
-    <Header titles={[
-        { content: 'words', href: path.resolve(process.env.__DHOW_ROUTE_PATH, '..') },
-        slug
-    ]} />
+    <Header title={'words'} href={'/words'} />
 
     <main className={'container prose'}>
-        <aside className={'flex flex-row justify-between'}>
-            <small>Last edited on {humanDate}</small>
-
-            <small><a href={githubUrl + 'edit/workbench/' + filePath}>Edit on github</a></small>
-        </aside>
-
         <h1>
             {title}
         </h1>
+
+        <aside className={'mb-2 flex flex-row justify-between'}>
+            <small>Last edited on {humanDate}</small>
+            <small><a href={githubUrl + 'edit/workbench/' + filePath}>Edit on github</a></small>
+        </aside>
 
         {content}
     </main>
@@ -32,6 +28,8 @@ const Post = ({ title, description, content, slug, humanDate, filePath }) => (<>
 
 export const getProps = async (slug) => {
     const post = await getPost(slug);
+
+    console.log(process.env.__DHOW_ROUTE_PATH)
 
     if (!post) {
         throw new Error('Couldn\'t get post ' + slug);

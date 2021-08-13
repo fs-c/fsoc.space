@@ -1,16 +1,12 @@
 import { Head } from '@fsoc/dhow';
 
-export const Header = ({ hero = false, title, titles = [title], className = '' }) => (<>
+export const Header = ({ hero = false, title, href, className = '' }) => (<>
     <header className={`container ${hero ? 'my-4' : 'border-b border-gray-300 mt-4 mb-3 pb-1'}` + className}>
         {hero ? (
             <img src={'/assets/logo.svg'} alt={'fsoc'} className={'mx-auto'} />
         ) : (<>
             <div className={'prose text-black'}>
-                <a href={'/'}>fsoc</a>{titles && titles.length ? (<>
-                   {' / '}{titles.map((t, i) => i === (titles.length - 1) ? t : (
-                        typeof t === 'string' ? t : <a href={t.href}>{t.content}</a>
-                    )).join(' / ')}
-                </>) : <></>}
+                <a href={'/'}>fsoc</a> / {href ? <a href={href}>{title}</a> : title}
             </div>
         </>)}
     </header>

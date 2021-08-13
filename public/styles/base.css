@@ -102,29 +102,24 @@
 
     .prose h1 {
         color: #111827;
-        font-weight: 700;
-        font-size: 2em;
-        margin-top: 0;
-        margin-bottom: 0.8888889em;
-        line-height: 1.1111111;
+        font-weight: 600;
+        font-size: 1.5em;
     }
 
     .prose h2 {
         color: #111827;
-        font-weight: 700;
-        font-size: 1.5em;
-        line-height: 1.3333333;
+        font-weight: 600;
+        font-size: 1.25em;
 
-        @apply my-4;
+        @apply my-3;
     }
 
     .prose h3 {
         color: #111827;
         font-weight: 600;
-        font-size: 1.25em;
-        line-height: 1.6;
+        font-size: 1em;
 
-        @apply my-3;
+        @apply my-2;
     }
 
     .prose blockquote {
@@ -132,5 +127,18 @@
         font-style: italic;
         color: #111827;
         @apply ml-4;
+    }
+
+    strong {
+        @apply font-semibold;
+        @apply text-gray-900;
+    }
+
+    figure {
+        @apply my-3;
+    }
+
+    figcaption {
+        @apply mt-2;
     }
 }
