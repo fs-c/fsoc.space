@@ -29,8 +29,6 @@ const Post = ({ title, description, content, slug, humanDate, filePath }) => (<>
 export const getProps = async (slug) => {
     const post = await getPost(slug);
 
-    console.log(process.env.__DHOW_ROUTE_PATH)
-
     if (!post) {
         throw new Error('Couldn\'t get post ' + slug);
     }
