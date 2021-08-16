@@ -15,6 +15,7 @@ The goal of this guide is to set up a Nintendo Switch [emulator](https://en.wiki
 Download the archive which is appropiate for your operating system (builds are only provided for Windows and Linux) from the post and extracted it in an appropiate location -- for Linux this is `/usr/local/ryujinx`, for Windows it's `C:\Program Files\ryujinx`. The folder you extracted it to should now contain a `Ryujinx` executable alongside a number of other files and folders.
 
 On Linux, the relevant commands are something like
+
 ```
 $ cd /usr/local
 $ tar -xzf ~/Downloads/ryujinx-1.0.0-acnh4-linux_x64.tar.gz publish
