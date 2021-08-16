@@ -15,7 +15,7 @@ const filesPath = process.env.__DHOW_PAGE_DIR
 const Directory = ({ entries }) => (<>
     <Header title={'files'} />
 
-    <div className={'container'}>
+    <main className={'container'}>
         <ul className={'rounded border border-gray-300 divide-y'}>
             {process.env.__DHOW_ROUTE_PATH !== `${filesPath}/` ? (
                 <li className={'text-gray-700 px-4 py-1'}>
@@ -54,7 +54,7 @@ const Directory = ({ entries }) => (<>
                 </li>
             </>))}
         </ul>
-    </div>
+    </main>
 </>);
 
 export default Directory;
@@ -62,7 +62,7 @@ export default Directory;
 // Don't force having the submodule initialized in development since it might be 
 // huge, just use a dummy directory with some files and folders for testing
 const contentName =
-    process.env.NODE_ENV === 'production' ? 'files' : 'files'
+    process.env.NODE_ENV === 'production' ? 'files' : 'dummy-files'
 const contentPath = path.resolve('public', contentName);
 
 export const getProps = async (relativePath) => {

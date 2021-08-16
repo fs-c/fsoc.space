@@ -19,17 +19,16 @@ That is probably best done by diving right into code, so let’s first get the b
 
 #define MAX_LENGTH 9999
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 	int cls[MAX_LENGTH];	// Cells.
 	int ins[MAX_LENGTH];	// Instructions.
 
 	int ilen = 0;           // Number of instructions.
-    
+
 	// Pointers to currently active cell and instruction, respectively.
 	int *ptr = cls;
 	int *iptr = ins;
-	
+
 	return 0;
 }
 ```
@@ -37,26 +36,25 @@ int main(int argc, char **argv)
 These are almost all the variables we’ll need, but it doesn‘t really reveal any of the program structure just yet. Before getting to that we’ll have to get the reading of the brainfuck code to interpret out of the way, so let’s expand what we have so far with some file streaming and reading logic.
 
 ```C
-int main(int argc, char **argv)
-{
-    if (argc < 2) {
+int main(int argc, char **argv) {
+	if (argc < 2) {
 		puts("expected arguments");
 		return 1;
 	}
-	
-    /* ... */
+
+	/* ... */
 
 	FILE stream, *fopen();
 
-    // Open the file given as first argument with read permissions.
-    stream = fopen(argv[1], "r");
+	// Open the file given as first argument with read permissions.
+	stream = fopen(argv[1], "r");
 
 	// Read the brainfuck to execute from the stream.
 	while (ilen < MAX_LENGTH && (ins[ilen] = getc(stream)) != EOF)
 		ilen++;
 
 	fclose(stream);
-	
+
 	return 0;
 }
 ```
@@ -70,43 +68,48 @@ Something that might also go unnoticed and cause confusion down the road is cell
 With those minor problems out of the way, the code is fairly simple:
 
 ```C
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 	/* ... */
-    
-    // Initialize all cells to zero.
+
+	// Initialize all cells to zero.
 	memset(cls, 0, MAX_LENGTH);
-    
-    // While iptr points to a character in ins, handle the char. 
-    while ((iptr - ins) < ilen) {
-        switch (*iptr) {
-        case '+':
-			++*ptr;		// Increase the value of the current cell.
+
+	// While iptr points to a character in ins, handle the char. 
+	while ((iptr - ins) < ilen) {
+		switch (*iptr) {
+		case '+':
+			// Increase the value of the current cell.
+			++*ptr;
 			break;
 		case '-':
-			--*ptr;		// Decrease.
+			// Decrease.
+			--*ptr;
 			break;
 		case '>':
-			++ptr;		// Move the pointer forwards by one.
+			// Move the pointer forwards by one.
+			++ptr;
 			break;
 		case '<':
-			--ptr;		// Backwards.
+			// Backwards.
+			--ptr;
 			break;
-		case '.':			// Output the character at the current cell.
+		case '.':
+			// Output the character at the current cell.
 			putchar(*ptr);
 			break;
 		case ',':
-			*ptr = getchar();	// Read a single character from stdin into the current cell.
+			// Read a single character from stdin into the current cell.
+			*ptr = getchar();
 			break;
-    	}
-        
-        // Move to the next instruction.
-        iptr++;
-    }
-    
-    putchar('\n');
-    
-    return 0;
+		}
+
+		// Move to the next instruction.
+		iptr++;
+	}
+
+	putchar('\n');
+
+	return 0;
 }
 ```
 
@@ -135,7 +138,8 @@ Now, getting to the logic of `[` , if the current cell is zero it will move the 
 Now, this might seem rather intimidating, maybe even counter-intuitive, but the code for it is fairly simple once you’ve wrapped your head around it.
 
 ```C
-int brk = 0;		// Keep count of open bracket pairs.
+// Keep count of open bracket pairs.
+int brk = 0;
 
 /* ...while... */
 
@@ -146,6 +150,7 @@ case '[':
 		break;
 
 	++iptr;
+
 	// Jump forwards to matching closing brace.
 	while (brk > 0 || *iptr != ']') {
 		if (*iptr == '[')
@@ -155,12 +160,15 @@ case '[':
 
 		++iptr;
 	}
+
 	break;
+
 case ']':
 	if (*ptr == 0 && ptr++)
 		break;
 
 	--iptr;
+
 	// Jump backwards to matching opening brace.
 	while (brk > 0 || *iptr != '[') {
 		if (*iptr == '[')
@@ -198,3 +206,5 @@ This “stuff” that is being done is really simple. First come the checks that
 Now, having implemented the looping, we are essentially done. The interpreter is fully implemented, and the last thing left over for us to do is testing.
 
 My go-to brainfuck snippet to test if my loop implementations work, is the following: `, [ -> +< ] . `. It will, in essence, copy a single character from stdin to stdout by looping from 0 to the value of the character, and incrementing the next cell by one for every loop execution.
+
+The code to this article can be found in [fs-c/brainfuck](https://github.com/fs-c/brainfuck). Fittingly, there's even a JavaScript version!

@@ -1,10 +1,10 @@
 ---
-title: Terminal Control Codes in C
+title: Terminal Control Codes (in C)
 date: 2018-07-26
 description: Using terminal control codes to move the cursor and to draw on the terminal, all from native C code.
 ---
 
-_Note that basically nothing in this guide is exclusive to the programming language C, anything that can print to a terminal supporting these sequences will work._
+_Note that basically nothing in this guide is exclusive to the programming language C, anything that can print to a terminal supporting these sequences will work. It's just the language I happened to use them in._
 
 Many terminals (and terminal emulators) support color and cursor control through a system of escape sequences. A commonly supported and used standard is often referred to as "ANSI Colour", on which the VT100 terminal specification which we will be using is based.
 
@@ -12,7 +12,7 @@ A terminal control code is a special sequence of characters that is sent to `std
 
 As an example, the code which can be used to erase the screen looks like `<ESC> [ 2J` where `<ESC>` represents the ASCII escape character, 27. Spaces are ignored, and can be added for increased readability.
 
-A more or less complete list of these sequences can be found on [termsys.demon.co.uk](http://www.termsys.demon.co.uk/vtansi.htm#status), but I'll explain the codes used here as we go along.
+A more or less complete list of these sequences can be found on [termsys.demon.co.uk](https://web.archive.org/web/20200413124215/http://www.termsys.demon.co.uk/vtansi.htm), but I'll explain the codes used here as we go along.
 
 Now, the title says "in C", so here goes:
 

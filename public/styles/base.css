@@ -16,6 +16,10 @@
 }
 
 @layer components {
+    .container {
+        @apply max-w-2xl w-full px-4 mx-auto;
+    }
+
     .ty, .prose {
         @apply text-gray-700;
     }
@@ -36,12 +40,46 @@
         content: "`";
     }
 
+    .prose pre {
+        @apply text-black;
+        @apply bg-gray-100;
+
+        @apply text-sm;
+        @apply leading-5;
+
+        @apply my-4;
+        @apply py-4;
+        @apply px-5;
+        @apply rounded-md;
+
+        @apply overflow-x-auto;
+    }
+
+    .prose pre code {
+        background-color: transparent;
+        border-width: 0;
+        border-radius: 0;
+        padding: 0;
+        font-weight: 400;
+        color: inherit;
+        font-size: inherit;
+        font-family: inherit;
+        line-height: inherit;
+    }
+
+    .prose pre code::before {
+        content: none;
+    }
+      
+    .prose pre code::after {
+        content: none;
+    }
+
     .prose p {
         @apply w-full mb-2;
     }
 
     .prose ul > li {
-        float: left;
         position: relative;
         padding-left: 1.75em;
     }
@@ -57,7 +95,50 @@
         left: 0.25em;
     }
 
-    .container {
-        @apply max-w-2xl w-full px-4 mx-auto;
+    .prose li {
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+    }
+
+    .prose h1 {
+        color: #111827;
+        font-weight: 600;
+        font-size: 1.5em;
+    }
+
+    .prose h2 {
+        color: #111827;
+        font-weight: 600;
+        font-size: 1.25em;
+
+        @apply my-3;
+    }
+
+    .prose h3 {
+        color: #111827;
+        font-weight: 600;
+        font-size: 1em;
+
+        @apply my-2;
+    }
+
+    .prose blockquote {
+        font-weight: 500;
+        font-style: italic;
+        color: #111827;
+        @apply ml-4;
+    }
+
+    strong {
+        @apply font-semibold;
+        @apply text-gray-900;
+    }
+
+    figure {
+        @apply my-3;
+    }
+
+    figcaption {
+        @apply mt-2;
     }
 }
