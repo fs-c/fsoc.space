@@ -62,7 +62,7 @@ export default Directory;
 // Don't force having the submodule initialized in development since it might be 
 // huge, just use a dummy directory with some files and folders for testing
 const contentName =
-    process.env.NODE_ENV === 'production' ? 'files' : 'files'
+    process.env.NODE_ENV === 'production' ? 'files' : 'dummy-files'
 const contentPath = path.resolve('public', contentName);
 
 export const getProps = async (relativePath) => {
