@@ -5,6 +5,8 @@ description: TODO
 listed: false
 ---
 
+https://enos.itcollege.ee/~jpoial/oop/naited/Clean%20Code.pdf
+
 ## Vertical Ordering
 
 "(...) a function that is called should be below a function that does the calling."
@@ -18,3 +20,11 @@ It's suggested to use white space "to accentuate the precedence of operators". A
 ## Data/Object Anti-Symmetry
 
 Not sure I understood that properly, might be worth doing an example. P. 95.
+
+## Typos
+
+p. 110, peristentStore
+p. 128, turnOnLoTempAlarmAtThreashold
+p. 139, SRP is one of the more important concept in OO...
+
+202
