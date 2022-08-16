@@ -13,6 +13,9 @@ module.exports = {
     mode: 'jit',
 
     purge: [
+        // posts may contain inline html
+        './posts/**/*.md',
+
         './public/**/*.html',
         './src/**/*.js',
     ],
