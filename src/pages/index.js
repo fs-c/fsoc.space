@@ -20,7 +20,7 @@ const Home = () => {
                 </li>
 
                 <li>
-                    Also available on this domain are a collection of <a href={'/words'}>/words</a> and an archive of <a href={'/files'}>/files</a>.
+                    <a href={'/words'}>More words.</a>.
                 </li>
             </ul>
         </main>

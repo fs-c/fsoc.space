@@ -15,17 +15,8 @@ jobs:
       with:
         ref: 'workbench'
         path: 'workbench'
-        submodules: true
-        
-    - name: Update submodules
-      run: |
-        cd workbench
-        git config --local user.email "root@fsoc.space"
-        git config --local user.name "fsoc"
-        git submodule update --remote --merge
-        git add -A
-        git commit -m "Updated files submodule" -a
-    
+        submodules: false
+
     - name: Run build
       run: |
         cd workbench
