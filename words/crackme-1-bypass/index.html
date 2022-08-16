@@ -1,0 +1,36 @@
+<html lang="en"><head><meta charset="utf-8"></meta><meta name="viewport"  content="width=device-width, initial-scale=1"></meta><meta name="author"  content="fsoc"></meta><meta name="author"  content="Laurenz Weixlbaumer"></meta><link href="/styles/base.css"  rel="stylesheet"></link><title>fsoc.space</title><title>fsoc.space</title><title>fsoc.space</title><title>fsoc.space</title><meta name="description"  content="TODO"></meta><meta name="description"  content="Solving a very simple .NET CrackMe using dnSpy."></meta></head><body><div class="flex-grow "><header class="container border-b border-gray-300 mt-4 mb-3 pb-1"><div class="prose text-black"><a href="/">fsoc</a> / <a href="/words">words</a></div></header><main class="container prose"><h1>CrackMe I: Bypass.exe</h1><aside class="mb-2 flex flex-row justify-between"><small>Last edited on 2022-8-16</small><small><a href="https://github.com/fs-c/fsoc.space/edit/workbench/posts/crackme-1-bypass.md">Edit on github</a></small></aside><p>I'm trying to solve (or work on) one reversing challenge on <a href="https://www.hackthebox.com/home/challenges/Reversing">HackTheBox</a> every day, to work on my reversing knowledge. This is day one, with a very easy one: <a href="https://www.hackthebox.com/home/challenges/download/114">Bypass.exe</a>.</p><p>The given file is a .NET executable, which I discovered upon opening it with IDA. Probably not the best way to find out, but it works. I then switched to using dnSpy because, while IDA supports it, their decompiled IL code isn't very readable to me. DnSpy was much more comfortable to work with in this case.</p><p>The program starts out with</p><pre><code class="language-c#">public static void 0()
+{
+    bool flag = global::0.1();
+    bool flag2 = flag;
+    if (flag2)
+    {
+        global::0.2();
+    }
+    else
+    {
+        Console.WriteLine(5.0);
+        global::0.0();
+    }
+}</code></pre><p>Here, <code>global::0.1</code> is clearly the authentication mechanism. If it returns true the program proceeds, if it is false we get some kind of message and the mechanism restarts. Looking at the disassembly of the function,</p><pre><code class="language-c#">public static bool 1()
+{
+    Console.Write(5.1);
+    string text = Console.ReadLine();
+    Console.Write(5.2);
+    string text2 = Console.ReadLine();
+    return false;
+}</code></pre><p>...it looks like it always returns false? I have to admit, this confused me for a bit. At first I was considering that there might be some arcane way of reading the values of local variables from other places in the program flow and stuff like that. But this is a crackme, the program doesn't have to actually work.</p><p>So I started debugging the game under dnSpy, changing <code>flag2</code> to be true (something that could not be possible without external manipulation) and stepped into <code>global::0.2</code>.</p><pre><code class="language-c#">public static void 2()
+{
+    string <<EMPTY_NAME>> = 5.3;
+    Console.Write(5.4);
+    string b = Console.ReadLine();
+    bool flag = <<EMPTY_NAME>> == b;
+    if (flag)
+    {
+        Console.Write(5.5 + global::0.2 + 5.6);
+    }
+    else
+    {
+        Console.WriteLine(5.7);
+        global::0.2();
+    }
+}</code></pre><p>At this point, the program asks for a "secret key" which is in <code>5.3</code> and trivially readable from the debugger. But knowledge of the key is not required in any case, since I again just set the if-condition to true.</p><p>This causes the flag to be printed out.</p><h2>Conclusion</h2><p>When working with .NET: dnSpy > IDA.</p><p>Regarding the challenge: This felt a little too easy, getting IDA and dnSpy installed probably took more time than actually solving the challenge. But reversing unobfuscated IL code can only be so difficult, so I suppose this was to be expected. It was fun though.</p></main></div><footer class="flex flex-row gap-2 prose container text-sm py-2 border-t border-gray-300 mt-4"><span>Built with <a href="https://github.com/fs-c/dhow/tree/rewrite">fs-c/dhow</a>.</span><div class="flex-grow"></div><a href="/imprint">/imprint</a><a href="/privacy">/privacy</a></footer></body></html>

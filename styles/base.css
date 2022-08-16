@@ -740,6 +740,9 @@ figcaption {
 .static {
 	position: static;
 }
+.isolate {
+	isolation: isolate;
+}
 .my-4 {
 	margin-top: 1rem;
 	margin-bottom: 1rem;
@@ -757,20 +760,17 @@ figcaption {
 .mb-2 {
 	margin-bottom: 0.5rem;
 }
-.mr-2 {
-	margin-right: 0.5rem;
-}
 .ml-2 {
 	margin-left: 0.5rem;
+}
+.block {
+	display: block;
 }
 .flex {
 	display: flex;
 }
 .contents {
 	display: contents;
-}
-.hidden {
-	display: none;
 }
 .h-5 {
 	height: 1.25rem;
@@ -802,35 +802,10 @@ figcaption {
 .gap-2 {
 	gap: 0.5rem;
 }
-.space-x-4 > :not([hidden]) ~ :not([hidden]) {
-	--tw-space-x-reverse: 0;
-	margin-right: calc(1rem * var(--tw-space-x-reverse));
-	margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
-}
 .space-y-4 > :not([hidden]) ~ :not([hidden]) {
 	--tw-space-y-reverse: 0;
 	margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
 	margin-bottom: calc(1rem * var(--tw-space-y-reverse));
-}
-.divide-y > :not([hidden]) ~ :not([hidden]) {
-	--tw-divide-y-reverse: 0;
-	border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
-	border-bottom-width: calc(1px * var(--tw-divide-y-reverse));
-}
-.overflow-hidden {
-	overflow: hidden;
-}
-.overflow-ellipsis {
-	text-overflow: ellipsis;
-}
-.whitespace-nowrap {
-	white-space: nowrap;
-}
-.rounded {
-	border-radius: 0.25rem;
-}
-.border {
-	border-width: 1px;
 }
 .border-b {
 	border-bottom-width: 1px;
@@ -846,26 +821,12 @@ figcaption {
 	padding-top: 0.5rem;
 	padding-bottom: 0.5rem;
 }
-.px-4 {
-	padding-left: 1rem;
-	padding-right: 1rem;
-}
-.py-1 {
-	padding-top: 0.25rem;
-	padding-bottom: 0.25rem;
-}
 .pb-1 {
 	padding-bottom: 0.25rem;
-}
-.text-center {
-	text-align: center;
 }
 .text-sm {
 	font-size: 0.875rem;
 	line-height: 1.25rem;
-}
-.font-bold {
-	font-weight: 700;
 }
 .text-black {
 	--tw-text-opacity: 1;
@@ -875,16 +836,6 @@ figcaption {
 	--tw-text-opacity: 1;
 	color: rgba(63, 63, 70, var(--tw-text-opacity));
 }
-.text-gray-500 {
-	--tw-text-opacity: 1;
-	color: rgba(113, 113, 122, var(--tw-text-opacity));
-}
 .filter {
 	filter: var(--tw-filter);
-}
-@media (min-width: 640px) {
-
-	.sm\:inline-block {
-		display: inline-block;
-	}
 }
