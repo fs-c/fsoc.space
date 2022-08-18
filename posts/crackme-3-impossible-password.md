@@ -81,10 +81,10 @@ int __fastcall print_flag(_BYTE *alphabet)
 }
 ```
 
-reveals that nothing about it depends on any random variables. Compiling the above code function and feeding it with the given alphabet prints the correct flag. It's interesting to note that the `while` loop condition is never true, it's just an anti-reversing decoy. The real loop condition is the check in `i > 19`.
+reveals that nothing about it depends on any random variables. Compiling the above code function and feeding it with the given alphabet prints the correct flag. It's interesting to note that the `while` loop condition is never true, it's just an anti-reversing decoy. The real loop condition is the check for `i > 19`.
 
 ## Conclusion
 
 This was a really fun one, first time I've used exclusively IDA to solve a crackme. Usually I only understand very little about what is going on in a program when analyzing it, but this one was simple enough to fully grasp in a couple of minutes. That made it more enjoyable I think.
 
-It would have probably been easier to patch out the offending checks in a debugger and just plow straight to the flag, but this was certainly more intersting.
+It would have probably been easier to patch out the offending checks in a debugger and just plow straight to the flag, but this was certainly more interesting.
