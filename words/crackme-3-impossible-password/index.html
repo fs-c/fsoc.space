@@ -1,0 +1,54 @@
+<html lang="en"><head><meta charset="utf-8"></meta><meta name="viewport"  content="width=device-width, initial-scale=1"></meta><meta name="author"  content="fsoc"></meta><meta name="author"  content="Laurenz Weixlbaumer"></meta><link href="/styles/base.css"  rel="stylesheet"></link><title>fsoc.space</title><title>fsoc.space</title><title>fsoc.space</title><title>fsoc.space</title><meta name="description"  content="TODO"></meta><meta name="description"  content="Purely static analysis to lift out a flag generation algorithm. Fun!"></meta></head><body><div class="flex-grow "><header class="container border-b border-gray-300 mt-4 mb-3 pb-1"><div class="prose text-black"><a href="/">fsoc</a> / <a href="/words">words</a></div></header><main class="container prose"><h1>CrackMe III: Impossible Password</h1><aside class="mb-2 flex flex-row justify-between"><small>Last edited on 2022-8-18</small><small><a href="https://github.com/fs-c/fsoc.space/edit/workbench/posts/crackme-3-impossible-password.md">Edit on github</a></small></aside><p>This is the <a href="https://app.hackthebox.com/challenges/26">"Impossible Password"</a> challenge from hackthebox. The file is an ELF binary, so I couldn't run it on my Windows box (without using a VM). It turns out that I didn't need to in any case.</p><p>The start routine nicely cleans up to</p><pre><code class="language-c">int __fastcall main(int a1, char **a2, char **a3)
+{
+  const char *second_key; // rax
+  int result; // eax
+  char flag_alphabet[32]; // [rsp+10h] [rbp-40h] BYREF
+  char input[20]; // [rsp+30h] [rbp-20h] BYREF
+  char *first_key; // [rsp+48h] [rbp-8h]
+
+  first_key = "SuperSeKretKey";
+  qmemcpy(flag_alphabet, "A]Kr=9k0=0o0;k1?k81t", 20);
+  printf("* ");
+  __isoc99_scanf("%20s", input);                // read first input
+  printf("[%s]\n", input);
+  if ( strcmp(input, first_key) )
+    exit(1);
+  printf("** ");
+  __isoc99_scanf("%20s", input);                // read second input
+  second_key = generate_second_key(20);
+  result = strcmp(input, second_key);
+  if ( !result )
+    result = print_flag(flag_alphabet);
+  return result;
+}</code></pre><p>which reveals the program to be a two-step process: First a trivially readable key is requested. Second, another key is generated and requested. Finally, the flag is printed out.</p><p>Taking a look at the key generation algorithm</p><pre><code class="language-c">BYTE *__fastcall generate_second_key(int size)
+{
+  int v1; // eax
+  _BYTE *buffer; // [rsp+20h] [rbp-10h]
+  int i; // [rsp+2Ch] [rbp-4h]
+
+  v1 = time(0LL);
+  ++dword_601074;
+  srand(size * v1 + dword_601074);
+  buffer = malloc(size + 1);
+  if ( !buffer )
+    exit(1);
+  for ( i = 0; i < size; ++i )
+    buffer[i] = rand() % 94 + 33;
+  buffer[size] = 0;
+  return buffer;
+}</code></pre><p>reveals that it uses both <code>time</code> and <code>rand</code>, so it is very much nontrivial to generate a key ahead of time. This is presumably also where the challenge gets its name from, it would be impossible for a regular user to get past this check.</p><p>I was basically already resigned to spinning up a Linux box and using a debugger at this point. But taking a look at the flag printing method</p><pre><code class="language-c">// alphabet = A]Kr=9k0=0o0;k1?k81t
+int __fastcall print_flag(_BYTE *alphabet)
+{
+  int i; // eax
+  int j; // [rsp+14h] [rbp-Ch]
+
+  j = 0;
+  while ( *alphabet != 9 )
+  {
+    i = j++;
+    if ( i > 19 )
+      break;
+    putchar((char)(*alphabet++ ^ 9));
+  }
+  return putchar(10);
+}</code></pre><p>reveals that nothing about it depends on any random variables. Compiling the above code function and feeding it with the given alphabet prints the correct flag.</p></main></div><footer class="flex flex-row gap-2 prose container text-sm py-2 border-t border-gray-300 mt-4"><span>Built with <a href="https://github.com/fs-c/dhow/tree/rewrite">fs-c/dhow</a>.</span><div class="flex-grow"></div><a href="/imprint">/imprint</a><a href="/privacy">/privacy</a></footer></body></html>
