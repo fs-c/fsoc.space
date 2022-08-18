@@ -81,7 +81,7 @@ int __fastcall print_flag(_BYTE *alphabet)
 }
 ```
 
-reveals that nothing about it depends on any random variables. Compiling the above code function and feeding it with the given alphabet prints the correct flag.
+reveals that nothing about it depends on any random variables. Compiling the above code function and feeding it with the given alphabet prints the correct flag. It's interesting to note that the `while` loop condition is never true, it's just an anti-reversing decoy. The real loop condition is the check in `i > 19`.
 
 ## Conclusion
 
