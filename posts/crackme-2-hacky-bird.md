@@ -19,3 +19,9 @@ No dice, doesn't look useful. So there appeared to be some other mechanism at wo
 ![](https://i.imgur.com/K2IUDrj.png)
 
 This instruction is followed immediately by a conditional jump based on `score <= 999`. So 999 seems to have some significance. Sure enough, freezing the score at 999 yields the flag.
+
+## Conclusion
+
+It was fun to use Cheat Engine again, I hadn't touched it in a long time. Its UI still feels clunky though.
+
+I'm not super happy with how I solved it, in the end it was mostly guesswork based on some very incomplete static analysis. But at the same time I already have the flag, so I don't feel like reversing more.
