@@ -40,4 +40,4 @@ trivially reveals the password and thus the flag. Yay?
 
 This one was a bit of a disappointment. The program uses signal handlers (see [`sigaction`](https://man7.org/linux/man-pages/man2/sigaction.2.html)), presumably to obfuscate control flow. The actual signal handler, `segill_sigaction` in the above snippet, looks complicated at first glance so it would have been a fun challenge to reverse how it works. Sadly while decompilation was hard (as promised), finding the flag wasn't.
 
-I'm still in the process of setting up a proper debugging workflow for ELF binaries. I look forward to finding out how this obfuscation works once I get that done. Looking forward to it!
+I'm still in the process of setting up a proper debugging workflow for ELF binaries. I look forward to finding out how this obfuscation works once I get that done.
