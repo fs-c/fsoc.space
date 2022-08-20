@@ -1,0 +1,54 @@
+<html lang="en"><head><meta charset="utf-8"></meta><meta name="viewport"  content="width=device-width, initial-scale=1"></meta><meta name="author"  content="fsoc"></meta><meta name="author"  content="Laurenz Weixlbaumer"></meta><link href="/styles/base.css"  rel="stylesheet"></link><title>fsoc.space</title><title>fsoc.space</title><title>fsoc.space</title><title>fsoc.space</title><meta name="description"  content="TODO"></meta><meta name="description"  content="Reversing modern C++ is weird. Purely static analysis to lift out a flag generation algorithm... again!"></meta></head><body><div class="flex-grow "><header class="container border-b border-gray-300 mt-4 mb-3 pb-1"><div class="prose text-black"><a href="/">fsoc</a> / <a href="/words">words</a></div></header><main class="container prose"><h1>CrackMe V: Exatlon</h1><aside class="mb-2 flex flex-row justify-between"><small>Last edited on 2022-8-20</small><small><a href="https://github.com/fs-c/fsoc.space/edit/workbench/posts/crackme-5-exatlon.md">Edit on github</a></small></aside><p>The challenge is <a href="https://app.hackthebox.com/challenges/121">"Exatlon"</a> from hackthebox. This was the first one that had cool ASCII art!</p><figure role="img"><img src="https://i.imgur.com/NfhNFdk.png" alt=""><figcaption></figcaption></figure><p>It starts out by printing the aforementioned ASCII art with 1s sleeps between some of the lines. I assume this is done to discourage bruteforcing the password. Not a particularly elegant solution but admittedly it looks kind of cool.</p><pre><code class="language-c">std::operator<<<std::char_traits<char>>((std::ostream *)&std::cout);
+std::operator<<<std::char_traits<char>>((std::ostream *)&std::cout);
+std::operator<<<std::char_traits<char>>((std::ostream *)&std::cout);
+sleep(1LL, &unk_54B0D8);
+std::operator<<<std::char_traits<char>>((std::ostream *)&std::cout);
+std::operator<<<std::char_traits<char>>((std::ostream *)&std::cout);
+sleep(1LL, &unk_54B260);
+std::operator<<<std::char_traits<char>>((std::ostream *)&std::cout);
+sleep(1LL, &unk_54B320);
+std::operator<<<std::char_traits<char>>((std::ostream *)&std::cout);
+sleep(1LL, &unk_54B400);</code></pre><p>As a side note: This was the first program I reversed that used the C++ STL extensively. It looks horrible, doesn't it?</p><p>After that comes the interesting part,</p><pre><code class="language-c">std::__cxx11::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string(input);
+std::operator<<<std::char_traits<char>>((std::ostream *)&std::cout);
+std::operator>><char>((std::istream *)&std::cin);
+exatlon((__int64)transformed_input, (__int64)input);
+is_equal = std::operator==<char>(
+    transformed_input,
+    "1152 1344 1056 1968 1728 816 1648 784 1584 816 1728 1520 1840 1664 784 1632 1856 1520 1728 816 1632 185"
+    "6 1520 784 1760 1840 1824 816 1584 1856 784 1776 1760 528 528 2000 ");</code></pre><p>the password is read, transformed and compared to a hardcoded string.</p><p>Taking a look at the <code>exatlon</code> function where the transformation happens</p><pre><code class="language-c">__int64 __fastcall exatlon(__int64 transformed_out, __int64 input)
+{
+  __int64 input_end; // [rsp+18h] [rbp-78h] BYREF
+  __int64 input_begin; // [rsp+20h] [rbp-70h] BYREF
+  char v5; // [rsp+2Fh] [rbp-61h] BYREF
+  char v6[32]; // [rsp+30h] [rbp-60h] BYREF
+  char v7[39]; // [rsp+50h] [rbp-40h] BYREF
+  char cur_char; // [rsp+77h] [rbp-19h]
+  __int64 input_; // [rsp+78h] [rbp-18h]
+
+  std::allocator<char>::allocator(&v5);
+  std::__cxx11::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string(
+    transformed_out,
+    &unk_54B00C,
+    &v5);
+  std::allocator<char>::~allocator(&v5);
+  input_ = input;
+  input_begin = std::__cxx11::basic_string<char,std::char_traits<char>,std::allocator<char>>::begin(input);
+  input_end = std::__cxx11::basic_string<char,std::char_traits<char>,std::allocator<char>>::end(input_);
+  while ( (unsigned __int8)__gnu_cxx::operator!=<char const*,std::__cxx11::basic_string<char,std::char_traits<char>,std::allocator<char>>>(
+                             &input_begin,
+                             &input_end) )
+  {
+    cur_char = *(_BYTE *)__gnu_cxx::__normal_iterator<char const*,std::__cxx11::basic_string<char,std::char_traits<char>,std::allocator<char>>>::operator*(&input_begin);
+    std::__cxx11::to_string((std::__cxx11 *)v7, 16 * cur_char);
+    std::operator+<char>((__int64)v6, (__int64)v7, (__int64)&ascii_space);
+    std::__cxx11::basic_string<char,std::char_traits<char>,std::allocator<char>>::operator+=(transformed_out, v6);
+    std::__cxx11::basic_string<char,std::char_traits<char>,std::allocator<char>>::~basic_string(v6);
+    std::__cxx11::basic_string<char,std::char_traits<char>,std::allocator<char>>::~basic_string(v7);
+    __gnu_cxx::__normal_iterator<char const*,std::__cxx11::basic_string<char,std::char_traits<char>,std::allocator<char>>>::operator++(&input_begin);
+  }
+  return transformed_out;
+}</code></pre><p>reveals even more STL goodness; great! The important part is the <code>while</code>-loop, which iterates over all characters in the input string. The loop body looks wild, so let's go through the steps</p><ul><li>multiply the current character by 16 (left shift by 4 bits) and convert it to a string</li><li>add a space at the end</li><li>append the resulting string to the final result</li></ul><p>Recalling the hardcoded string we found earlier, we can now decode the password by applying the inverse transformations as the ones above. Hackers like Python apparently but I used NodeJS:</p><pre><code class="language-js">> const encoded = "1152 1344 1056 1968 1728 816 1648 784 1584 816 1728 1520 1840 1664 784 1632 1856 1520 1728 816 1632 1856 1520 784 1760 1840 1824 816 1584 1856 784 1776 1760 528 528 2000 "
+undefined
+> encoded.split(" ").map((v) => String.fromCharCode(Math.floor(v / 16))).join('')
+'HTB{***}\x00'
+></code></pre><p>The password is also the flag.</p><h2>Conclusion</h2><p>Figuring this one out took me significantly longer than I would like to admit. I found the STL function calls very challenging/confusing to read and understand. In particular, some appear to deviate heavily from what you would expect based on the name and the relevant STL documentation. (For example: I didn't know that <code>std::to_string</code> had a variant that accepted 2 arguments. And <a href="https://en.cppreference.com/w/cpp/string/basic_string/to_string">officially, it doesn't</a>!) Presumably these are implementation details of the compiler (GCC, in this case).</p><p>I think that this is a symptom of me trying to understand the whole program before I even start looking for the flag. In this case I was held back by not being sure what some calls did, even though the actual steps to decode the password were trivially readable. This was a good learning experience.</p></main></div><footer class="flex flex-row gap-2 prose container text-sm py-2 border-t border-gray-300 mt-4"><span>Built with <a href="https://github.com/fs-c/dhow/tree/rewrite">fs-c/dhow</a>.</span><div class="flex-grow"></div><a href="/imprint">/imprint</a><a href="/privacy">/privacy</a></footer></body></html>
