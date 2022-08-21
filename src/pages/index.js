@@ -20,7 +20,7 @@ const Home = () => {
                 </li>
 
                 <li>
-                    <a href={'/words'}>More words.</a>.
+                    <a href={'/words'}>More words</a>.
                 </li>
             </ul>
         </main>
