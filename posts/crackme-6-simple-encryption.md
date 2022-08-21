@@ -46,7 +46,7 @@ for every character in the input sequence:
     rotate its bits to the left by ((random value 2) & 7)
 ```
 
-The random number generator is initialized with a seed of `time(0)` which just [returns the seconds since the epoch](https://man7.org/linux/man-pages/man2/time.2.html). This seed is stored in the first four bytes of the encrypted file.
+The random number generator is initialized with a seed of `time(0)` which just [returns the seconds since the epoch](https://man7.org/linux/man-pages/man2/time.2.html). This seed is stored in the first four bytes of the encrypted file. Interestingly, `seed` in the above IDA snippet is declared as `int seed[2]`. The first entry is the actual seed, but the second entry changes with every iteration and is never used.
 
 Writing a decryption routine is straightforward, and consists of performing the inverse of the above steps in reverse order. Care needs to be taken to preserve the order in which the random numbers are generated.
 
