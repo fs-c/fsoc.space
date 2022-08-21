@@ -26,7 +26,7 @@
   return 0;
 }</code></pre><p>The encryption routine in prose-pseudocode is</p><pre><code class="language-plaintext">for every character in the input sequence:
     XOR it with (random value 1)
-    rotate its bits to the left by ((random value 2) & 7)</code></pre><p>The random number generator is initialized with a seed of <code>time(0)</code> which just <a href="https://man7.org/linux/man-pages/man2/time.2.html">returns the seconds since the epoch</a>. This seed is stored in the first four bytes of the encrypted file.</p><p>Writing a decryption routine is straightforward, and consists of performing the inverse of the above steps in reverse order. Care needs to be taken to preserve the order in which the random numbers are generated.</p><pre><code class="language-c">unsigned int seed = *(unsigned int *)buffer;
+    rotate its bits to the left by ((random value 2) & 7)</code></pre><p>The random number generator is initialized with a seed of <code>time(0)</code> which just <a href="https://man7.org/linux/man-pages/man2/time.2.html">returns the seconds since the epoch</a>. This seed is stored in the first four bytes of the encrypted file. Interestingly, <code>seed</code> in the above IDA snippet is declared as <code>int seed[2]</code>. The first entry is the actual seed, but the second entry changes with every iteration and is never used.</p><p>Writing a decryption routine is straightforward, and consists of performing the inverse of the above steps in reverse order. Care needs to be taken to preserve the order in which the random numbers are generated.</p><pre><code class="language-c">unsigned int seed = *(unsigned int *)buffer;
 srand(seed);
 
 for (int i = 4; i < size; i++) {
