@@ -34,7 +34,7 @@ target_include_directories(maniac-app PRIVATE dependencies/imgui)
 target_link_libraries(maniac-app PRIVATE maniac d3d9.lib)
 ```
 
-I added the dependencies folder to the includes so I could write `#import <imgui/...>`, but had to add the imgui subfolder itself to the includes as well to avoid having to rewrite all the imports in the imgui implementation files.
+I added the dependencies folder to the includes so I could import imgui-related headers with an `imgui/` prefix, but had to add the imgui subfolder itself to the includes as well to avoid having to rewrite all the imports in the imgui implementation files.
 
 Now it's just a matter of adjusting the example code to fit into a larger project. I moved the code that was previously in `main` into a separate function and made it accept a "content" function that would be rendered inside the main loop.
 
