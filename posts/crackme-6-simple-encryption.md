@@ -1,5 +1,5 @@
 ---
-title: "CrackMe V: Simple Encryption"
+title: "CrackMe VI: Simple Encryption"
 date: 2022-08-21
 description: "Decrypting file contents by reversing the encryption algorithm."
 ---
