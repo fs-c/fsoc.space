@@ -10,7 +10,7 @@
 target_include_directories(maniac-app PRIVATE dependencies)
 target_include_directories(maniac-app PRIVATE dependencies/imgui)
 
-target_link_libraries(maniac-app PRIVATE maniac d3d9.lib)</code></pre><p>I added the dependencies folder to the includes so I could write <code>#import <imgui/...></code>, but had to add the imgui subfolder itself to the includes as well to avoid having to rewrite all the imports in the imgui implementation files.</p><p>Now it's just a matter of adjusting the example code to fit into a larger project. I moved the code that was previously in <code>main</code> into a separate function and made it accept a "content" function that would be rendered inside the main loop.</p><pre><code class="language-c++">void gui::render(std::function<void()> body) {
+target_link_libraries(maniac-app PRIVATE maniac d3d9.lib)</code></pre><p>I added the dependencies folder to the includes so I could import imgui-related headers with an <code>imgui/</code> prefix, but had to add the imgui subfolder itself to the includes as well to avoid having to rewrite all the imports in the imgui implementation files.</p><p>Now it's just a matter of adjusting the example code to fit into a larger project. I moved the code that was previously in <code>main</code> into a separate function and made it accept a "content" function that would be rendered inside the main loop.</p><pre><code class="language-c++">void gui::render(std::function<void()> body) {
     // imgui setup...
 
     while (!done) {
