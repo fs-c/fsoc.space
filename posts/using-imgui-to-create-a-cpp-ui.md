@@ -4,6 +4,8 @@ date: 2022-08-21
 description: The tale of how a side project of mine got a GUI with minimal effort and super convenient usage.
 ---
 
+![](https://github.com/fs-c/maniac/raw/master/media/showcase.png)
+
 A while ago I added a GUI to a side project of mine, [maniac](https://github.com/fs-c/maniac). I had never written an application with a GUI before, but I had previously used [ImGui](https://github.com/ocornut/imgui) to create [a custom HUD](https://github.com/fs-c/acchud) for [a racing game](https://www.assettocorsa.it/competizione/). That project consisted of a DLL which hijacked the game's drawing function to render the custom interface. I hope to get around to writing about that in the future, it was a fun project.
 
 This time was different, since I didn't have a drawing function to hijack. Luckily ImGui has a very extensive collection of [examples](https://github.com/ocornut/imgui/tree/master/examples) and it was easy enough to just start out with one of them as the baseline. (For reference: I chose the DirectX 9 example because I am somewhat familiar with the API, but Vulkan or a more recent DX version would have probably been better.)
