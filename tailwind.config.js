@@ -1,4 +1,3 @@
-const colors = require('tailwindcss/colors');
 
 const commonHeader = (theme) => ({
     fontFamily: theme('fontFamily.serif'),
@@ -10,16 +9,14 @@ module.exports = {
         purgeLayersByDefault: true,
     },
 
-    mode: 'jit',
-
-    purge: [
+    content: [
         // posts may contain inline html
         './posts/**/*.md',
 
         './public/**/*.html',
         './src/**/*.js',
     ],
-    darkMode: 'class',
+
     theme: {
         extend: {
             fontFamily: {
@@ -36,12 +33,10 @@ module.exports = {
                     },
                 },
             }),
-        },
-        colors: {
-            transparent: 'transparent',
-            current: 'currentColor',
-
-            ...colors,
+            colors: {
+                transparent: 'transparent',
+                current: 'currentColor',
+            },
         },
     },
     variants: {},
