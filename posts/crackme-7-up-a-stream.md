@@ -8,7 +8,7 @@ This is the recently released ["Up a Stream"](https://app.hackthebox.com/challen
 
 Decompiling JAR files is unsurprisingly quite easy considering that it is compiled to an IL. I used [quiltflower](https://github.com/QuiltMC/quiltflower/releases) to do it.
 
-´´´java
+```java
 private static List<String> dunkTheFlag(String var0) {
     return Arrays.asList(
         ((String)((List)((String)((List)((String)((List)var0.chars().mapToObj(var0x -> (char)var0x).collect(Collectors.toList()))
@@ -58,7 +58,7 @@ private static byte waterlog(Integer var0) {
     var0 = ((var0 + 2) * 4 % 87 ^ 3) == 17362 ? var0 * 2 : var0 / 2;
     return var0.byteValue();
 }
-´´´
+```
 
 True to the challenge description, basically everything important happens through streaming mechanics. I really like functional programming so this was perhaps easier on the eyes to me than for some others. I'm sorry for the overly long lines, I'll summarize what's going on without the (de)compiler-generated fluff. 
 
