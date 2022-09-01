@@ -69,7 +69,7 @@ True to the challenge description, basically everything important happens throug
 - Convert value to string in hexadecimal notation
 - Add them together to form a string, with `O` (not a zero!) in between
 
-You might have noticed that I left out two supposed additional operations -- `hydrate` and `waterlog`. Those are applied inside a `peek` on the stream, which doesn't actually modify the stream (as a `map` or a `filter` would). I didn't know about `peek` beforehand and I figured that it worked similarly to `map`, but it turns out that they were just included as an anti-reversing measure.
+You might have noticed that I left out two supposed additional operations--`hydrate` and `waterlog`. Those are applied inside a `peek` on the stream, which doesn't actually modify the stream (as a `map` or a `filter` would). I didn't know about `peek` beforehand and I figured that it worked similarly to `map`, but it turns out that they were just included as an anti-reversing measure.
 
 Writing out the above operations in reverse order is straightforward, I used JS to create a simple decoder.
 
