@@ -8,7 +8,7 @@ This is the ["Simple Encryptor"](https://app.hackthebox.com/challenges/366) chal
 
 True to its name, the encryption routine is rather simple.
 
-```C
+```c
 int __cdecl main(int argc, const char **argv, const char **envp)
 {
   // ...
@@ -50,7 +50,7 @@ The random number generator is initialized with a seed of `time(0)` which just [
 
 Writing a decryption routine is straightforward, and consists of performing the inverse of the above steps in reverse order. Care needs to be taken to preserve the order in which the random numbers are generated.
 
-```C
+```c
 unsigned int seed = *(unsigned int *)buffer;
 srand(seed);
 

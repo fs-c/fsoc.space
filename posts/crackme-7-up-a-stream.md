@@ -62,12 +62,12 @@ private static byte waterlog(Integer var0) {
 
 True to the challenge description, basically everything important happens through streaming mechanics. I really like functional programming so this was perhaps easier on the eyes to me than for some others. I'm sorry for the overly long lines, I'll summarize what's going on without the (de)compiler-generated fluff. 
 
-1. Invert the string (see the `reduce` in the most-indented part)
-2. Apply `moisten` to every character
-3. Apply `drench` to every value
-4. Apply `dilute` to every value
-5. Convert value to string in hexadecimal notation
-6. Add them together to form a string, with `O` (not a zero!) in between
+- Invert the string (see the `reduce` in the most-indented part)
+- Apply `moisten` to every character
+- Apply `drench` to every value
+- Apply `dilute` to every value
+- Convert value to string in hexadecimal notation
+- Add them together to form a string, with `O` (not a zero!) in between
 
 You might have noticed that I left out two supposed additional operations -- `hydrate` and `waterlog`. Those are applied inside a `peek` on the stream, which doesn't actually modify the stream (as a `map` or a `filter` would). I didn't know about `peek` beforehand and I figured that it worked similarly to `map`, but it turns out that they were just included as an anti-reversing measure.
 

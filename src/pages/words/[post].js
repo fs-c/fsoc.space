@@ -1,13 +1,14 @@
-import path from 'path';
 import { Header } from '../_app';
 import { Head } from '@fsoc/dhow';
 import { getPost, getPosts } from '../../posts';
 
 const githubUrl = 'https://github.com/fs-c/fsoc.space/';
 
-const Post = ({ title, description, content, slug, humanDate, filePath }) => (<>
+const Post = ({ title, description, content, humanDate, filePath }) => (<>
     <Head>
         <meta name={'description'} content={description} />
+
+        <link href="https://unpkg.com/prismjs@v1.x/themes/prism.css" rel="stylesheet" />
     </Head>
 
     <Header title={'words'} href={'/words'} />
@@ -23,6 +24,9 @@ const Post = ({ title, description, content, slug, humanDate, filePath }) => (<>
         </aside>
 
         {content}
+
+        <script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+	    <script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
     </main>
 </>);
 

@@ -14,7 +14,7 @@ The former will be the focus here, for I’ve been toying around with implementi
 
 That is probably best done by diving right into code, so let’s first get the basic skeleton out of the way:
 
-```C
+```c
 #include <stdio.h>
 
 #define MAX_LENGTH 9999
@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
 
 These are almost all the variables we’ll need, but it doesn‘t really reveal any of the program structure just yet. Before getting to that we’ll have to get the reading of the brainfuck code to interpret out of the way, so let’s expand what we have so far with some file streaming and reading logic.
 
-```C
+```c
 int main(int argc, char **argv) {
 	if (argc < 2) {
 		puts("expected arguments");
@@ -67,7 +67,7 @@ Something that might also go unnoticed and cause confusion down the road is cell
 
 With those minor problems out of the way, the code is fairly simple:
 
-```C
+```c
 int main(int argc, char **argv) {
 	/* ... */
 
@@ -137,7 +137,7 @@ Now, getting to the logic of `[` , if the current cell is zero it will move the 
 
 Now, this might seem rather intimidating, maybe even counter-intuitive, but the code for it is fairly simple once you’ve wrapped your head around it.
 
-```C
+```c
 // Keep count of open bracket pairs.
 int brk = 0;
 
@@ -188,7 +188,7 @@ This is a full implementation of the looping in brainfuck, and it looks like qui
 
 Lets look at one of these loops in more detail, to explore how they work:
 
-```C
+```c
 while (brk > 0 || *iptr != ']') {
 	if (*iptr == '[')
 		brk++;

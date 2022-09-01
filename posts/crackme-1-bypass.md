@@ -10,7 +10,7 @@ The given file is a .NET executable, which I discovered upon opening it with IDA
 
 The program starts out with
 
-```C#
+```cs
 public static void 0()
 {
     bool flag = global::0.1();
@@ -29,7 +29,7 @@ public static void 0()
 
 Here, `global::0.1` is clearly the authentication mechanism. If it returns true the program proceeds, if it is false we get some kind of message and the mechanism restarts. Looking at the disassembly of the function,
 
-```C#
+```cs
 public static bool 1()
 {
     Console.Write(5.1);
@@ -44,7 +44,7 @@ public static bool 1()
 
 So I started debugging the game under dnSpy, changing `flag2` to be true (something that could not be possible without external manipulation) and stepped into `global::0.2`.
 
-```C#
+```cs
 public static void 2()
 {
     string <<EMPTY_NAME>> = 5.3;

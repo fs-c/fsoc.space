@@ -1,7 +1,7 @@
 ---
 title: Using ImGui to Create a Simple GUI in C++
 date: 2022-08-21
-description: The tale of how a side project of mine got a GUI with minimal effort and super convenient usage.
+description: I created a GUI for a side project of mine with minimal effort and convenient usage and you can too!
 ---
 
 ![](https://github.com/fs-c/maniac/raw/master/media/showcase.png)
@@ -38,7 +38,7 @@ I added the dependencies folder to the includes so I could import imgui-related 
 
 Now it's just a matter of adjusting the example code to fit into a larger project. I moved the code that was previously in `main` into a separate function and made it accept a "content" function that would be rendered inside the main loop.
 
-```C++
+```cpp
 void gui::render(std::function<void()> body) {
     // imgui setup...
 
@@ -58,7 +58,7 @@ void gui::render(std::function<void()> body) {
 
 In the `main` of my project I could now do
 
-```C++
+```cpp
 int main (int, char **) {
     // ...
 
