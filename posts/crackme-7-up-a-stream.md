@@ -73,7 +73,7 @@ You might have noticed that I left out two supposed additional operations -- `hy
 
 Writing out the above operations in reverse order is straightforward, I used JS to create a simple decoder.
 
-´´´js
+```js
 const decode = (code) => {
     return code
         // undo encoding
@@ -89,7 +89,7 @@ const decode = (code) => {
         // make readable
         .map((e) => String.fromCharCode(e)).join('')
 };
-´´´
+```
 
 ## Conclusion
 
