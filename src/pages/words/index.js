@@ -8,8 +8,8 @@ const Posts = ({ posts }) => (<>
         <ul className={'space-y-4'}>
             {posts.map((post) => (<>
                 <li>
-                    <h1 className={'prose'}>
-                        <a href={process.env.__DHOW_ROUTE_PATH + '/' + post.slug}>{post.title}</a>
+                    <h1>
+                        <a className={'text-lg font-semibold'} href={process.env.__DHOW_ROUTE_PATH + '/' + post.slug}>{post.title}</a>
                         <small className={'text-sm ml-2'}>
                             <time datetime={post.isoDate}>
                                 {post.humanDate}

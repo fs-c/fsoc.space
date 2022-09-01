@@ -18,8 +18,7 @@ const Footer = () => (<>
 
         <div className={'flex-grow'} />
 
-        <a href={'/imprint'}>/imprint</a>
-        <a href={'/privacy'}>/privacy</a>
+        <a href={'/legal'}>imprint & privacy</a>
     </footer>
 </>);
 
