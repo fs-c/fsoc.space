@@ -44,12 +44,12 @@
         @apply text-black;
         @apply bg-gray-100;
 
-        @apply text-sm;
+        @apply text-base;
         @apply leading-5;
 
         @apply my-4;
-        @apply py-4;
-        @apply px-5;
+        @apply py-3;
+        @apply px-3;
         @apply rounded-md;
 
         @apply overflow-x-auto;

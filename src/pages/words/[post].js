@@ -8,17 +8,17 @@ const Post = ({ title, description, content, humanDate, filePath }) => (<>
     <Head>
         <meta name={'description'} content={description} />
 
-        <link href="https://unpkg.com/prismjs@v1.x/themes/prism.css" rel="stylesheet" />
+        <link href="/styles/syntax-theme.css" rel="stylesheet" />
     </Head>
 
     <Header title={'words'} href={'/words'} />
 
-    <main className={'container prose'}>
-        <h1>
+    <main className={'container prose pb-8'}>
+        <h1 className={'mt-4'}>
             {title}
         </h1>
 
-        <aside className={'mb-2 flex flex-row justify-between'}>
+        <aside className={'mb-4 flex flex-row justify-between'}>
             <small>Last edited on {humanDate}</small>
             <small><a href={githubUrl + 'edit/workbench/' + filePath}>Edit on github</a></small>
         </aside>
