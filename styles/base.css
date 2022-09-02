@@ -367,20 +367,16 @@ video {
   max-width: 100%;
   height: auto;
 }
-    @import url('https://rsms.me/inter/inter.css');
-    html { font-family: 'Inter', sans-serif; }
-    @supports (font-variation-settings: normal) {
-        html { font-family: 'Inter var', sans-serif; }
-    }
-
     body {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
         /* Make sure that the body takes up at least the whole screen, vertically */
         min-height: 100vh;
 
         /* Allow for nice header-content-footer spacing even when content is <100vh */
         display: flex;
         flex-direction: column;
-    }
+}
 
 *, ::before, ::after {
   --tw-border-spacing-x: 0;
@@ -791,6 +787,10 @@ figcaption {
 .text-black {
   --tw-text-opacity: 1;
   color: rgb(0 0 0 / var(--tw-text-opacity));
+}
+.text-gray-500 {
+  --tw-text-opacity: 1;
+  color: rgb(107 114 128 / var(--tw-text-opacity));
 }
 .text-gray-700 {
   --tw-text-opacity: 1;
