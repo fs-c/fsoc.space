@@ -13,7 +13,7 @@ export const Header = ({ hero = false, title, href, className = '' }) => (<>
 </>);
 
 const Footer = () => (<>
-    <footer className={'flex flex-row gap-2 prose container text-sm py-2 border-t border-gray-300 mt-4'}>
+    <footer className={'flex flex-row gap-2 prose container text-sm py-2 border-t border-gray-300 mt-4 text-gray-500'}>
         <span>Built with <a href={'https://github.com/fs-c/dhow/tree/rewrite'}>fs-c/dhow</a>.</span>
 
         <div className={'flex-grow'} />

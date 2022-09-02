@@ -18,7 +18,9 @@ const Legal = () => (<>
 
         <p>
             <i>I do not collect, process or otherwise handle any personal data of site visitors</i>, unless 
-            you send me an email, in which case its contents and your address will be stored for the duration of our correspondence. There are no public user accounts. Cookies or equivalent technologies are not used.
+            you send me an email, in which case its contents and your address will be stored for the 
+            duration and purposes of our correspondence. There are no public user accounts. Cookies or 
+            equivalent technologies are not used.
         </p>
 
         <p>
