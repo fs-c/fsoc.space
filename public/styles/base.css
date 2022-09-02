@@ -4,14 +4,7 @@
 
 @layer base {
     body {
-        @apply font-sans;
-
-        /* Make sure that the body takes up at least the whole screen, vertically */
-        min-height: 100vh;
-
-        /* Allow for nice header-content-footer spacing even when content is <100vh */
-        display: flex;
-        flex-direction: column;
+        @apply text-lg;
     }
 }
 

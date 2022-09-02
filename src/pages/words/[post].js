@@ -19,8 +19,13 @@ const Post = ({ title, description, content, humanDate, filePath }) => (<>
         </h1>
 
         <aside className={'mb-4 flex flex-row justify-between'}>
-            <small>Last edited on {humanDate}</small>
-            <small><a href={githubUrl + 'edit/workbench/' + filePath}>Edit on github</a></small>
+            <small>
+                Last edited on {humanDate}
+            </small>
+
+            <small>
+                <a href={githubUrl + 'edit/workbench/' + filePath}>Edit on github</a>
+            </small>
         </aside>
 
         {content}
