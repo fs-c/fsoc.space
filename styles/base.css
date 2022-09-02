@@ -368,14 +368,8 @@ video {
   height: auto;
 }
     body {
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-
-        /* Make sure that the body takes up at least the whole screen, vertically */
-        min-height: 100vh;
-
-        /* Allow for nice header-content-footer spacing even when content is <100vh */
-        display: flex;
-        flex-direction: column;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
 }
 
 *, ::before, ::after {
@@ -697,14 +691,14 @@ figcaption {
 .mt-4 {
   margin-top: 1rem;
 }
-.mb-3 {
-  margin-bottom: 0.75rem;
+.mb-4 {
+  margin-bottom: 1rem;
+}
+.mb-1 {
+  margin-bottom: 0.25rem;
 }
 .mb-2 {
   margin-bottom: 0.5rem;
-}
-.mb-4 {
-  margin-bottom: 1rem;
 }
 .ml-2 {
   margin-left: 0.5rem;
@@ -718,17 +712,14 @@ figcaption {
 .contents {
   display: contents;
 }
-.h-5 {
-  height: 1.25rem;
+.h-full {
+  height: 100%;
 }
-.w-5 {
-  width: 1.25rem;
+.min-h-screen {
+  min-height: 100vh;
 }
 .w-full {
   width: 100%;
-}
-.flex-grow {
-  flex-grow: 1;
 }
 .flex-row {
   flex-direction: row;
@@ -745,9 +736,6 @@ figcaption {
 .justify-between {
   justify-content: space-between;
 }
-.gap-2 {
-  gap: 0.5rem;
-}
 .space-y-4 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
@@ -763,38 +751,33 @@ figcaption {
   --tw-border-opacity: 1;
   border-color: rgb(209 213 219 / var(--tw-border-opacity));
 }
-.py-2 {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+.py-3 {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
 }
-.pb-1 {
-  padding-bottom: 0.25rem;
+.pb-4 {
+  padding-bottom: 1rem;
 }
 .pb-8 {
   padding-bottom: 2rem;
 }
-.text-sm {
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+.font-light {
+  font-weight: 300;
 }
-.text-lg {
-  font-size: 1.125rem;
-  line-height: 1.75rem;
-}
-.font-semibold {
-  font-weight: 600;
+.font-medium {
+  font-weight: 500;
 }
 .text-black {
   --tw-text-opacity: 1;
   color: rgb(0 0 0 / var(--tw-text-opacity));
 }
-.text-gray-500 {
-  --tw-text-opacity: 1;
-  color: rgb(107 114 128 / var(--tw-text-opacity));
-}
 .text-gray-700 {
   --tw-text-opacity: 1;
   color: rgb(55 65 81 / var(--tw-text-opacity));
+}
+.text-gray-500 {
+  --tw-text-opacity: 1;
+  color: rgb(107 114 128 / var(--tw-text-opacity));
 }
 .invert {
   --tw-invert: invert(100%);
@@ -802,4 +785,14 @@ figcaption {
 }
 .filter {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+@media (min-width: 640px) {
+
+  .sm\:flex-row {
+    flex-direction: row;
+  }
+
+  .sm\:justify-between {
+    justify-content: space-between;
+  }
 }
