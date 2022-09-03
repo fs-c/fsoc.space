@@ -12,7 +12,7 @@ const Home = () => {
 
             <ul>
                 <li>
-                    You can contact me by email via <code>root@ this domain</code> or through <a href={'discordapp.com/users/151759959997153281'}>discord</a>.
+                    You can contact me by email via <code>root@ this domain</code> or through <a href={'https://discordapp.com/users/151759959997153281'}>discord</a>.
                 </li>
 
                 <li>
