@@ -12,7 +12,7 @@ I've used CMake for around a year or so and programmed in C++ for maybe half of 
 
 I wanted the workflow for building and testing the project to be
 
-```
+```bash
 cd build
 cmake ..
 make

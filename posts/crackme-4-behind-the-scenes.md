@@ -10,7 +10,7 @@ This is the ["Behind the Scenes"](https://app.hackthebox.com/challenges/301) cha
 
 Indeed, after opening the ELF binary in IDA and taking a look at `main`, it looks unusual.
 
-```C
+```c
 int __cdecl __noreturn main(int argc, const char **argv, const char **envp)
 {
   struct sigaction s; // [rsp+10h] [rbp-A0h] BYREF

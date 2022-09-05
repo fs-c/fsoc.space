@@ -8,7 +8,7 @@ This is the ["Impossible Password"](https://app.hackthebox.com/challenges/26) ch
 
 The start routine nicely cleans up to
 
-```C
+```c
 int __fastcall main(int a1, char **a2, char **a3)
 {
   const char *second_key; // rax
@@ -38,7 +38,7 @@ which reveals the program to be a two-step process: First a trivially readable k
 
 Taking a look at the key generation algorithm
 
-```C
+```c
 BYTE *__fastcall generate_second_key(int size)
 {
   int v1; // eax
@@ -62,7 +62,7 @@ reveals that it uses both `time` and `rand`, so it is very much nontrivial to ge
 
 I was basically already resigned to spinning up a Linux box and using a debugger at this point. But taking a look at the flag printing method
 
-```C
+```c
 // alphabet = A]Kr=9k0=0o0;k1?k81t
 int __fastcall print_flag(_BYTE *alphabet)
 {

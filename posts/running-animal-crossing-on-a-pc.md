@@ -16,7 +16,7 @@ Download the archive which is appropiate for your operating system (builds are o
 
 On Linux, the relevant commands are something like
 
-```
+```bash
 $ cd /usr/local
 $ tar -xzf ~/Downloads/ryujinx-1.0.0-acnh4-linux_x64.tar.gz publish
 $ mv publish ryujinx

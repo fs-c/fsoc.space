@@ -4,14 +4,7 @@
 
 @layer base {
     body {
-        @apply font-sans;
-
-        /* Make sure that the body takes up at least the whole screen, vertically */
-        min-height: 100vh;
-
-        /* Allow for nice header-content-footer spacing even when content is <100vh */
-        display: flex;
-        flex-direction: column;
+        @apply text-lg;
     }
 }
 
@@ -44,12 +37,12 @@
         @apply text-black;
         @apply bg-gray-100;
 
-        @apply text-sm;
+        @apply text-base;
         @apply leading-5;
 
         @apply my-4;
-        @apply py-4;
-        @apply px-5;
+        @apply py-3;
+        @apply px-3;
         @apply rounded-md;
 
         @apply overflow-x-auto;
@@ -127,6 +120,10 @@
         font-style: italic;
         color: #111827;
         @apply ml-4;
+    }
+
+    .prose hr {
+        @apply my-3;
     }
 
     strong {

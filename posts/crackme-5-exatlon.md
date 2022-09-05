@@ -10,7 +10,7 @@ The challenge is ["Exatlon"](https://app.hackthebox.com/challenges/121) from hac
 
 It starts out by printing the aforementioned ASCII art with 1s sleeps between some of the lines. I assume this is done to discourage bruteforcing the password. Not a particularly elegant solution but admittedly it looks kind of cool.
 
-```C
+```cpp
 std::operator<<<std::char_traits<char>>((std::ostream *)&std::cout);
 std::operator<<<std::char_traits<char>>((std::ostream *)&std::cout);
 std::operator<<<std::char_traits<char>>((std::ostream *)&std::cout);
@@ -28,7 +28,7 @@ As a side note: This was the first program I reversed that used the C++ STL exte
 
 After that comes the interesting part,
 
-```C
+```cpp
 std::__cxx11::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string(input);
 std::operator<<<std::char_traits<char>>((std::ostream *)&std::cout);
 std::operator>><char>((std::istream *)&std::cin);
@@ -43,7 +43,7 @@ the password is read, transformed and compared to a hardcoded string.
 
 Taking a look at the `exatlon` function where the transformation happens
 
-```C
+```cpp
 __int64 __fastcall exatlon(__int64 transformed_out, __int64 input)
 {
   __int64 input_end; // [rsp+18h] [rbp-78h] BYREF
@@ -87,7 +87,7 @@ reveals even more STL goodness; great! The important part is the `while`-loop, w
 
 Recalling the hardcoded string we found earlier, we can now decode the password by applying the inverse transformations as the ones above. Hackers like Python apparently but I used NodeJS:
 
-```JS
+```js
 > const encoded = "1152 1344 1056 1968 1728 816 1648 784 1584 816 1728 1520 1840 1664 784 1632 1856 1520 1728 816 1632 1856 1520 784 1760 1840 1824 816 1584 1856 784 1776 1760 528 528 2000 "
 undefined
 > encoded.split(" ").map((v) => String.fromCharCode(Math.floor(v / 16))).join('')

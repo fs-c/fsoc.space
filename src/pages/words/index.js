@@ -7,20 +7,21 @@ const Posts = ({ posts }) => (<>
     <main className={'container'}>
         <ul className={'space-y-4'}>
             {posts.map((post) => (<>
-                <li>
-                    <h1 className={'prose'}>
-                        <a href={process.env.__DHOW_ROUTE_PATH + '/' + post.slug}>{post.title}</a>
-                        <small className={'text-sm ml-2'}>
+                <li><a href={process.env.__DHOW_ROUTE_PATH + '/' + post.slug}>
+                    <h1>
+                        <span className={'font-medium'}>{post.title}</span>
+                        
+                        <small className={'text-gray-500 ml-2'}>
                             <time datetime={post.isoDate}>
                                 {post.humanDate}
                             </time>
                         </small>
                     </h1>
 
-                    <p className={'text-sm text-gray-700'}>
+                    <p className={'text-gray-700 font-light'}>
                         {post.description}
                     </p>
-                </li>
+                </a></li>
             </>))}
         </ul>
     </main>
