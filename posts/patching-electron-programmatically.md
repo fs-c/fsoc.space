@@ -13,11 +13,11 @@ __TL;DR__
 
 ## Intro
 
-My objective was to remove some annoying ads from the [OP.GG client](https://www.op.gg/desktop/), a companion application to a game I occasionaly play. Like many other modern applications, it is built using electron.
+My objective was to remove some annoying ads from the [OP.GG client](https://www.op.gg/desktop/), a companion application to a game I occasionaly play. Like many other modern applications, it is built using [electron](https://www.electronjs.org/). These applications use web technologies like JS, HTML and CSS on top of a thin browser, pretending to be a native application. 
 
 The source code of electron applications is usually packaged inside `resources/app.asar` in the installation directory of the app. The `asar` file format is [open source](https://github.com/electron/asar) and well documented, it is a "simple extensive tar-like archive format with indexing". But more importantly, the package used to create these archives (see previous link) can also be used to extract their contents.
 
-Choose an electron application, as mentioned I will use OP.GG, and find its `app.asar` file. For me this was the default directory, i.e. `resources/`, but you might have to poke around a bit. Open a terminal in that folder and run
+Choose an electron application, as mentioned I will use the OP.GG client, and find its `app.asar` file. For me this was the default directory, i.e. `resources/`, but you might have to poke around a bit. Open a terminal in that folder and run
 
 ```bash
 $ npx asar extract app.asar extracted/
