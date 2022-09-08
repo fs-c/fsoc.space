@@ -11,5 +11,18 @@ module.exports = {
         './public/**/*.html',
         './src/**/*.js',
     ],
+
+    theme: {
+        extend: {
+            fontFamily: {
+                mono: 'JetBrains Mono',
+            },
+        },
+    },
+
+    plugins: [
+        require('@tailwindcss/typography'),
+    ],
+
     variants: {},
 };

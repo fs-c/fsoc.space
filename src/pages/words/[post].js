@@ -13,14 +13,14 @@ const Post = ({ title, description, content, humanDate, filePath }) => (<>
 
     <Header title={'words'} href={'/words'} />
 
-    <main className={'container prose pb-8'}>
-        <h1 className={'mt-4'}>
+    <main className={'container prose dark:prose-invert lg:prose-lg pb-8'}>
+        <h1 className={'mt-4 text-center'}>
             {title}
         </h1>
 
         <aside className={'mb-4 flex flex-row justify-between'}>
             <small>
-                Last edited on {humanDate}
+                Published on {humanDate}
             </small>
 
             <small>

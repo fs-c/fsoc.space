@@ -11,7 +11,7 @@ Austria`;
 const Legal = () => (<>
     <Header title={'legal'} />
 
-    <div className={'container prose'}>
+    <div className={'container prose dark:prose-invert'}>
         <p>
             As required by Austrian law.
         </p>

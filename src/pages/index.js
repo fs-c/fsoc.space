@@ -4,13 +4,13 @@ const Home = () => {
     return (<>
         <Header hero />
 
-        <main className={'flex flex-col prose container'}>
+        <main className={'flex flex-col prose dark:prose-invert prose-lg container'}>
             <p>
                 Hey there, I'm Laurenz Weixlbaumer, a software developer living in Austria. Online, 
                 I mainly go by <code>fsoc</code>. I build things, usually by writing things.
             </p>
 
-            <ul>
+            <ul className={'m-0'}>
                 <li>
                     You can contact me by email via <code>root@ this domain</code> or through <a href={'https://discordapp.com/users/151759959997153281'}>discord</a>.
                 </li>

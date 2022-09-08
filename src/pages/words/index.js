@@ -9,16 +9,16 @@ const Posts = ({ posts }) => (<>
             {posts.map((post) => (<>
                 <li><a href={process.env.__DHOW_ROUTE_PATH + '/' + post.slug}>
                     <h1>
-                        <span className={'font-medium'}>{post.title}</span>
+                        <span className={'font-medium dark:text-gray-200'}>{post.title}</span>
                         
-                        <small className={'text-gray-500 ml-2'}>
+                        <small className={'text-gray-500 dark:text-gray-400 ml-2'}>
                             <time datetime={post.isoDate}>
                                 {post.humanDate}
                             </time>
                         </small>
                     </h1>
 
-                    <p className={'text-gray-700 font-light'}>
+                    <p className={'text-gray-700 dark:text-gray-400 font-light'}>
                         {post.description}
                     </p>
                 </a></li>
