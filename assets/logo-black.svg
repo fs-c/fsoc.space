@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="440" height="192" class="fsoc-logo">
     <style>line, path, circle,rect,polygon {
-                          stroke: #3f3f46;
+                          stroke: black;
                           stroke-width: 2;
                           stroke-opacity: 1;
                           fill-opacity: 1;

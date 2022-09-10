@@ -1,29 +1,29 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8"></meta><meta name="viewport"  content="width=device-width, initial-scale=1"></meta><meta name="author"  content="fsoc"></meta><meta name="author"  content="Laurenz Weixlbaumer"></meta><link href="/styles/base.css"  rel="stylesheet"></link><link href="/styles/font.css"  rel="stylesheet"></link><title>fsoc.space</title><title>fsoc.space</title><meta name="description"  content="Writing a small patcher to remove ads from an electron app with NodeJS."></meta><link href="/styles/syntax-theme.css"  rel="stylesheet"></link><meta name="description"  content="So I added live reloading to dhow, why do I think this is such a big deal"></meta><link href="/styles/syntax-theme.css"  rel="stylesheet"></link><meta name="description"  content="TODO"></meta><link href="/styles/syntax-theme.css"  rel="stylesheet"></link><meta name="description"  content="Reversing an encryptor written in Java, decidedly overusing streams."></meta><link href="/styles/syntax-theme.css"  rel="stylesheet"></link></head><body><div class="min-h-screen flex flex-col h-full "><header class="container border-b border-gray-300 mt-4 mb-4 pb-4"><div class="prose dark:prose-invert text-black dark:text-white"><a href="/">fsoc</a> / <a href="/words">words</a></div></header><main class="container prose dark:prose-invert lg:prose-lg pb-8"><h1 class="mt-4 text-center">CrackMe VII: Up a Stream</h1><aside class="mb-4 flex flex-row justify-between"><small>Published on 2022-9-1</small><small><a href="https://github.com/fs-c/fsoc.space/edit/workbench/posts/crackme-7-up-a-stream.md">Edit on github</a></small></aside><p>This is the recently released <a href="https://app.hackthebox.com/challenges/392">"Up a Stream"</a> challenge from hackthebox. The download contains a JAR file and its output.</p><p>Decompiling JAR files is unsurprisingly quite easy considering that it is compiled to an IL. I used <a href="https://github.com/QuiltMC/quiltflower/releases">quiltflower</a> to do it.</p><pre><code class="language-java">private static List<String> dunkTheFlag(String var0) {
+<html lang="en"><head><meta charset="utf-8"></meta><meta name="viewport"  content="width=device-width, initial-scale=1"></meta><meta name="author"  content="fsoc"></meta><meta name="author"  content="Laurenz Weixlbaumer"></meta><link href="/styles/base.css"  rel="stylesheet"></link><link href="/styles/font.css"  rel="stylesheet"></link><meta name="description"  content="Writing a small patcher to remove ads from an electron app with NodeJS."></meta><link href="/styles/syntax-theme.css"  rel="stylesheet"></link><meta name="description"  content="So I added live reloading to dhow, why do I think this is such a big deal"></meta><link href="/styles/syntax-theme.css"  rel="stylesheet"></link><meta name="description"  content="TODO"></meta><link href="/styles/syntax-theme.css"  rel="stylesheet"></link><meta name="description"  content="Reversing an encryptor written in Java, decidedly overusing streams."></meta><link href="/styles/syntax-theme.css"  rel="stylesheet"></link></head><body><div class="min-h-screen flex flex-col h-full "><header class="container border-b border-gray-300 mt-4 mb-4 pb-4"><div class="prose dark:prose-invert text-black dark:text-white"><a href="/">fsoc</a> / <a href="/words">words</a></div></header><main class="container prose dark:prose-invert lg:prose-lg pb-8"><h1 class="mt-4">CrackMe VII: Up a Stream</h1><aside class="mb-4 flex flex-row justify-between"><small>Published on 2022-9-1</small><small><a href="https://github.com/fs-c/fsoc.space/edit/workbench/posts/crackme-7-up-a-stream.md">Edit on github</a></small></aside><p>This is the recently released <a href="https://app.hackthebox.com/challenges/392">"Up a Stream"</a> challenge from hackthebox. The download contains a JAR file and its output.</p><p>Decompiling JAR files is unsurprisingly quite easy considering that it is compiled to an IL. I used <a href="https://github.com/QuiltMC/quiltflower/releases">quiltflower</a> to do it.</p><pre><code class="language-java">private static List&lt;String&gt; dunkTheFlag(String var0) {
     return Arrays.asList(
-        ((String)((List)((String)((List)((String)((List)var0.chars().mapToObj(var0x -> (char)var0x).collect(Collectors.toList()))
+        ((String)((List)((String)((List)((String)((List)var0.chars().mapToObj(var0x -&gt; (char)var0x).collect(Collectors.toList()))
                         .stream()
-                        .peek(var0x -> hydrate(var0x))
-                        .map(var0x -> var0x.toString())
-                        .reduce("", (var0x, var1) -> var1 + var0x))
+                        .peek(var0x -&gt; hydrate(var0x))
+                        .map(var0x -&gt; var0x.toString())
+                        .reduce("", (var0x, var1) -&gt; var1 + var0x))
                     .chars()
-                    .mapToObj(var0x -> (char)var0x)
+                    .mapToObj(var0x -&gt; (char)var0x)
                     .collect(Collectors.toList()))
                     .stream()
-                    .map(var0x -> var0x.toString())
+                    .map(var0x -&gt; var0x.toString())
                     .reduce(String::concat)
                     .get())
                 .chars()
-                .mapToObj(var0x -> var0x)
+                .mapToObj(var0x -&gt; var0x)
                 .collect(Collectors.toList()))
             .stream()
-            .map(var0x -> moisten(var0x))
-            .map(var0x -> var0x)
+            .map(var0x -&gt; moisten(var0x))
+            .map(var0x -&gt; var0x)
             .map(Challenge::drench)
             .peek(Challenge::waterlog)
             .map(Challenge::dilute)
             .map(Integer::toHexString)
-            .reduce("", (var0x, var1) -> var0x + var1 + "O"))
+            .reduce("", (var0x, var1) -&gt; var0x + var1 + "O"))
         .repeat(5)
     );
 }
@@ -37,7 +37,7 @@ private static Integer moisten(int var0) {
 }
 
 private static Integer drench(Integer var0) {
-    return var0 << 1;
+    return var0 &lt;&lt; 1;
 }
 
 private static Integer dilute(Integer var0) {
@@ -47,18 +47,18 @@ private static Integer dilute(Integer var0) {
 private static byte waterlog(Integer var0) {
     var0 = ((var0 + 2) * 4 % 87 ^ 3) == 17362 ? var0 * 2 : var0 / 2;
     return var0.byteValue();
-}</code></pre><p>True to the challenge description, basically everything important happens through streaming mechanics. I really like functional programming so this was perhaps easier on the eyes to me than for some others. I'm sorry for the overly long lines, I'll summarize what's going on without the (de)compiler-generated fluff.</p><ul><li>Invert the string (see the <code>reduce</code> in the most-indented part)</li><li>Apply <code>moisten</code> to every character</li><li>Apply <code>drench</code> to every value</li><li>Apply <code>dilute</code> to every value</li><li>Convert value to string in hexadecimal notation</li><li>Add them together to form a string, with <code>O</code> (not a zero!) in between</li></ul><p>You might have noticed that I left out two supposed additional operations&mdash;<code>hydrate</code> and <code>waterlog</code>. Those are applied inside a <code>peek</code> on the stream, which doesn't actually modify the stream (as a <code>map</code> or a <code>filter</code> would). I didn't know about <code>peek</code> beforehand and I figured that it worked similarly to <code>map</code>, but it turns out that they were just included as an anti-reversing measure.</p><p>Writing out the above operations in reverse order is straightforward, I used JS to create a simple decoder.</p><pre><code class="language-js">const decode = (code) => {
+}</code></pre><p>True to the challenge description, basically everything important happens through streaming mechanics. I really like functional programming so this was perhaps easier on the eyes to me than for some others. I'm sorry for the overly long lines, I'll summarize what's going on without the (de)compiler-generated fluff.</p><ul><li>Invert the string (see the <code>reduce</code> in the most-indented part)</li><li>Apply <code>moisten</code> to every character</li><li>Apply <code>drench</code> to every value</li><li>Apply <code>dilute</code> to every value</li><li>Convert value to string in hexadecimal notation</li><li>Add them together to form a string, with <code>O</code> (not a zero!) in between</li></ul><p>You might have noticed that I left out two supposed additional operations&mdash;<code>hydrate</code> and <code>waterlog</code>. Those are applied inside a <code>peek</code> on the stream, which doesn't actually modify the stream (as a <code>map</code> or a <code>filter</code> would). I didn't know about <code>peek</code> beforehand and I figured that it worked similarly to <code>map</code>, but it turns out that they were just included as an anti-reversing measure.</p><p>Writing out the above operations in reverse order is straightforward, I used JS to create a simple decoder.</p><pre><code class="language-js">const decode = (code) =&gt; {
     return code
         // undo encoding
-        .split('O').slice(0, -1).map((h) => parseInt(h, 16))
+        .split('O').slice(0, -1).map((h) =&gt; parseInt(h, 16))
         // undo dilute
-        .map((e) => e - Math.floor(e / 3))
+        .map((e) =&gt; e - Math.floor(e / 3))
         // undo drench
-        .map((e) => Math.floor(e / 2))
+        .map((e) =&gt; Math.floor(e / 2))
         // undo moisten (this isn't a perfect inversion but it works)
-        .map((e) => e > 255 ? Math.sqrt(e) : e)
+        .map((e) =&gt; e &gt; 255 ? Math.sqrt(e) : e)
         // invert
         .reverse()
         // make readable
-        .map((e) => String.fromCharCode(e)).join('')
-};</code></pre><h2>Conclusion</h2><p>I'd never had reason to decompile Java code before, so this was a welcome opportunity. I loved the word-plays on hydration in the helper functions.</p><p>I feel like I did okay on this one, I finished it in a decent time and in one sitting. I'm still frustrated that it took me so long to figure out that <code>peek</code> didn't work like I assumed it would, I really should have checked that earlier. I think I spent almost have of my time trying to figure out how <code>waterlog</code> could possibly work, considering that it returned a byte, but the values that it supposedly generated vastly exceeded the size of one. Only to find out that its results were never even used.</p><p>This is the first post after more than a week of not working on these challenges. I originally set out to complete (or work on) one per day, but the moment I broke my streak I lost all motivation. Maybe this says something about overly valuing rituals as (motivational) support, considering that once one is broken everything falls? I'm still thinking about this. But I'm happy to be back.</p><script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script><script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script></main></div><footer class="flex flex-col prose dark:prose-invert container text-md py-3 mb-1 border-t border-gray-300 mt-4"><p class="m-0">Built with <a href="https://github.com/fs-c/dhow/tree/rewrite">fs-c/dhow</a>, <a href="https://tailwindcss.com/">tailwindcss</a> and <a href="https://rsms.me/inter/">inter</a>.</p><p class="mt-3">Also, <a href="/legal">imprint & privacy</a>.</p></footer></body></html>
+        .map((e) =&gt; String.fromCharCode(e)).join('')
+};</code></pre><h2>Conclusion</h2><p>I'd never had reason to decompile Java code before, so this was a welcome opportunity. I loved the word-plays on hydration in the helper functions.</p><p>I feel like I did okay on this one, I finished it in a decent time and in one sitting. I'm still frustrated that it took me so long to figure out that <code>peek</code> didn't work like I assumed it would, I really should have checked that earlier. I think I spent almost have of my time trying to figure out how <code>waterlog</code> could possibly work, considering that it returned a byte, but the values that it supposedly generated vastly exceeded the size of one. Only to find out that its results were never even used.</p><p>This is the first post after more than a week of not working on these challenges. I originally set out to complete (or work on) one per day, but the moment I broke my streak I lost all motivation. Maybe this says something about overly valuing rituals as (motivational) support, considering that once one is broken everything falls? I'm still thinking about this. But I'm happy to be back.</p><script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script><script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script></main></div><footer class="flex flex-row justify-between prose dark:prose-invert container text-md py-3 mb-1 border-t border-gray-300 mt-4"><p class="m-0">Built with <a href="https://github.com/fs-c/dhow/tree/rewrite">fs-c/dhow</a>.</p><a href="/legal">imprint & privacy</a></footer></body></html>
