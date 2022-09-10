@@ -5,7 +5,7 @@
 @layer base {
     body {
         @apply text-lg;
-        @apply dark:bg-zinc-900;
+        @apply dark:bg-gray-800;
     }
 }
 

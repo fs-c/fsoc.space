@@ -14,7 +14,7 @@ const Post = ({ title, description, content, humanDate, filePath }) => (<>
     <Header title={'words'} href={'/words'} />
 
     <main className={'container prose dark:prose-invert lg:prose-lg pb-8'}>
-        <h1 className={'mt-4 text-center'}>
+        <h1 className={'mt-4'}>
             {title}
         </h1>
 

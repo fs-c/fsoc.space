@@ -4,12 +4,12 @@ import { getPosts } from '../../posts';
 const Posts = ({ posts }) => (<>
     <Header title={'words'} />
 
-    <main className={'container'}>
+    <main className={'container my-4'}>
         <ul className={'space-y-4'}>
             {posts.map((post) => (<>
                 <li><a href={process.env.__DHOW_ROUTE_PATH + '/' + post.slug}>
                     <h1>
-                        <span className={'font-medium dark:text-gray-200'}>{post.title}</span>
+                        <span className={'font-medium dark:text-gray-100'}>{post.title}</span>
                         
                         <small className={'text-gray-500 dark:text-gray-400 ml-2'}>
                             <time datetime={post.isoDate}>
@@ -18,7 +18,7 @@ const Posts = ({ posts }) => (<>
                         </small>
                     </h1>
 
-                    <p className={'text-gray-700 dark:text-gray-400 font-light'}>
+                    <p className={'text-gray-700 dark:text-gray-300 font-light'}>
                         {post.description}
                     </p>
                 </a></li>
