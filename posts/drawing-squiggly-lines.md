@@ -20,8 +20,8 @@ Let's start with polygons for now and worry about getting rid of the sharp edges
 
 Okay, we want to randomly generate a polygon. The naiive way to go about this is to just generate some random points in a given area:
 
-<div class="relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md">
-    <p class="m-0 absolute bottom-0 right-0 px-3 py-1 text-gray-500">click to regenerate</p>
+<div class="not-prose relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md">
+    <p class="text-sm absolute bottom-0 right-0 px-3 py-2 text-gray-500">click to regenerate</p>
     <svg class="w-full h-full dark:stroke-white"
         id="random-points-naiive"
         version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
@@ -31,8 +31,8 @@ This is, as it turns out, a suboptimal solution. The generated polygons are ofte
 
 An improvement one could make is to divide the area into slices of a circle, and to generate one point per slice--while choosing the slices in clockwise or counter-clockwise order (as in, not randomly).
 
-<div class="relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md">
-    <p class="m-0 absolute bottom-0 right-0 px-3 py-1 text-gray-500">click to regenerate</p>
+<div class="not-prose relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md">
+    <p class="text-sm absolute bottom-0 right-0 px-3 py-2 text-gray-500">click to regenerate</p>
     <svg class="w-full h-full dark:stroke-white"
         id="random-points-circle"
         version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
@@ -42,8 +42,8 @@ The improved version solves the problem of generating self-interesecting polygon
 
 This concept of using a circle to ensure that the polygon not self-intersecting motivates a somewhat more complex approach: Distribute a given number of points randomly but evenly along a circle with radius `r`, then choose points some random distance (bounded by `spread`) and direction around them.
 
-<div class="relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md">
-    <p class="m-0 absolute bottom-0 right-0 px-3 py-1 text-gray-500">click to regenerate</p>
+<div class="not-prose relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md">
+    <p class="text-sm absolute bottom-0 right-0 px-3 py-2 text-gray-500">click to regenerate</p>
     <svg class="w-full h-full dark:stroke-white"
         id="random-points"
         version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
@@ -61,8 +61,8 @@ The algorithm I will be presenting here is based on a post ([archive](http://www
 
 We start out by getting the midpoints of the edges of our starting polygon, and connecting the midpoints of edges that share a vertex (corner). We then divide each such connecting line into two parts of the same proportionality as the edges whose midpoints it connects. We call the point between these proportional parts the anchors.
 
-<div class="relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md">
-    <p class="m-0 absolute bottom-0 right-0 px-3 py-1 text-gray-500">click to regenerate</p>
+<div class="not-prose relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md">
+    <p class="text-sm absolute bottom-0 right-0 px-3 py-2 text-gray-500">click to regenerate</p>
     <svg class="w-full h-full dark:stroke-white"
         id="polygon-midpoints"
         version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
@@ -72,8 +72,8 @@ _Points with a colored outline are midpoints, filled points divide the connectin
 
 Finally, we move the connecting lines such that their anchors are at the same position as the respective vertex. The ends of these lines, the previous midpoints, now serve as control points for cubic Bezier curves. (I synchronized the previous and following illustrations, hopefully it helps to better understand the transformation.)
 
-<div class="relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md">
-    <p class="m-0 absolute bottom-0 right-0 px-3 py-1 text-gray-500">click to regenerate</p>
+<div class="not-prose relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md">
+    <p class="text-sm absolute bottom-0 right-0 px-3 py-2 text-gray-500">click to regenerate</p>
     <svg class="w-full h-full dark:stroke-white"
         id="polygon-smooth"
         version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
@@ -91,8 +91,8 @@ Now that we're able to generate an aesthetically fitting polygon and smooth out 
 
 __Gradient Topograhy__ (the original goal)
 
-<div class="relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md">
-    <p class="m-0 absolute bottom-0 right-0 px-3 py-1 text-gray-500">click to regenerate</p>
+<div class="not-prose relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md">
+    <p class="text-sm absolute bottom-0 right-0 px-3 py-2 text-gray-500">click to regenerate</p>
     <svg class="w-full h-full dark:stroke-white"
         id="gradient-topography"
         version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
@@ -100,8 +100,8 @@ __Gradient Topograhy__ (the original goal)
 
 __Outline Topography__ (a variation of the above)
 
-<div class="relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md">
-    <p class="m-0 absolute bottom-0 right-0 px-3 py-1 text-gray-500">click to regenerate</p>
+<div class="not-prose relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md">
+    <p class="text-sm absolute bottom-0 right-0 px-3 py-2 text-gray-500">click to regenerate</p>
     <svg class="w-full h-full dark:stroke-white"
         id="outline-topography"
         version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
