@@ -12,11 +12,11 @@ I like this style, and I wanted to create something similar, but dynamically. Th
 
 You can find my experimentation on this topic in [v0/squiggly-stuff](https://github.com/fs-c/v0/tree/master/squiggly-stuff). Initially, I was using the [canvas API](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API), and most of the algorithm development was with that API. Later I switched to SVG, mostly to try out something else, but also because the canvas API is kind of cumbersome.
 
-What follows is a presentation of a method for randomly generate polygons that is easy to parameterize and has some other useful properties. Then I'll showcase an algorithm I found on the web that smoothes out the edges of a polygon, creating the shapes we are looking for.
+What follows is a presentation of a method for randomly generating polygons that is easy to parameterize and has some other useful properties. Then I'll showcase an algorithm I found on the web that smoothes out the edges of a polygon, creating the shapes we are looking for.
 
 ## Generating a Polygon
 
-Let's start with polygons for now and worry about getting rid of the sharp edges later. The general idea is that we will generate a random polygon, which will be our source of irregularity, and then do some magic to smooth out the edges.
+Let's start with polygons for now and worry about getting rid of the sharp edges later. We need the polygon generation to be random because it is our primary source of irregularity--the smoothing algorithm doesn't contain any randomness.
 
 Okay, we want to randomly generate a polygon. The naiive way to go about this is to just generate some random points in a given area:
 
@@ -40,7 +40,7 @@ An improvement one could make is to divide the area into slices of a circle, and
 
 The improved version solves the problem of generating self-interesecting polygons, but the polygons still don't look consistently good: Some more parameterization is necessary.
 
-This concept of using a circle to ensure that the polygon not self-intersecting motivates a somewhat more complex approach: Initially distribute a given number of points randomly but evenly along a circle with radius `r`, then choose points some random distance (bounded by `spread`) and direction around them.
+This concept of using a circle to ensure that the polygon not self-intersecting motivates a somewhat more complex approach: Distribute a given number of points randomly but evenly along a circle with radius `r`, then choose points some random distance (bounded by `spread`) and direction around them.
 
 <div class="relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md">
     <p class="m-0 absolute bottom-0 right-0 px-3 py-1 text-gray-500">click to regenerate</p>
@@ -51,7 +51,7 @@ This concept of using a circle to ensure that the polygon not self-intersecting 
 
 _Arguments to the algorithm are radius and spread. Dashed circle represents radius, solid circles represent spread. Colored dots are initial points, outlined points are the final output. Note that the initial points are spread evenly but not randomly, this was omitted for simplicity._
 
-Now we have an algorithm that gives us random polygons that will never self-intersect, and we also have a measure of control over "how random" the given polygon will turn out to be.
+Now we have an algorithm that gives us random polygons that will never self-intersect, and we also have a measure of control over how the generated polygons will look like.
 
 This is the algorithm that will be used for generating the shapes in the rest of this post.
 
@@ -106,6 +106,8 @@ __Outline Topography__ (a variation of the above)
         id="outline-topography"
         version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
 </div>
+
+That's it, for now.
 
 <script type="text/javascript">
     //
