@@ -53,6 +53,21 @@ _Arguments to the algorithm are radius and spread. Dashed circle represents radi
 
 Now we have an algorithm that gives us random polygons that will never self-intersect, and we also have a measure of control over how the generated polygons will look like.
 
+<div class="not-prose rounded-md grid grid-cols-3 gap-4 relative font-mono w-full h-[400px] pb-8" id="polygon-showcase-container">
+    <svg  class="w-full h-full" version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+    <svg  class="w-full h-full" version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+    <svg  class="w-full h-full" version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+    <svg  class="w-full h-full" version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+    <svg  class="w-full h-full" version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+    <svg  class="w-full h-full" version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+    <svg  class="w-full h-full" version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+    <svg  class="w-full h-full" version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+    <svg  class="w-full h-full" version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+    <p class="text-sm absolute bottom-0 right-0 px-3 py-2 text-gray-500">click to regenerate</p>
+</div>
+
+_Demonstration of polygon generation, with every polygon the number of edges increase by one._
+
 This is the algorithm that will be used for generating the shapes in the rest of this post.
 
 ## Smoothing it out
@@ -506,6 +521,41 @@ That's it, for now.
         draw();
 
         element.addEventListener('click', () => {
+            draw();
+        });
+    }
+
+    {
+        const container = document.getElementById('polygon-showcase-container');
+        const elements = container.children;
+
+        const draw = () => {
+            let i = 3;
+
+            for (const element of elements) {
+                if (element.tagName !== 'svg') {
+                    continue;
+                }
+
+                element.innerHTML = '';
+
+                const center = getCenter(element);
+
+                const radius = center[1] / 1.5;
+                const spread = center[1] / 6;
+
+                const points = generateRandomPoints(i, { radius, spread })
+                    .map((p) => relToAbs(center, p));
+
+                drawPolygon(element, points);
+
+                i++;
+            }
+        };
+
+        draw();
+
+        container.addEventListener('click', () => {
             draw();
         });
     }
