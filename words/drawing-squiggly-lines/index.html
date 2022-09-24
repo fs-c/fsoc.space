@@ -14,7 +14,18 @@
     <svg class="w-full h-full dark:stroke-white"
         id="random-points"
         version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
-</div><p><em>Arguments to the algorithm are radius and spread. Dashed circle represents radius, solid circles represent spread. Colored dots are initial points, outlined points are the final output. Note that the initial points are spread evenly but not randomly, this was omitted for simplicity.</em></p><p>Now we have an algorithm that gives us random polygons that will never self-intersect, and we also have a measure of control over how the generated polygons will look like.</p><p>This is the algorithm that will be used for generating the shapes in the rest of this post.</p><h2>Smoothing it out</h2><p>The algorithm I will be presenting here is based on a post (<a href="http://www.elvenprogrammer.org/projects/bezier/reference/">archive</a>) by the late Maxim Shemanarev, known for <a href="https://en.wikipedia.org/wiki/Anti-Grain_Geometry">Anti-Grain Geometry</a>. It takes a polygon as input and generates <a href="https://en.wikipedia.org/wiki/B%C3%A9zier_curve">Bézier curves</a> that smoothly interpolate it. As far as I am aware he is the inventor, I'm just presenting the idea in a different context.</p><p>We start out by getting the midpoints of the edges of our starting polygon, and connecting the midpoints of edges that share a vertex (corner). We then divide each such connecting line into two parts of the same proportionality as the edges whose midpoints it connects. We call the point between these proportional parts the anchors.</p><div class="not-prose relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md">
+</div><p><em>Arguments to the algorithm are radius and spread. Dashed circle represents radius, solid circles represent spread. Colored dots are initial points, outlined points are the final output. Note that the initial points are spread evenly but not randomly, this was omitted for simplicity.</em></p><p>Now we have an algorithm that gives us random polygons that will never self-intersect, and we also have a measure of control over how the generated polygons will look like.</p><div class="not-prose rounded-md grid grid-cols-3 gap-4 relative font-mono w-full h-[400px] pb-8" id="polygon-showcase-container">
+    <svg  class="w-full h-full" version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+    <svg  class="w-full h-full" version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+    <svg  class="w-full h-full" version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+    <svg  class="w-full h-full" version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+    <svg  class="w-full h-full" version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+    <svg  class="w-full h-full" version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+    <svg  class="w-full h-full" version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+    <svg  class="w-full h-full" version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+    <svg  class="w-full h-full" version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+    <p class="text-sm absolute bottom-0 right-0 px-3 py-2 text-gray-500">click to regenerate</p>
+</div><p><em>Demonstration of polygon generation, with every polygon the number of edges increase by one.</em></p><p>This is the algorithm that will be used for generating the shapes in the rest of this post.</p><h2>Smoothing it out</h2><p>The algorithm I will be presenting here is based on a post (<a href="http://www.elvenprogrammer.org/projects/bezier/reference/">archive</a>) by the late Maxim Shemanarev, known for <a href="https://en.wikipedia.org/wiki/Anti-Grain_Geometry">Anti-Grain Geometry</a>. It takes a polygon as input and generates <a href="https://en.wikipedia.org/wiki/B%C3%A9zier_curve">Bézier curves</a> that smoothly interpolate it. As far as I am aware he is the inventor, I'm just presenting the idea in a different context.</p><p>We start out by getting the midpoints of the edges of our starting polygon, and connecting the midpoints of edges that share a vertex (corner). We then divide each such connecting line into two parts of the same proportionality as the edges whose midpoints it connects. We call the point between these proportional parts the anchors.</p><div class="not-prose relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md">
     <p class="text-sm absolute bottom-0 right-0 px-3 py-2 text-gray-500">click to regenerate</p>
     <svg class="w-full h-full dark:stroke-white"
         id="polygon-midpoints"
@@ -431,6 +442,41 @@
         draw();
 
         element.addEventListener('click', () => {
+            draw();
+        });
+    }
+
+    {
+        const container = document.getElementById('polygon-showcase-container');
+        const elements = container.children;
+
+        const draw = () => {
+            let i = 3;
+
+            for (const element of elements) {
+                if (element.tagName !== 'svg') {
+                    continue;
+                }
+
+                element.innerHTML = '';
+
+                const center = getCenter(element);
+
+                const radius = center[1] / 1.5;
+                const spread = center[1] / 6;
+
+                const points = generateRandomPoints(i, { radius, spread })
+                    .map((p) => relToAbs(center, p));
+
+                drawPolygon(element, points);
+
+                i++;
+            }
+        };
+
+        draw();
+
+        container.addEventListener('click', () => {
             draw();
         });
     }

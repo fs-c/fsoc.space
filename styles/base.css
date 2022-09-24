@@ -1247,6 +1247,9 @@ video {
 .flex {
   display: flex;
 }
+.grid {
+  display: grid;
+}
 .contents {
   display: contents;
 }
@@ -1262,6 +1265,9 @@ video {
 .w-full {
   width: 100%;
 }
+.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
 .flex-row {
   flex-direction: row;
 }
@@ -1276,6 +1282,9 @@ video {
 }
 .justify-between {
   justify-content: space-between;
+}
+.gap-4 {
+  gap: 1rem;
 }
 .space-y-4 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
@@ -1340,11 +1349,11 @@ video {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
 }
-.pb-4 {
-  padding-bottom: 1rem;
-}
 .pb-8 {
   padding-bottom: 2rem;
+}
+.pb-4 {
+  padding-bottom: 1rem;
 }
 .font-mono {
   font-family: JetBrains Mono;
