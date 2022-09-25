@@ -1197,6 +1197,9 @@ video {
   padding-left: 1rem;
   padding-right: 1rem;
 }
+.visible {
+  visibility: visible;
+}
 .static {
   position: static;
 }
