@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"></meta><meta name="viewport"  content="width=device-width, initial-scale=1"></meta><meta name="author"  content="fsoc"></meta><meta name="author"  content="Laurenz Weixlbaumer"></meta><link href="/styles/base.css"  rel="stylesheet"></link><link href="/styles/font.css"  rel="stylesheet"></link><meta name="description"  content="Writeup for the ServerfARM task from the Internetwache CTF 2016."></meta><link href="/styles/syntax-theme.css"  rel="stylesheet"></link></head><body><div class="min-h-screen flex flex-col h-full "><header class="container border-b border-gray-300 dark:border-gray-600 mt-4 mb-4 pb-4"><div class="prose dark:prose-invert text-black dark:text-white"><a href="/">fsoc</a> / <a href="/words">words</a></div></header><main class="container prose dark:prose-invert lg:prose-lg pb-8"><h1 class="mt-4">Internetwache CTF 2016: SeverfARM</h1><aside class="mb-4 flex flex-row justify-between"><small>Published on 2022-9-29</small><small><a href="https://github.com/fs-c/fsoc.space/edit/workbench/posts/Internetwache-ctf-2016-serverfarm.md">Edit on github</a></small></aside><p>This is the <code>ServerfARM</code> task from the Internetwache CTF 2016, I got it from <a href="https://github.com/internetwache/Internetwache-CTF-2016/tree/master/tasks/rev70/task">their official repository</a>.</p><p>The provided file is an ELF binary for ARM7. We're asked to extract a key from it. It looks like binja has some problems with ARM; looking at the main function reveals</p><pre><code class="language-c">int32_t main(int32_t argc, char** argv, char** envp)
+    char* r0
+    mstate r1
+    r0, r1 = malloc(bytes: 0x65)
+    char* var_c = nullptr
+    mstate r2_1
+    while (true)
+        r2_1 = argc - 1
+        if (r2_1 s&lt;= var_c)
+            break
+        printf("Enter Solution for task %d:", format: var_c, r2_1, var_c, argv, argc, r0, var_c)
+        r1 = handle_task(var_c, r0, __isoc99_scanf(&amp;string_format, format: r0))
+        var_c = &amp;var_c[1]  // wrong? var_c += 1 (00010704)
+    free(mem: r0, r1, r2_1, var_c)
+    return 0</code></pre><p>I have added a comment to the line I think is wrongly decompiled. Why do I think it's wrong? Take a look at the disassembly:</p><pre><code class="language-asm">ldr     r3, [r11,  #-0x8] {var_c}
+add     r3, r3, #0x1
+str     r3, [r11,  #-0x8] {var_c} ; (00010704)</code></pre><p>Clearly, <code>var_c</code> is incremented by one, right? LLIL and MLIL seem to agree with me:</p><pre><code class="language-asm">  26 @ 000106fc  r3 = [r11 - 8 {var_c}].d
+  27 @ 00010700  r3 = r3 + 1
+  28 @ 00010704  [r11 - 8 {var_c}].d = r3
+  
+  18 @ 000106fc  r3_1 = var_c
+  19 @ 00010700  r3_2 = r3_1 + 1
+  20 @ 00010704  var_c = r3_2</code></pre><p>But HLIL messes up for some reason. Anyways, with that mental correction to the HLIL code we see that <code>handle_task()</code> is called until our loop counter <code>var_c</code> is <code>&gt;= argc - 1</code>.</p><p>The <code>handle_task</code> function is quite big, but it's important to remember that we just want to extract a string (that is presumably printed out under some condition). We don't need to care too much about the inner workings of the program. So, with that out of the way, notice that <code>handle_task</code> is called with the loop counter as the first argument. The function is basically a big switch case that does entirely different things based on the loop counter.</p><p>So let us go through the possible cases and take a look at what is being printed.</p><p>For <code>0</code>:</p><pre><code class="language-c">// the switch case for 0 is effectively empty but at the end of 
+// the function we find:
+if (arg1 == 0)
+    if (r0_5 s&lt;= 0x23)
+        printf(&amp;string_format, format: &amp;data_10e70)  // IW{
+        putchar(c: 'S')
+        arg1 = printf("%c%c\n", format: '.', 'E')
+    else
+        arg1 = puts(str: "I{WAQ3")</code></pre><p>It is either <code>IW{S.E.</code> or <code>I{WAQ3</code>.</p><p>For <code>1</code>:</p><pre><code class="language-c">printf(&amp;string_format, format: "Here's your 2. block:", arg3, arg1, var_20, arg1)
+if (__aeabi_idivmod(zx.d(*var_20), zx.d(var_20[1])) != 'A')
+    arg1 = puts(str: "WI{QA3")
+else
+    printf(&amp;string_format, format: &amp;data_10e94)
+    putchar(c: 'V')
+    arg1 = printf("%c%c\n", format: '.', 'E')
+</code></pre><p>it is either <code>WI{QA3</code> or <code>.R.V.E</code></p><p>For <code>2</code>:</p><pre><code class="language-c">printf(&amp;string_format, format: "Here's your 3. block:", arg3, arg1, var_20, arg1)
+if (strcmp(p1: var_20, p2: "1337") != 0)
+    arg1 = printf("%c%s%c\n", format: '.', 0x10ec8, '!')  {"Q.D.Q"}
+else
+    arg1 = puts(str: ".R&gt;=F:")
+</code></pre><p>it is either <code>.Q.D.Q!</code> or <code>.R&gt;=F:</code>.</p><p>For <code>3</code>:</p><pre><code class="language-c">if (zx.d(*var_20) != 0)
+    arg1 = printf("%c%s%c\n", format: 'A', 0x10ed8, '}', var_20, arg1)  {":R:M"}</code></pre><p>it is <code>A:R:M}</code>.</p><p>Notice that exactly one combination spells out an English word, I think it is safe to say that we found the required key.</p><h2>Conclusion</h2><p>I'm somewhat disappointed I didn't have to debug this, an ARM debugging setup would probably have been interesting. That aside it was a fun, short challenge.</p><script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script><script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script></main></div><footer class="flex flex-row justify-between prose dark:prose-invert container text-md py-3 mb-1 border-t border-gray-300 dark:border-gray-600 mt-4"><p class="m-0">Built with <a href="https://github.com/fs-c/dhow/tree/rewrite">fs-c/dhow</a>.</p><a href="/legal">imprint & privacy</a></footer></body></html>
