@@ -1,10 +1,10 @@
 ---
-title: "Netzwache CTF 2016: filechecker"
+title: "Internetwache CTF 2016: filechecker"
 date: 2022-09-27
-description: Writeup for the filechecker task from the Netzwache CTF 2016.
+description: Writeup for the filechecker task from the Internetwache CTF 2016.
 ---
 
-This is the `filechecker` task from the Netzwache CTF 2016, which I got from the [same repository](https://github.com/N4NU/Reversing-Challenges-List/tree/master/Baby/Internetwache_CTF_2016_File_Checker) as the tasks from the last post.
+This is the `filechecker` task from the Internetwache CTF 2016, which I got from the [same repository](https://github.com/N4NU/Reversing-Challenges-List/tree/master/Baby/Internetwache_CTF_2016_File_Checker) as the tasks from the last post.
 
 It's an ELF binary, no non-code branches or stack shenanigans so decompilation into Binja HLIL is quite informative.
 
