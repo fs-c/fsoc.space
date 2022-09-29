@@ -195,9 +195,9 @@ uint64_t final_segfault_handler()
     return rax_5
 ```
 
-...which triggers a floating point exception by dividing some arbitrary value by zero. (I never checked but it should be 0/0, since I would expect `input_buffer[0x15]` to be zero--null terminatin and all that.) The floating point exception handler then goes on to print a congratulary message.
+...which triggers a floating point exception by dividing some arbitrary value by zero. (I never checked but it should be 0/0, since I would expect `input_buffer[0x15]` to be zero since `argv[1]` is null-terminated.) The floating point exception handler then goes on to print a congratulatory message.
 
-Okay, so for every character in the password we have a function that verifies its validity. Thankfully the signal handlers follow a pattern, there are two clear "classes" of handlers that are always used (except once, but we'll ignore that for now). The first handler is an example of the first class, the second handler an example of the second. Handlers inside either class differ only by some immediate values used in the calculations.
+Okay, so for every character in the password we have a function that verifies its validity. Thankfully the signal handlers follow a pattern, there are two clear types/classes of handlers that are always used. (And a third class with a single instance, but we'll ignore that for now.) The first handler is an example of the first class, the second handler an example of the second. Handlers inside either class differ only by some immediate values used in the calculations.
 
 Let us take a look at the first signal handler again. The calculation can be simplified to
 
@@ -225,7 +225,7 @@ for (char c = CHAR_MIN; c < CHAR_MAX; c++) {
 }
 ```
 
-In fact, this turned out to be enough. Since the majority of the handlers are of the first class running the above on all values allowed me to piece together the missing values.
+In fact, this turned out to be enough. Since the majority of the handlers are of the first class running the above on all values already returns a solid portion of the key. Since the key is made up of English words, filling in the gaps (the characters that used a handler of a different class) was trivial with some manual trial and error.
 
 ## Conclusion
 
@@ -233,4 +233,4 @@ The gradual build-up of difficulty was enjoyable. (Although the first stage coul
 
 But both the second and third stage were kind of laborious to solve. The second one had its pile of trivial equations, the third was just mindnumbingly going through functions and spotting tiny differences. I would've liked to use scripting to make this easier but it appears that my binja license doesn't cover that.
 
-The (to me) novelty of the third part makes up for the annoyingness of actually getting the flag--overall I liked it.
+Still, it was enjoyable to figure out how the stages worked. So even though getting the keys themselves turned out to be more annoying than difficult, I liked the challenge overall.
