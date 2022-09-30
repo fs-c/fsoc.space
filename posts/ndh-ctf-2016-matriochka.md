@@ -1,6 +1,6 @@
 ---
 title: "Nuit du Hack CTF 2016: Matriochka"
-date: 2022-09-29
+date: 2022-09-28
 description: Writeup for the Matriochka task(s) from the Nuit du Hack CTF Quals 2016.
 ---
 
@@ -120,7 +120,7 @@ So the correct password has eleven characters. What follows is eleven if-stateme
 
 ## Stage 3
 
-This one is siginificantly more interesting. Once again decompilation into HLIL produces good results:
+This one is more interesting. Once again decompilation into HLIL produces good results:
 
 ```c
 int32_t main(int32_t argc, char** argv, char** envp)
