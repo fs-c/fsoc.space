@@ -15,7 +15,7 @@ const Index = ({ title, content, posts }) => (<>
             <ul>
                 {posts.map((post) => (<>
                     <li>
-                        <p><b>{post.title}</b>: {post.description} ({post.humanDate})</p>
+                        <a href={process.env.__DHOW_ROUTE_PATH + '/' + post.slug}>{post.title}</a>: {post.description} ({post.humanDate})
                     </li>
                 </>))}
             </ul>
