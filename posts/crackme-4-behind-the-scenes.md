@@ -2,6 +2,7 @@
 title: "CrackMe IV: Behind the Scenes"
 date: 2022-08-19
 description: I can see you! Reading the flag straight from the file. 
+tags: [ctf]
 ---
 
 This is the ["Behind the Scenes"](https://app.hackthebox.com/challenges/301) challenge from hackthebox. The description reads

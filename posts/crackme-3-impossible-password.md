@@ -2,6 +2,7 @@
 title: "CrackMe III: Impossible Password"
 date: 2022-08-18
 description: Purely static analysis to lift out a flag generation algorithm. Fun!
+tags: [ctf]
 ---
 
 This is the ["Impossible Password"](https://app.hackthebox.com/challenges/26) challenge from hackthebox. The file is an ELF binary, so I couldn't run it on my Windows box (without using a VM). It turns out that I didn't need to in any case.

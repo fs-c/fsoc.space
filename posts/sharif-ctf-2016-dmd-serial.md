@@ -2,6 +2,7 @@
 title: "SUT CTF 2016: dMd & serial"
 date: 2022-09-25
 description: Writeups for two tasks from the Sharif University CTF 2016.
+tags: [ctf]
 ---
 
 Two challenges today, both from the Sharif University CTF 2016. I usually stick to one per post for ease of reference, but the first one didn't feel like it warranted it's own writeup so I tacked it on to a more interesting one.

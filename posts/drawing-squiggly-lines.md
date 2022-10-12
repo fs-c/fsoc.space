@@ -2,6 +2,7 @@
 title: Drawing Squiggly Lines
 date: 2022-09-20
 description: Dynamically generating polygons and smoothing out their edges.
+pinned: true
 ---
 
 According to the [online cambridge dictionary](https://dictionary.cambridge.org/dictionary/english/squiggly), squiggly lines "curve and twist in a way that is not regular".

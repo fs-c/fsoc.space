@@ -2,6 +2,7 @@
 title: "CrackMe V: Exatlon"
 date: 2022-08-20
 description: "Reversing modern C++ is weird. Purely static analysis to lift out a flag generation algorithm... again!"
+tags: [ctf]
 ---
 
 The challenge is ["Exatlon"](https://app.hackthebox.com/challenges/121) from hackthebox. This was the first one that had cool ASCII art!

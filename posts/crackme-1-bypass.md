@@ -2,6 +2,7 @@
 title: "CrackMe I: Bypass.exe"
 date: 2022-08-16
 description: Solving a very simple .NET CrackMe using dnSpy.
+tags: [ctf]
 ---
 
 I'm trying to solve (or work on) one reversing challenge on [HackTheBox](https://www.hackthebox.com/home/challenges/Reversing) every day, to work on my reversing knowledge. This is day one, with a very easy one: [Bypass.exe](https://www.hackthebox.com/home/challenges/download/114).

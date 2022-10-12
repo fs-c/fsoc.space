@@ -2,6 +2,7 @@
 title: "CrackMe VII: Up a Stream"
 date: 2022-09-01
 description: "Reversing an encryptor written in Java, decidedly overusing streams."
+tags: [ctf]
 ---
 
 This is the recently released ["Up a Stream"](https://app.hackthebox.com/challenges/392) challenge from hackthebox. The download contains a JAR file and its output.

@@ -2,6 +2,7 @@
 title: "CrackMe VI: Simple Encryption"
 date: 2022-08-21
 description: "Decrypting file contents by reversing the encryption algorithm."
+tags: [ctf]
 ---
 
 This is the ["Simple Encryptor"](https://app.hackthebox.com/challenges/366) challenge from hackthebox. The download contains an ELF binary ("encrypt") that was used to encrypt another given file ("flag.enc"), containing the flag.

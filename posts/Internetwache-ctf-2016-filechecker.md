@@ -2,6 +2,7 @@
 title: "Internetwache CTF 2016: filechecker"
 date: 2022-09-27
 description: Writeup for the filechecker task from the Internetwache CTF 2016.
+tags: [ctf]
 ---
 
 This is the `filechecker` task from the Internetwache CTF 2016, which I got from the [same repository](https://github.com/N4NU/Reversing-Challenges-List/tree/master/Baby/Internetwache_CTF_2016_File_Checker) as the tasks from the last post.

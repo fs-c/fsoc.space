@@ -28,6 +28,8 @@ const Footer = () => (<>
 const App = ({ Component, pageProps = {} }) => (<>
     <Head>
         <title>{pageProps.title || 'fsoc.space'}</title>
+
+        {pageProps.head}
     </Head>
 
     <div className={'min-h-screen flex flex-col h-full ' + (pageProps.wrapperClassName || '')}>

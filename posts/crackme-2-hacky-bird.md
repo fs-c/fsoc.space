@@ -2,6 +2,7 @@
 title: "CrackMe II: Hacky Bird"
 date: 2022-08-17
 description: Solving a CrackMe wrapped in a well-known game.
+tags: [ctf]
 ---
 
 You can get the file at [hackthebox](https://www.hackthebox.com/home/challenges/download/192). The program looks to be a clone of [Flappy Bird](https://flappybird.io/).

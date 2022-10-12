@@ -2,6 +2,7 @@
 title: "Internetwache CTF 2016: SeverfARM"
 date: 2022-09-29
 description: Writeup for the ServerfARM task from the Internetwache CTF 2016.
+tags: [ctf]
 ---
 
 This is the `ServerfARM` task from the Internetwache CTF 2016, I got it from [their official repository](https://github.com/internetwache/Internetwache-CTF-2016/tree/master/tasks/rev70/task).

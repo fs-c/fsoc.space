@@ -2,6 +2,7 @@
 title: "Nuit du Hack CTF 2016: Matriochka"
 date: 2022-09-28
 description: Writeup for the Matriochka task(s) from the Nuit du Hack CTF Quals 2016.
+tags: [ctf]
 ---
 
 This is the "matriochka" task from the Nuit du Hack CTF 2016 Quals, which is divided into three stages. I got them from [this repository](https://github.com/N4NU/Reversing-Challenges-List/tree/master/Baby). All stages are ELF binaries without any overt binary trickery.

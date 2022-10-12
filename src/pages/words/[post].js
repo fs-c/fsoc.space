@@ -1,6 +1,6 @@
 import { Header } from '../_app';
 import { Head } from '@fsoc/dhow';
-import { getPost, getPosts } from '../../posts';
+import { getPost, getContent } from '../../posts';
 
 const githubUrl = 'https://github.com/fs-c/fsoc.space/';
 
@@ -46,7 +46,7 @@ export const getProps = async (slug) => {
 }
 
 export const getPaths = async () => {
-    return (await getPosts()).map((post) => post.slug);
+    return (await getContent()).posts.map((post) => post.slug);
 }
 
 export default Post;
