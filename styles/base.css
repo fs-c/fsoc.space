@@ -1156,6 +1156,9 @@ video {
 .static {
   position: static;
 }
+.fixed {
+  position: fixed;
+}
 .absolute {
   position: absolute;
 }
@@ -1281,6 +1284,12 @@ video {
 .fill-indigo-500\/20 {
   fill: rgb(99 102 241 / 0.2);
 }
+.fill-gray-300 {
+  fill: #d1d5db;
+}
+.fill-indigo-100 {
+  fill: #e0e7ff;
+}
 .stroke-gray-800 {
   stroke: #1f2937;
 }
@@ -1390,6 +1399,14 @@ video {
 
   .dark\:fill-gray-700 {
     fill: #374151;
+  }
+
+  .dark\:fill-gray-500 {
+    fill: #6b7280;
+  }
+
+  .dark\:fill-indigo-800\/50 {
+    fill: rgb(55 48 163 / 0.5);
   }
 
   .dark\:stroke-white {
