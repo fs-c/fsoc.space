@@ -32,7 +32,7 @@ _Yes, this is equivalent to the [travelling salesman problem](https://en.wikiped
 
 The shortest route through a given number of points (in two-dimensional Euclidian space) will always form the boundary of a simple polygon. This is probably obvious to some, but I found it fascinating. (Intuition: Every crossing can be eliminated while also decreasing local length.)
 
-Of course, algorithms for (exactly) solving the TSP and related problems have terrible time efficiency. They are only a conceivably acceptable solution if we are given completely arbitrary points. From now on we will assume that we have some control over how the final points are generated, as was the case for the "aesthetic" algorithm illustrated in the introduction.
+Of course, algorithms for (exactly) solving the TSP and related problems have terrible time efficiency. They are only a conceivably acceptable solution if we are given completely arbitrary points. This isn't usually the case, for example the "aesthetic" algorithm in the illustrated in the introduction was specifically designed to yield points that form a simple polygon--it's not designed to work on arbitrary points.
 
 But the above observation has an important consequence: The problem of generating a simple polygon can be equivalently reformulated to the problem of finding an ordering for a set of points such that the path through them is minimal. So any and all algorithms that we may devise for yielding the vertices of a simple polygon must necessarily yield points in an order such that their path is minimal.
 
