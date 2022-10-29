@@ -1,10 +1,10 @@
 ---
 title: More Tinkering with Random Shapes
-date: 2022-10-16
+date: 2022-10-29
 description: Thoughts and visualisations loosely related to randomly generating simple polygons.
 ---
 
-In a [recent post](https://fsoc.space/words/drawing-squiggly-lines) I talked about generating random shapes. The goal was to generate aesthetically consistent but still random shapes with smooth curves. One of the primary challenges was generating polygons which would not self-intersect (for aesthetic reasons). To get an idea for what I'm talking about, the following is an interactive illustration of the algorithm, taken from the linked post.
+In a [recent post](https://fsoc.space/words/drawing-squiggly-lines) I talked about generating random shapes. The goal was to generate aesthetically consistent but still random shapes with smooth curves. One of the primary challenges was generating polygons which would not self-intersect (for aesthetic reasons). To get an idea for what I'm talking about, the following is an interactive illustration of the algorithm I ended up designing and using, taken from the linked post.
 
 <div class="not-prose relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md">
     <p class="text-sm absolute bottom-0 right-0 px-3 py-2 text-gray-500">click to regenerate</p>
@@ -13,9 +13,7 @@ In a [recent post](https://fsoc.space/words/drawing-squiggly-lines) I talked abo
         version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
 </div>
 
-This algorithm works fine and it was well suited to the needs of that project. But I did a lot of experimentation in different directions while working on it, and this post is an attempt to make some of the resulting thoughts and results accessible.
-
-The first section talks about the travelling salesman problem and its relation to simple polygons. The following section explores a trivial algorithm that I overlooked in the first post. Finally I'll apply some of the above to a hexagonal lattice.
+This is a sort of addendum to that one, talking about some other stuff related to generating simple polygons that wasn't included previously. So the first section talks about the travelling salesman problem and its relation to simple polygons. The following section briefly explores a trivial algorithm that uses triangles to build polygons. The final section explores _triangular lattices_, a really cool construct, in which we will build polygons. 
 
 ## Shortest Path
 
@@ -36,7 +34,7 @@ Of course, algorithms for (exactly) solving the TSP and related problems have te
 
 But the above observation has an important consequence: The problem of generating a simple polygon can be equivalently reformulated to the problem of finding an ordering for a set of points such that the path through them is minimal. So any and all algorithms that we may devise for yielding the vertices of a simple polygon must necessarily yield points in an order such that their path is minimal.
 
-This is something I hadn't realized when I worked on the project that inspired the first post, or when writing said post, and it narrows the solution space significantly. The options are either generating completely random points and using a TSP algorithm. Or generating points such that they will already be in an order that satisfies the TSP. An obvious way to do this is to start with some notion of circularity, as in the algorithm illustrated in the introduction for example. Another is to take a simple polygon that is trivial to randomly generate and build off of it in a way that doesn't violate the simpleness.
+This is something I hadn't fully realized when I worked on the project that inspired the first post, and it narrows the solution space significantly. The options are either generating completely random points and using a TSP algorithm. Or generating points such that they will already be in an order that satisfies the TSP. An obvious way to do this is to start with some notion of circularity, as in the algorithm illustrated in the introduction for example. Another is to take a simple polygon that is trivial to randomly generate and build off of it in a way that doesn't violate the simpleness.
 
 ## Triangles
 
@@ -87,7 +85,28 @@ The following is an example of a lattice, with a line between randomly selected 
 
 _The (fixed) starting point is highlighted with a colored outline. By the way, this is an example of a [random walk](https://en.wikipedia.org/wiki/Random_walk)._
 
-Again according to the linked Wikipedia article, lattices have many applications in pure mathematics, cryptography and physics. But let's not worry about any of that, I'm talking about them here because I think they look cool. The following is an implementation of a TSP algorithm operating with [Manhattan distance](https://en.wikipedia.org/wiki/Taxicab_geometry).
+Again according to the linked Wikipedia article, lattices have many applications in pure mathematics, cryptography and physics. But we won't worry about any of that now, I'm talking about them here because I think they look cool.
+
+So let's draw some shapes in a lattice. Of course, we can't just generate points and draw straight lines between them--we need to construct our lines by connecting adjacent lattice points. As far as we're concerned, nothing but these points exists, and we can't draw on nothing.
+
+Let's build an algorithm that can connect two arbitrary lattice points (just called points, from now on), and later use it to write an algorithm for drawing arbitrary shapes. The algorithm we are looking for will return a polyline of minimal length such that it connects two given points without "leaving" the lattice. 
+
+A [polyline](https://en.wikipedia.org/wiki/Polygonal_chain (or polygonal chain) is a sequence of straght lines. The maximum number of points that a polyline returned by our algorithm will contain is three--one for origin and destination respectively and optionally one to account for vertical movement that isn't diagonal to the origin.
+
+<div class="not-prose relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md">
+    <p class="text-sm absolute bottom-0 right-0 px-3 py-2 text-gray-500">click to regenerate</p>
+    <svg class="w-full h-full dark:stroke-white"
+        id="lattice-adjacent-line"
+        version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+</div>
+
+_A polyline of length four, between the center and a randomly selected point (marked with a colored outline) around it. Thicker gray circles mark all points that are four units removed from the center. Gray outlines mark points that were stepped through or considered. Note that diagonal movement requires steps and checks all the way, but horizontal movement is done in one step/check._
+
+We first check if the two points (origin and destination) are in a horizontal line, this case is trivial. If they aren't, we will move a "cursor" in incremental steps from the origin in the direction of the destination, so right/left and upwards/downwards. After each step in this direction we check if the destination is in a horizontal line with the cursor. If it isn't we also check if it is in the diagonal opposite to our horizontal direction of movement. So if we are currently stepping to the top right, we would start stepping to the top left to see if we hit the destination.
+
+The distance between the two points determines the amount of steps we need. So if we have a distance of seven and are on the third step in our primary direction, we only need to search for four steps in our off direction.
+
+I have written a [separate post](/words/minimum-distance-triagonal-lattice) about finding the distance between two lattice points. The following is an implementation of a TSP algorithm operating with this custom distance function.
 
 <div class="not-prose relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md">
     <p class="text-sm absolute bottom-0 right-0 px-3 py-2 text-gray-500">click to regenerate</p>
@@ -100,11 +119,43 @@ What is particularly interesting about lattices is that in this space, solutions
 
 ## Art?
 
+__Recursive Triangles__ (a failed experiment)
+
 <div class="not-prose relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md">
     <p class="text-sm absolute bottom-0 right-0 px-3 py-2 text-gray-500">click to regenerate</p>
     <svg class="w-full h-full dark:stroke-white"
         id="failed-experiment-1"
         version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+</div>
+
+__Rounded TSP__ (with opacity steps)
+
+<div class="not-prose relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md">
+    <p class="text-sm absolute bottom-0 right-0 px-3 py-2 text-gray-500">click to regenerate</p>
+    <svg class="w-full h-full dark:stroke-white"
+        id="rounded-tsp"
+        version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+</div>
+
+__Rounded Lattice__ (racetrack, anyone?)
+
+<div class="not-prose relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md">
+    <p class="text-sm absolute bottom-0 right-0 px-3 py-2 text-gray-500">click to regenerate</p>
+    <svg class="w-full h-full dark:stroke-white"
+        id="rounded-lattice-tsp"
+        version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+</div>
+
+__Random Lattice Marketing__
+
+<div class="not-prose relative font-mono w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md flex items-center justify-center">
+    <p class="text-sm absolute bottom-0 right-0 px-3 py-2 text-gray-500">click to regenerate</p>
+    <svg class="z-0 absolute top-0 left-0 w-full h-full dark:stroke-white"
+        id="random-lattice-marketing"
+        version="1.1" xmlns="http://www.w3.org/2000/svg"></svg>
+    <h1 class="text-indigo-600  z-10 text-5xl font-black font-sans text-center">
+        Connecting the Dots
+    </h1>
 </div>
 
 _To be expanded..._
@@ -154,6 +205,8 @@ _To be expanded..._
     const length = (p1, p2) => Math.sqrt(
         Math.pow(p2[0] - p1[0], 2) + Math.pow(p2[1] - p1[1], 2)
     );
+
+    const equal = (p1, p2) => p1[0] === p2[0] && p1[1] === p2[1];
 
     // create a new svg element of the given type with the given attributes
     // and add it to the new parent
@@ -369,7 +422,7 @@ _To be expanded..._
         const midpoints = getMidpoints(points);
         const anchorPoints = getAnchorPoints(points, midpoints);
         const controlPoints = getControlPoints(points, midpoints, anchorPoints);
-        
+
         let pathDescription = `M ${points[0][0]} ${points[0][1]} `;
 
         for (let i = 0; i < points.length; i++) {
@@ -461,9 +514,88 @@ _To be expanded..._
             return [ p[0] + ((p[1] % 2) ? 1 : 0), p[1] + 1 ];
         }
 
-        // manhattan distance
-        static distance(p1, p2) {
-            return Math.abs(p2[0] - p1[0]) + Math.abs(p2[1] - p1[1]);
+        static distance(op1, op2) {
+            const toLinear = (p) => {
+                const offset = Math.floor(p[1] / 2);
+
+                return [ p[0] - offset, p[1] ];
+            };
+
+            const p1 = toLinear(op1);
+            const p2 = toLinear(op2);
+
+            const p = [ ...p1, -p1[0] - p1[1] ];
+            const q = [ ...p2, -p2[0] - p2[1] ];
+
+            return Math.max(0, p[0] - q[0]) + Math.max(0, p[1] - q[1])
+                + Math.max(0, p[2] - q[2]);
+        }
+
+        static manhattanDistance(p1, p2) {
+            return Math.abs(p1[1] - p2[1]) + Math.abs(p1[0] - p2[0]);
+        }
+
+        static getStepper(right, vertical) {
+            return (
+                vertical === 'up' ? (
+                    right ? Lattice.moveTopRight : Lattice.moveTopLeft
+                ) : vertical === 'down' ? (
+                    right ? Lattice.moveBotRight : Lattice.moveBotLeft
+                ) : (
+                    right ? Lattice.moveRight : Lattice.moveLeft
+                )
+            );
+        }
+
+        // get all points a given distance away from p
+        static getAdjacentPoints(point, distance) {
+            const points = [];
+
+            // adjacent points will make up a hexagon, first get the edges of the
+            // hexagon
+
+            for (let direction = 0; direction < 6; direction++) {
+                let p = point;
+                
+                for (let i = 0; i < distance; i++) {
+                    switch (direction) {
+                        case 0: p = Lattice.moveTopLeft(p); break;
+                        case 1: p = Lattice.moveTopRight(p); break;
+                        case 2: p = Lattice.moveRight(p); break;
+                        case 3: p = Lattice.moveBotRight(p); break;
+                        case 4: p = Lattice.moveBotLeft(p); break;
+                        case 5: p = Lattice.moveLeft(p); break;
+                    }
+                }
+
+                points.push(p);
+            }
+
+            const adjacent = [];
+
+            // then fill in the other points
+
+            for (let i = 0; i < points.length; i++) {
+                const from = points[i];
+                const to = (i + 1 === points.length) ? points[0] : points[i + 1];
+
+                const right = from[0] === to[0]
+                    ? from[1] % 1 : from[0] < to[0];
+                const vertical = from[1] === to[1] ? 'none'
+                    : from[1] > to[1] ? 'up' : 'down';
+
+                const stepToNext = Lattice.getStepper(right, vertical);
+
+                let cursor = from;
+
+                for (let j = 0; j < distance; j++) {
+                    adjacent.push(cursor);
+
+                    cursor = stepToNext(cursor);
+                }
+            }
+
+            return adjacent;
         }
 
         constructor(element, horizontalGap) {
@@ -516,19 +648,21 @@ _To be expanded..._
             }
         }
 
-        markPoint(x, y, special = false) {
+        markPoint(x, y, special = false, attributes = {}) {
             const actual = this.positionAt(x, y);
 
             if (special) {
                 addSVGElement(this.element, 'circle', {
                     cx: actual[0], cy: actual[1], r: 8,
                     class: 'fill-transparent stroke-indigo-500',
+                    ...attributes,
                 });
             }
 
             addSVGElement(this.element, 'circle', {
                 cx: actual[0], cy: actual[1], r: 4,
                 class: 'fill-indigo-500 stroke-transparent',
+                ...attributes,
             });            
         }
 
@@ -541,69 +675,162 @@ _To be expanded..._
                 class: 'stroke-indigo-500',
             });
         }
-        
-        // this is terrible
-        drawLine(p1, p2) {
-            const equal = (p, q) => p[0] === q[0] && p[1] === q[1];
 
-            const right = p1[0] < p2[0];
-            const upwards = p1[1] > p2[1];
+        // returns the points of the polyline between from and to, might just 
+        // return [from, to]. if `returnConsidered` is true, will return an object
+        // { polyline: ..., considered: ... } where considered is an array of points
+        // that the cursor was on
+        getPolylineBetween(from, to, returnConsidered) {
+            // if the points lie on a horizontal line already, we're done
+            if (from[1] === to[1]) {
+                const polyline = [ from, to ];
 
-            const distance = Lattice.distance(p1, p2);
+                return returnConsidered ? { polyline, considered: [] } : polyline;
+            }
 
-            let cur = p1;
+            // attempt to reach `to` through following the lattice
+            // if we need to make a bend, we will return it
 
-            for (let i = 0; i < distance; i++) {
-                if (cur[1] === p2[1]) {
-                    // vertical lines are trivial, pretend points are adjacent
-                    return this.drawLineAdjacent(cur, p2);
+            // `to` is to the right of `from`
+            const moveRight = from[0] === to[0]
+                ? from[1] % 1 : from[0] < to[0];
+            // `to` is above `from`
+            const moveUpwards = from[1] > to[1];
+
+            const getStepper = (right = moveRight, upwards = moveUpwards) => (
+                upwards ? (
+                    right ? Lattice.moveTopRight : Lattice.moveTopLeft
+                ) : (
+                    right ? Lattice.moveBotRight : Lattice.moveBotLeft
+                )
+            );
+
+            const stepToNext = getStepper();
+
+            // in total, we will need exactly this many steps
+            const distance = Lattice.distance(from, to);
+
+            let cursor = from;
+            let innerCursor = from;
+
+            // only relevant if `returnConsidered`
+            const considered = [];
+
+            // move diagonally in the target direction, innerCursor will be set
+            // to null in an inner loop to indicate that we want to break out
+            for (let j = 0; j < distance && innerCursor; j++) {
+                cursor = stepToNext(cursor);
+
+                // if we were able to hit `to` by moving diagonally, we're done
+                if (equal(cursor, to)) {
+                    const polyline = [ from, to ]
+
+                    return returnConsidered ? { considered, polyline } : polyline;
                 }
 
-                const next = upwards
-                    ? (right ? Lattice.moveTopRight(cur) : Lattice.moveTopLeft(cur))
-                    : (right ? Lattice.moveBotRight(cur) : Lattice.moveBotLeft(cur));
+                considered.push(cursor);
 
-                this.drawLineAdjacent(cur, next);
+                // cursor and to are in a horizontal line
+                if (cursor[1] === to[1]) {
+                    const polyline = [ from, cursor, to ];
 
-                cur = next;
-
-                if (equal(cur, p2)) {
-                    return;
+                    return returnConsidered ? { considered, polyline } : polyline;
                 }
 
-                if (cur[1] === p2[1]) {
-                    return this.drawLineAdjacent(cur, p2);
-                }
+                const innerStepToNext = getStepper(!moveRight);
 
-                // at this point we have a line from p1 to cur
+                innerCursor = cursor;
 
-                let ccur = cur;
+                // if we can reach it diagonally we add an edge and are done
+                for (let k = 0; k < distance - j - 1; k++) {
+                    innerCursor = innerStepToNext(innerCursor);
 
-                // move diagonally
-                for (let j = 0; j < distance; j++) {
-                    ccur = upwards
-                        ? (right ? Lattice.moveTopLeft(ccur) : Lattice.moveTopRight(ccur))
-                        : (right ? Lattice.moveBotLeft(ccur) : Lattice.moveBotRight(ccur));
+                    considered.push(innerCursor);
 
-                    // when we hit something
-                    if (equal(ccur, p2)) {
-                        let cccur = ccur;
-                        let prev;
+                    // if we hit the point, return the 'pivot' edge
+                    if (equal(innerCursor, to)) {
+                        const polyline = [ from, cursor, to ];
 
-                        // move back the same way but draw lines
-                        for (let k = 0; k <= j; k++) {
-                            prev = cccur;
-                            cccur = upwards
-                                ? (right ? Lattice.moveBotRight(cccur) : Lattice.moveBotLeft(cccur))
-                                : (right ? Lattice.moveTopRight(cccur) : Lattice.moveTopLeft(cccur));
-                            
-                            this.drawLineAdjacent(prev, cccur);
-                        }
-
-                        return;
+                        return returnConsidered
+                            ? { considered, polyline } : polyline;
                     }
                 }
             }
+
+            throw new Error('could not find polyline');
+        }
+
+        // get the points of a polygon that touches all of the given lattice points
+        // and that, when drawn, lies the lattice
+        getPolygon(points) {
+            const polygon = [];
+
+            for (let i = 0; i < points.length; i++) {
+                const cur = points[i];
+                const next = (i + 1) === points.length ? points[0] : points[i + 1];
+
+                const polyline = this.getPolylineBetween(cur, next);
+
+                polygon.push(polyline[0]);
+
+                if (polyline.length === 3) {
+                    polygon.push(polyline[1]);
+                }
+            }
+
+            return polygon;
+        }
+
+        drawRoundedShape(points) {
+            const polygon = this.getPolygon(points);
+
+            // round the edges of the generated polygon (we first draw the curves
+            // and keep track of the straight lines to add in later)
+
+            const center = getCenter(this.element);
+
+            const lines = [];
+
+            for (let i = 0; i < polygon.length; i++) {
+                const prev = absToRel(center, this.positionAt(...(
+                    i === 0 ? polygon[polygon.length - 1] : polygon[i - 1])
+                ));
+
+                const cur = absToRel(center, this.positionAt(...polygon[i]));
+
+                const next = absToRel(center, this.positionAt(
+                    ...polygon[(i + 1) % polygon.length]
+                ));
+
+                const back = add(prev, scale(cur, -1));
+                const front = add(next, scale(cur, -1));
+
+                const subStep = this.horizontalGap / 2;
+
+                const scaledBack = scale(back, subStep / length(cur, prev));
+                const scaledFront = scale(front, subStep / length(cur, next));
+
+                const start = relToAbs(center, add(cur, scaledBack));
+                const middle = relToAbs(center, cur);
+                const end = relToAbs(center, add(cur, scaledFront));
+
+                lines.push(start, end);
+
+                addSVGElement(this.element, 'path', {
+                    d: `M ${start[0]} ${start[1]} Q ${middle[0]} ${middle[1]} ${end[0]} ${end[1]}`,
+                    class: 'fill-transparent stroke-indigo-500 stroke-[4]',
+                });
+            }
+
+            for (let i = 0; i < lines.length; i += 2) {
+                const l1 = lines[(i + 1) % lines.length];
+                const l2 = lines[(i + 2) % lines.length];
+
+                addSVGElement(this.element, 'line', {
+                    x1: l1[0], x2: l2[0], y1: l1[1], y2: l2[1],
+                    class: 'stroke-gray-500 stroke-[4]',
+                });
+            };
         }
     }
 
@@ -869,6 +1096,71 @@ _To be expanded..._
     }
 
     {
+        const element = document.getElementById('lattice-adjacent-line');
+
+        let adjacentCache;
+
+        const draw = () => {
+            element.innerHTML = '';
+
+            const lattice = new Lattice(element, 30);
+
+            lattice.drawGrid();
+
+            const center = [
+                Math.floor(lattice.totalCols / 2), Math.floor(lattice.totalRows / 2)
+            ];
+
+            lattice.markPoint(...center);
+
+            const adjacent = adjacentCache = adjacentCache ||
+                Lattice.getAdjacentPoints(center, 4);
+            const targetIndex = randomInt(0, adjacent.length - 1);
+
+            for (let i = 0; i < adjacent.length; i++) {
+                const p = adjacent[i];
+                
+                if (i === targetIndex) {
+                    lattice.markPoint(...p, true);
+                } else {
+                    lattice.markPoint(...p, false, {
+                        class: 'fill-gray-400 dark:fill-gray-500 stroke-transparent'
+                    });
+                }
+            }
+
+            const target = adjacent[targetIndex];
+            const { polyline, considered } = lattice.getPolylineBetween(center,
+                target, true);
+
+            for (let i = 0; i < polyline.length - 1; i++) {
+                const c = lattice.positionAt(...polyline[i]);
+                const n = lattice.positionAt(...polyline[i + 1]);
+    
+                addSVGElement(element, 'line', {
+                    x1: c[0], y1: c[1], x2: n[0], y2: n[1],
+                    class: 'stroke-indigo-500',
+                });
+            }
+
+            for (const consideredPoint of considered) {
+                const p = lattice.positionAt(...consideredPoint);
+
+                addSVGElement(element, 'circle', {
+                    r: 8, cx: p[0], cy: p[1],
+                    class: 'fill-transparent dark:stroke-gray-500 stroke-gray-400'
+                });
+            };
+        };
+
+        draw();
+
+        element.addEventListener('click', () => {
+            draw();
+        });
+    }
+
+    {
         const element = document.getElementById('lattice-tsp');
 
         const draw = () => {
@@ -891,13 +1183,12 @@ _To be expanded..._
                 lattice.markPoint(...points[i]);
             }
 
-            points = tsp(points, Lattice.distance);
+            points = lattice.getPolygon(tsp(points, Lattice.distance))
+                .map((p) => lattice.positionAt(...p));
 
-            for (let i = 0; i < 7 - 1; i++) {
-                lattice.drawLine(points[i], points[i + 1]);
-            }
-
-            lattice.drawLine(points[0], points[points.length - 1]);
+            drawPolygon(element, points, {
+                fill: false, class: 'stroke-indigo-500 fill-transparent'
+            });
         };
 
         draw();
@@ -941,8 +1232,6 @@ _To be expanded..._
                         )
                     ));
 
-                    //drawPolygon(element, [ first, randomPoint, second ].map((p) => relToAbs(center, p)), { fill: false });
-
                     finalPolygon.push(...buildPolygon([ first, randomPoint, second ], level + 1));
 
                     finalPolygon.push(first, randomPoint);
@@ -957,6 +1246,125 @@ _To be expanded..._
             drawPolygon(element, polygon.map((p) => relToAbs(center, p)), {
                 class: 'stroke-indigo-500 fill-indigo-100 dark:fill-indigo-800/50'
             });
+        };
+
+        draw();
+
+        element.addEventListener('click', () => {
+            draw();
+        });
+    }
+
+    {
+        const element = document.getElementById('rounded-tsp');
+        const center = getCenter(element);
+
+        const drawGradientTopography = (points) => {
+            const radius = center[1] / 2.5;
+            const spread = center[1] / 6;
+
+            // each stage should be this much larger than the previous
+            const stageProportion = 0.3;
+
+            for (let i = 4; i >= 0; i--) {
+                const factor = 1 + stageProportion * i;
+
+                drawBlob(element, points.map((p) => scale(p, factor)).map((p) => relToAbs(center, p)), {
+                    class: `stroke-transparent fill-indigo-500/30 dark:fill-indigo-600/30`,
+                });
+            }
+        };
+
+        const draw = () => {
+            element.innerHTML = '';
+
+            const points = tsp(generateRandomPoints(7, center, 20));
+
+            drawGradientTopography(points);
+        };
+
+        draw();
+
+        element.addEventListener('click', () => {
+            draw();
+        });
+    }
+
+    {
+        const element = document.getElementById('rounded-lattice-tsp');
+        const center = getCenter(element);
+
+        const draw = () => {
+            element.innerHTML = '';
+
+            const lattice = new Lattice(element, 30);
+
+            const totalRows = lattice.totalRows;
+            const totalCols = lattice.totalCols;
+
+            let points = [];
+
+            for (let i = 0; i < 7; i++) {
+                const random = [
+                    randomInt(0, totalCols - 1), randomInt(0, totalRows - 1)
+                ];
+
+                if (!points.filter((p) => p[0] === random[0] && p[1] === random[1]).length) {
+                    points.push(random);
+                }
+            }
+
+            points = tsp(points, Lattice.distance);
+            
+            lattice.drawRoundedShape(points);
+        };
+
+        draw();
+
+        element.addEventListener('click', () => {
+            draw();
+        });
+    }
+
+    {
+        const element = document.getElementById('random-lattice-marketing');
+        const center = getCenter(element);
+
+        const draw = () => {
+            element.innerHTML = '';
+
+            const lattice = new Lattice(element, 30);
+
+            const totalRows = lattice.totalRows;
+            const totalCols = lattice.totalCols;
+
+            lattice.drawGrid();
+
+            for (let i = 0; i < 4; i++) {
+                const p1 = [
+                    randomInt(0, totalCols - 1), randomInt(0, totalRows - 1),
+                ];
+
+                const p2 = [
+                    randomInt(0, totalCols - 1), randomInt(0, totalRows - 1),
+                ];
+
+                lattice.markPoint(...p1);
+                lattice.markPoint(...p2);
+
+                const polyline = lattice.getPolylineBetween(p1, p2)
+                    .map((p) => lattice.positionAt(...p));
+
+                for (let i = 0; i < polyline.length - 1; i++) {
+                    const c = polyline[i];
+                    const n = polyline[i + 1];
+                    
+                    addSVGElement(element, 'line', {
+                        x1: c[0], y1: c[1], x2: n[0], y2: n[1],
+                        class: 'stroke-indigo-500/25 stroke-2'
+                    });
+                }
+            }
         };
 
         draw();
