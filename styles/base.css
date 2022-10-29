@@ -1287,6 +1287,12 @@ video {
 .fill-gray-300 {
   fill: #d1d5db;
 }
+.fill-gray-400 {
+  fill: #9ca3af;
+}
+.fill-gray-800 {
+  fill: #1f2937;
+}
 .fill-indigo-100 {
   fill: #e0e7ff;
 }
@@ -1304,6 +1310,9 @@ video {
 }
 .stroke-indigo-600 {
   stroke: #4f46e5;
+}
+.stroke-gray-300\/75 {
+  stroke: rgb(209 213 219 / 0.75);
 }
 .px-3 {
   padding-left: 0.75rem;
@@ -1329,6 +1338,10 @@ video {
 .text-sm {
   font-size: 0.875rem;
   line-height: 1.25rem;
+}
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
 }
 .font-medium {
   font-weight: 500;
@@ -1405,6 +1418,10 @@ video {
     fill: #6b7280;
   }
 
+  .dark\:fill-gray-200 {
+    fill: #e5e7eb;
+  }
+
   .dark\:fill-indigo-800\/50 {
     fill: rgb(55 48 163 / 0.5);
   }
@@ -1415,6 +1432,10 @@ video {
 
   .dark\:stroke-gray-200 {
     stroke: #e5e7eb;
+  }
+
+  .dark\:stroke-gray-500\/50 {
+    stroke: rgb(107 114 128 / 0.5);
   }
 
   .dark\:text-white {
