@@ -30,7 +30,7 @@ const Posts = ({ posts, pinnedPosts, indices }) => (<>
 
     <main className={'container my-4 flex flex-col gap-4'}>
         <div className={'pb-4'}>
-            <h2 className={'mb-2 dark:text-gray-400 uppercase tracking-widest text-sm font-bold'}>
+            <h2 className={'mb-2 dark:text-gray-400 text-gray-500 uppercase tracking-widest text-sm font-bold'}>
                 Pinned
             </h2>
 
@@ -46,7 +46,7 @@ const Posts = ({ posts, pinnedPosts, indices }) => (<>
         </div>
 
         <div>
-            <h2 className={'mb-2 dark:text-gray-400 uppercase tracking-widest text-sm font-bold'}>
+            <h2 className={'mb-2 dark:text-gray-400 text-gray-500 uppercase tracking-widest text-sm font-bold'}>
                 All Posts ({posts.length})
             </h2>
 
