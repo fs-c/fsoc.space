@@ -10,7 +10,7 @@ Recently, I was refactoring a pattern scanner implementation in [maniac](https:/
 
 Consider the following sample application
 
-```C++
+```c++
 int global_counter = 0;
 
 int main() {
@@ -28,7 +28,7 @@ Let's say we want to read and keep track of the `global_counter` from another ap
 
 ### Finding the location manually
 
-First, static analysis. I will use Binary Ninja here. I didn't want to make this needelessly annoying so I compiled the sample application with debug information, which generates a PDB. Taking a look at the disassembled `main` reveals
+First, static analysis. I will use Binary Ninja here. I didn't want to make this needlessly annoying so I compiled the sample application with debug information, which generates a PDB. Taking a look at the disassembled `main` reveals
 
 ```asm
 int32_t main() __noreturn
