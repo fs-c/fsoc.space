@@ -10,7 +10,7 @@ Recently, I was refactoring a pattern scanner implementation in [maniac](https:/
 
 Consider the following sample application
 
-```c++
+```cpp
 int global_counter = 0;
 
 int main() {
@@ -129,7 +129,7 @@ Another issue with it is that it encounters a _lot_ of read errors. Some years a
 
 This never made it in a maniac release, but here's a sketch of what I was going for:
 
-```c++
+```cpp
 // iterate over all regions (subsequent pages with equal attributes) of the process
 // with the given handle, call given callback function for each
 void map_regions(HANDLE handle, const std::function<void(MEMORY_BASIC_INFORMATION *)> &callback) {
@@ -159,7 +159,7 @@ void map_regions(HANDLE handle, const std::function<void(MEMORY_BASIC_INFORMATIO
 
 This could then be used like
 
-```c++
+```cpp
 map_regions(handle, [](MEMORY_BASIC_INFORMATION *info) {
     std::cout << std::format("scanning region at {}\n", info->BaseAddress);
 
@@ -178,7 +178,7 @@ or something like that, which would vastly improve performance because we would 
 
 So, as promised, we can throw away even more reads. We know the module our signature is in (because we just did some reversing to find it), in this case it's in the main executable module, named like the executable file itself: `sample.exe`. This means we can just iterate the modules with
 
-```c++
+```cpp
 Module Process::find_module(std::string_view name) const {
     MODULEENTRY32 entry;
     entry.dwSize = sizeof(MODULEENTRY32);
@@ -209,7 +209,7 @@ Module Process::find_module(std::string_view name) const {
 
 which creates and returns a `Module` instance. I might want to do some other stuff with the module later so I figured I might as well allow saving it for later, so the search doesn't have to be repeated. But the method we are interested here is 
 
-```c++
+```cpp
 uintptr_t Module::find_signature(const Signature &&signature) const {
     auto buffer = std::vector<uint8_t>(size);
 
@@ -230,7 +230,8 @@ uintptr_t Module::find_signature(const Signature &&signature) const {
 which accepts a `Signature` object, reads the entire module memory and scans it for the given signature. I wanted to make `Signature` into an object because when finding a pattern like we have previously, one also needs to store an offset into the pattern alongside it. For our pattern of `83 EC ? A1 ? ? ? ? 8b 0D` this offset would be `4`, because the address we are looking for is at index four in the pattern.
 
 The scanning method in the `Signature` class,
-```c++
+
+```cpp
 uintptr_t scan(const std::vector<uint8_t> &buffer) const {
     const auto comparator = [](auto byte, auto pair) {
         return pair.second || byte == pair.first;
@@ -242,11 +243,12 @@ uintptr_t scan(const std::vector<uint8_t> &buffer) const {
     return result == buffer.end() ? 0 : (result - buffer.begin() + offset);
 }
 ```
+
 uses `std::search` with a custom comparator. This not only simplifies the code but will also internally use a significantly faster algorithm than the one I initially used. (Probably [Boyer-Moore](https://en.wikipedia.org/wiki/Boyer%E2%80%93Moore_string-search_algorithm).)
 
 Taken together, this can be used to write the following
 
-```c++
+```cpp
 try {
     const auto process = Process::find_process(process_name);
     
@@ -265,3 +267,5 @@ try {
     std::cout << std::format("runtime error: {}\n", err.what());
 }
 ```
+
+which, at least to my eyes, is pretty clean.
