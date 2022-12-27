@@ -268,4 +268,4 @@ try {
 }
 ```
 
-which, at least to my eyes, is pretty clean.
+which, at least to my eyes, is pretty clean. You can take a look at the final example code on [fs-c/sigscan](https://fsoc.space/words/refactoring-a-pattern-scanner/).
