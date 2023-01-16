@@ -1,7 +1,7 @@
 ---
 title: "Bypassing osu! Anti-Debug"
-date: 2023-01-11
-description: 
+date: 2023-01-16
+description:
 ---
 
 Since the last time I've looked at it, [osu!](https://osu.ppy.sh/home) has received some anti-cheat improvements with new anti-debugging measures among them. Most of them are bypassed just fine by [ScyllaHide](https://github.com/x64dbg/ScyllaHide), but at least one isn't. For each new process that is started, osu! calls [`GetFileVersionInfo`](https://learn.microsoft.com/en-us/windows/win32/api/winver/nf-winver-getfileversioninfoa) and checks the executable description against a blacklist. I found the process of discovering and bypassing this interesting enough to be worth sharing.
@@ -14,7 +14,7 @@ When selecting all supported APIs, this will log _a lot_ of calls and significan
 
 ![](https://i.imgur.com/aeGbPWh.png)
 
-This just initializes a string with the program that was just started, but taking a look at the stack reveals that this is called as a part of `GetFileVersionInfoW`.
+This just initializes a string with the program that was just started, but taking a look at the stack reveals that this is called as a part of `GetFileVersionInfoW`. In fact, these calls happen for every application that is started while osu! is running.
 
 ![](https://i.imgur.com/B91ed1S.png)
 
@@ -38,4 +38,4 @@ So osu! is reading the `FileDescription` and appears to be checking it against a
 
 ![](https://i.imgur.com/RqcOlg3.png)
 
-Indeed, changing it to anything but x64dbg will cause osu! to ignore it. This is the solution that I actually use. But for completeness sake, it is also possible to hook `GetFileVersionInfoSizeW` and always return zero. That way osu! will never even call `GetFileVersionInfoW`. But this requires injecting a DLL every time osu! is started, which is somewhat cumbersone.
+Indeed, changing it to anything but x64dbg will cause osu! to ignore it. This is the solution that I actually use, considering that there are only a handful of blacklisted processes. But for completeness sake, it is also possible to hook `GetFileVersionInfoSizeW` and always return zero. That way osu! will never even call `GetFileVersionInfoW`. But this requires injecting a DLL every time osu! is started, which is somewhat cumbersone.
