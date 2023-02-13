@@ -4,9 +4,13 @@ date: 2022-12-27
 description: Patterns and offsets in the context of game hacking, motivated by a refactor of an old pattern scanning implementation 
 ---
 
-Recently, I was refactoring a pattern scanner implementation in [maniac](https://github.com/fs-c/maniac). In the context of game cheating, a pattern scanner basically looks for a sequence of bytes, with optional wildcards. I will first give some background on what this is all about and then go over the actual rewrite of a rather badly implemented pattern scanner.
+In the context of game cheating, a pattern scanner looks for a sequence of bytes in the memory of a (game) process, usually with optional wildcards to account for parts that will always change. Recently, I was refactoring a pattern scanner implementation in [maniac](https://github.com/fs-c/maniac), which is what motivated this post -- hence the title.
 
-## Background
+But since it fits the topic and I have been asked to explain it before, I have also added a preface that illustrates some concepts behind pattern scanning in more detail. That section particularly aimed at those with little to no experience in the game cheating/reversing world.
+
+Then I introduce the original implementation, highlight some of its problems, and develop improved versions for different use-cases. 
+
+## Preface/Background
 
 Consider the following sample application
 
@@ -69,15 +73,17 @@ this is indeed the case. Again, we could have known this just from looking at th
 
 ### Building a pattern
 
-We could stop right here, assuming the program we are reading from remains the same, we will always be able to get the correct address now. But, particularly when working with games, the program will not remain the same and any update will invariably change the location of our pointer in the assembly. At this point, some resign themselves to updating their offsets after every update, perhaps choosing to use something like [dumps.host](https://dumps.host/) to essentially offload the work.
+We could stop right here, assuming the program we are reading from remains the same*, we will always be able to get the correct address now. But, particularly when working with games, the program will not remain the same and any update will invariably change the location of our pointer in the assembly. At this point, some resign themselves to updating their offsets after every update, perhaps choosing to use something like [dumps.host](https://dumps.host/) to essentially offload the work.
+
+*And assuming that the program isn't written in an interpreted language, in which case the location of the actual machine code is effectively unpredictable.
 
 But while code changes _anywhere_ will break our offsets, these code changes will very often not be local to the place in the assembly we are getting our address from. This motivates the concept of pattern scanning, often also called signature scanning. For each offset we create a pattern, made up of surrounding instructions (bytes), taking care to add wildcards for things we expect to change --- like the offset we are looking for.
 
-A signature for our `global counter` could be `83 EC ? A1 ? ? ? ? 8b 0D`. This signature is probably too long, signatures should be as short as possible while making sure that they are still unique, the shorter it is the more resilient it is to code changes near our offset location. We can now scan the process memory for this signature and thus dynamically obtain our offset, and would still be able to get it even if the sample application was expanded with some additional logic somewhere.
+A signature for our `global counter` could be `83 EC ? A1 ? ? ? ? 8B 0D`. We can now scan the process memory for this signature, doing a byte comparison for regular bytes and allowing any byte for the wildcard `?`, and thus dynamically obtain our offset. If some logic in the program changes somewhere that isn't very close to our value, its signature won't have changed and we will still be able to obtain it.
 
 ## Signature Scanning
 
-A couple of years ago I added the following signature scanning implementation to maniac. This section will be about improving this implementation.
+A couple of years ago I added the following signature scanning implementation to maniac. This section will first highlight some of the issues of this implementation, and then go through the thought process of developing an improved version.
 
 ```c
 void *find_pattern(const unsigned char *signature, unsigned int sig_len)
@@ -123,143 +129,154 @@ static inline void *check_chunk(const unsigned char *sig, size_t sig_size,
 }
 ```
 
-But first, let's take a look at what is going on. We read chunks of some predefined size (`read_size`) starting at address `0` until we hit `INT_MAX`. Some immediate comments: This should iterate up to `UINTPTR_MAX` and use `uintptr_t` instead of `size_t` for `off`. It also has a potential bug where a signature that happens to be between these arbitrarily sized chunks won't be found. So: this is a very bad implementation, and not only because of that. At the time I wrote it I had no clue about reverse engineering and had only a very vague idea about what a signature was. But someone gave me some signatures so I figured I might as well use them.
+But first, let's take a look at what is going on. We read chunks of some predefined size (`read_size`) starting at address `0` until we hit `INT_MAX`. These chunks are then searched using the most basic search algorithm.
 
-Another issue with it is that it encounters a _lot_ of read errors. Some years after first implementing it, trying to improve its performance, I set out to fix this by using `VirtualQueryEx` to check the permissions of memory regions before trying to read from them, and then skipping the entire region.
+Some issues, in no particular order:
 
-This never made it in a maniac release, but here's a sketch of what I was going for:
+- `INT_MAX` isn't necessarily the highest address, this should use something like `UINTPTR_MAX`.
+- not all parts of a process address space are readable; since this implementation doesn't even know about paging, let alone page permissions, it runs into a lot of permission errors
+- because the buffer size is arbitrary and not tied to page sizes or regions there is a possibility that a signature might span two buffers, und thus be missed
+- the search algorithm used is very naiive, better algorithms exist
+- it doesn't allow specifying a module name, which could significantly narrow down the region of memory that needs to be searched 
+
+Let's first tackle the issue of our search algorithm, because the structure that I will introduce will be used throughout the rest of this post. The key idea here is to separate "finding the region to search" from "searching the region". This is already roughly the case in the above implementation, but it can be taken a step further:
 
 ```cpp
-// iterate over all regions (subsequent pages with equal attributes) of the process
-// with the given handle, call given callback function for each
-void map_regions(HANDLE handle, const std::function<void(MEMORY_BASIC_INFORMATION *)> &callback) {
-    uintptr_t cur_address = 0;
-    // ensure architecture compatibility, UINTPTR_MAX is the largest (data) pointer i.e. address
-    // for 32bit this is 0xFFFFFFFF or UINT32_MAX
-    const uintptr_t max_address = UINTPTR_MAX;
+class Signature {
+    uintptr_t offset;
+    std::vector<std::pair<uint8_t, bool>> pattern;
+
+    // converts a pattern like "AB CD EF ? ? FF" to [ [171, false], ..., [0, true], ... ]
+    // where the second pair member signifies whether the byte is a wildcard
+    constexpr void parse_string_pattern(const std::string &string_pattern) {
+        // ...
+    }
+
+public:
+    Signature(const std::string &pattern, uintptr_t offset) : offset(offset) {
+        parse_string_pattern(pattern);
+    }
+
+    template<typename T>
+    uintptr_t scan(T begin, T end) const {
+        const auto comparator = [](auto byte, auto pair) {
+            // treat everything as equal to a wildcard, compare others normally
+            return pair.second || byte == pair.first;
+        };
+
+        const auto result = std::search(begin, end, pattern.begin(), pattern.end(), comparator);
+
+        return result == end ? 0 : (result - begin + offset);
+    }
+};
+```
+
+From [`signature.h`](https://github.com/fs-c/sigscan/blob/main/sigscan/signature.h).
+
+We intruduce a type for signatures that internally handles conversion from the human-readable signature format to a more computationally practical one and also provides a method to search for "itself" in a given buffer. The particularly nice bit here is the usage of [`std::search`](https://en.cppreference.com/w/cpp/algorithm/search) which has a significantly better runtime complexity than the previous implementation while also cleaning up the code. Note the custom comparator to add support for our wildcards. Note that the class also stores an offset -- for a signature of `AA BB ? ? ? ? CC DD` the offset would be two, because the value we are searching for is two bytes beyond the address of the start of the signature.
+
+The rest of this code will live in the context of a `Process` class, which provides access to memory and (importantly) manages the lifetime of required handles. I won't go over most utility methods in detail, if you're curious take a look at [`process.h`](https://github.com/fs-c/sigscan/blob/main/sigscan/process.h).
+
+That takes care of the point about our slow search algorithm. Let's now work on the permissions issue, by making sure that we can actually read at a particular address before trying. The Windows API function [`VirtualQueryEx`](https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-virtualqueryex) does all the heavy lifting here, by letting us get information about the region a given address is in. In this context a region is made up of subsequent pages with equal attributes.
+
+Using this information (I'd recommend taking a look at the documentation for [`MEMORY_BASIC_INFORMATION`](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-memory_basic_information) and [Process Security and Access Rights](https://learn.microsoft.com/en-us/windows/win32/procthread/process-security-and-access-rights)) we can avoid read errors by checking the type and protection. We can also fix the bug where a signature might be between two of our previously arbitrarily sized buffers by just reading whole regions at once.
+
+```cpp
+intptr_t Process::find_signature(const Signature &signature, uintptr_t initial_address, const uintptr_t max_address) const {
+    auto cur_address = initial_address;
+
+    MEMORY_BASIC_INFORMATION info;
+
+    auto buffer = std::vector<std::uint8_t>{};
 
     while (cur_address < max_address) {
-        MEMORY_BASIC_INFORMATION info;
-
         if (!VirtualQueryEx(handle, reinterpret_cast<void *>(cur_address), &info, sizeof(info))) {
-            std::cout << std::format("couldn't query at {}\n", cur_address);
-
-            // can't really recover from this gracefully
-            return;
+            throw std::runtime_error(std::format("couldn't query at {}", cur_address));
         }
 
-        callback(&info);
+        const auto base = reinterpret_cast<uintptr_t>(info.BaseAddress);
 
-        // don't just add region size to current address because we might have
-        // missed the actual region boundary
-        cur_address = reinterpret_cast<uintptr_t>(info.BaseAddress) + info.RegionSize;
-    }
-}
-```
+        bool invalid_type = (info.Type != MEM_IMAGE && info.Type != MEM_PRIVATE);
+        bool invalid_protection = (info.Protect == PAGE_EXECUTE || info.Protect == PAGE_NOACCESS || info.Protect == PAGE_TARGETS_INVALID);
 
-This could then be used like
+        if (!info.RegionSize || info.State != MEM_COMMIT || invalid_type || invalid_protection) {
+            cur_address = base + info.RegionSize;
 
-```cpp
-map_regions(handle, [](MEMORY_BASIC_INFORMATION *info) {
-    std::cout << std::format("scanning region at {}\n", info->BaseAddress);
+            continue;
+        }
 
-    if (/* permissions are fine */) {
-        const auto buffer = /* read the region */;
-        const auto offset = /* scan the region */;
+        buffer.resize(info.RegionSize);
+        read_memory<std::uint8_t>(base, buffer.data(), buffer.size());
+
+        const auto offset = signature.scan(buffer.begin(), buffer.end());
 
         if (offset) {
-            std::cout << std::format("found offset {}\n", offset);
+            return base + offset;
         }
+
+        cur_address = base + info.RegionSize;
     }
-});
+
+    return 0;
+}
 ```
 
-or something like that, which would vastly improve performance because we would read or skip entire regions (adjacent pages with the same permissions) at once, instead of tiny chunks. I don't want to go into detail about this implementation because I will strip it down even more in the next step. It's included here because I can imagine situations where it would be useful.
+The method accepts a signature to search for and memory addresses between which to search for it. It then walks the regions of memory in this span, verifies that the type and protection make it relevant and readable to us, and searches the regions. This code isn't very exciting, if it looks intimidating take a look at the documentation pages that I linked at above.
 
-So, as promised, we can throw away even more reads. We know the module our signature is in (because we just did some reversing to find it), in this case it's in the main executable module, named like the executable file itself: `sample.exe`. This means we can just iterate the modules with
+This method is private, but with it we can trivially create a public version that just searches _all_ regions of memory in a given process -- useful for interpreted programs.
 
 ```cpp
-Module Process::find_module(std::string_view name) const {
-    MODULEENTRY32 entry;
-    entry.dwSize = sizeof(MODULEENTRY32);
+uintptr_t Process::find_signature(const Signature &&signature) const {
+    return find_signature(signature, 0, UINTPTR_MAX);
+}
+```
 
-    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, id);
-    if (!snapshot || snapshot == INVALID_HANDLE_VALUE) {
-        throw std::runtime_error(std::format("couldn't enumerate modules of process {}", id));
-    }
+We've now taken care of all read errors, improved performance by reading more at once and skipping irrelevant or unreadable regions and fixed a bug where a signature wouldn't be found. The only point remaining is to allow specifiying a particular module to search in, further reducing the memory that needs to be searched significantly.
 
-    Module32First(snapshot, &entry);
+Entries of the module list of a process are described by [`MODULEENTRY32`](https://learn.microsoft.com/en-us/windows/win32/api/tlhelp32/ns-tlhelp32-moduleentry32), which can be queried using [`Module32First`](https://learn.microsoft.com/en-us/windows/win32/api/tlhelp32/nf-tlhelp32-module32first)/[`Module32Next`](https://learn.microsoft.com/en-us/windows/win32/api/tlhelp32/nf-tlhelp32-module32next). I implemented a small wrapper over this, called `for_each_module`, which calls a given callback for every module and passes it a pointer to the relevant struct.
 
-    if (name == entry.szModule) {
-        CloseHandle(snapshot);
-        return Module(this, reinterpret_cast<uintptr_t>(entry.modBaseAddr), entry.modBaseSize);
-    }
+Thus we don't have to look at the ugly module iteration, and the implementation is as simple as
 
-    while (Module32Next(snapshot, &entry)) {
-        if (name == entry.szModule) {
-            CloseHandle(snapshot);
-            return Module(this, reinterpret_cast<uintptr_t>(entry.modBaseAddr), entry.modBaseSize);
+```cpp
+uintptr_t Process::find_signature(const Signature &&signature, std::string_view module_name) const {
+    uintptr_t address = 0;
+
+    for_each_module([&](MODULEENTRY32 *mod) -> bool {
+        if (mod->szModule != module_name) {
+            return true;
         }
-    }
 
-    CloseHandle(snapshot);
-    throw std::runtime_error(std::format("couldn't find module '{}' in process {}", name, id));
+        const auto base = reinterpret_cast<uintptr_t>(mod->modBaseAddr);
+        address = find_signature(signature, base, base + mod->modBaseSize);
+
+        return false;
+    });
+
+    return address;
 }
 ```
 
-which creates and returns a `Module` instance. I might want to do some other stuff with the module later so I figured I might as well allow saving it for later, so the search doesn't have to be repeated. But the method we are interested here is 
+Here, `for_each_module` expects the callback to return true if it should continue iterating.
 
-```cpp
-uintptr_t Module::find_signature(const Signature &&signature) const {
-    auto buffer = std::vector<uint8_t>(size);
-
-    if (!process->read_memory<uint8_t>(base, buffer.data(), buffer.size())) {
-        throw std::runtime_error(std::format("couldn't read module memory at {} ({})", base, size));
-    }
-
-    const auto offset = signature.scan(buffer);
-
-    if (!offset) {
-        throw std::runtime_error("couldn't find signature");
-    }
-
-    return base + offset;
-}
-```
-
-which accepts a `Signature` object, reads the entire module memory and scans it for the given signature. I wanted to make `Signature` into an object because when finding a pattern like we have previously, one also needs to store an offset into the pattern alongside it. For our pattern of `83 EC ? A1 ? ? ? ? 8b 0D` this offset would be `4`, because the address we are looking for is at index four in the pattern.
-
-The scanning method in the `Signature` class,
-
-```cpp
-uintptr_t scan(const std::vector<uint8_t> &buffer) const {
-    const auto comparator = [](auto byte, auto pair) {
-        return pair.second || byte == pair.first;
-    };
-
-    const auto result = std::search(buffer.begin(), buffer.end(),
-        pattern.begin(), pattern.end(), comparator);
-
-    return result == buffer.end() ? 0 : (result - buffer.begin() + offset);
-}
-```
-
-uses `std::search` with a custom comparator. This not only simplifies the code but will also internally use a significantly faster algorithm than the one I initially used. (Probably [Boyer-Moore](https://en.wikipedia.org/wiki/Boyer%E2%80%93Moore_string-search_algorithm).)
-
-Taken together, this can be used to write the following
+Taken together, these methods can be used like
 
 ```cpp
 try {
     const auto process = Process::find_process(process_name);
-    
-    const auto counter_ptr = process.find_module("sample.exe")
-        .find_signature(Signature{ "83 EC ? A1 ? ? ? ? 8b 0D", 4 });
-    const auto counter = process.read_memory<uintptr_t>(counter_ptr);
 
-    std::cout << std::format("found counter at {:#x} -> {:#x}\n", counter, counter_ptr);
+    // ...leaving out the last parameter if the module is not known
+    const auto value_ptr_addr = process.find_signature(Signature{ "40 50 A3 ? ? ? ? FF 15", 3 }, "sample.exe");
+
+    if (!value_ptr_addr) {
+        throw std::runtime_error("couldn't find signature");
+    }
+
+    const auto value_ptr = process.read_memory<uintptr_t>(value_ptr_addr);
+
+    std::cout << std::format("found value at {:#x} -> {:#x}\n", value_ptr, value_ptr_addr);
 
     while (true) {
-        std::cout << process.read_memory<int32_t>(counter) << std::endl;
+        std::cout << process.read_memory<int32_t>(value_ptr) << std::endl;
 
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
@@ -268,4 +285,4 @@ try {
 }
 ```
 
-which, at least to my eyes, is pretty clean. You can take a look at the final example code on [fs-c/sigscan](https://fsoc.space/words/refactoring-a-pattern-scanner/).
+which, at least to my eyes, is pretty clean. You can take a look at the final example code in [fs-c/sigscan](https://fsoc.space/words/refactoring-a-pattern-scanner/).
