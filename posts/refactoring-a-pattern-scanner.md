@@ -6,7 +6,7 @@ description: Patterns and offsets in the context of game hacking, motivated by a
 
 In the context of game cheating, a pattern scanner looks for a sequence of bytes in the memory of a (game) process, usually with optional wildcards to account for parts that will always change. Recently, I was refactoring a pattern scanner implementation in [maniac](https://github.com/fs-c/maniac), which is what motivated this post -- hence the title.
 
-But since it fits the topic and I have been asked to explain it before, I have also added a preface that illustrates some concepts behind pattern scanning in more detail. That section particularly aimed at those with little to no experience in the game cheating/reversing world.
+But since it fits the topic and I have been asked to explain it before, I have also added a preface that illustrates some concepts behind pattern scanning in more detail. This first section is particularly aimed at those with little to no experience in the game cheating/reversing world.
 
 Then I introduce the original implementation, highlight some of its problems, and develop improved versions for different use-cases. 
 
@@ -73,9 +73,9 @@ this is indeed the case. Again, we could have known this just from looking at th
 
 ### Building a pattern
 
-We could stop right here, assuming the program we are reading from remains the same*, we will always be able to get the correct address now. But, particularly when working with games, the program will not remain the same and any update will invariably change the location of our pointer in the assembly. At this point, some resign themselves to updating their offsets after every update, perhaps choosing to use something like [dumps.host](https://dumps.host/) to essentially offload the work.
+We could stop right here, assuming the program we are reading from remains the same, we will always be able to get the correct address now. But, particularly when working with games, the program will not remain the same and any update will invariably change the location of our pointer in the assembly. At this point, some resign themselves to updating their offsets after every update, perhaps choosing to use something like [dumps.host](https://dumps.host/) to essentially offload the work.
 
-*And assuming that the program isn't written in an interpreted language, in which case the location of the actual machine code is effectively unpredictable.
+(The situation is somewhat more convoluted when the target program is written in an interpreted language, where the location of the actual machine code might not always be the same.)
 
 But while code changes _anywhere_ will break our offsets, these code changes will very often not be local to the place in the assembly we are getting our address from. This motivates the concept of pattern scanning, often also called signature scanning. For each offset we create a pattern, made up of surrounding instructions (bytes), taking care to add wildcards for things we expect to change --- like the offset we are looking for.
 
