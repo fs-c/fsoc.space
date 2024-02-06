@@ -18,7 +18,7 @@ const Legal = () => (<>
 
         <p>
             <i>I do not collect, process or otherwise handle any personal data of site visitors</i>, unless 
-            you send me an email, in which case its contents and your address will be stored for the 
+            you send me an email, in which case its contents and metadata will be stored for the 
             duration and purposes of our correspondence. There are no public user accounts. Cookies or 
             equivalent technologies are not used.
         </p>
@@ -27,7 +27,7 @@ const Legal = () => (<>
             This site runs on infrastructure provided by GitHub, Inc. via 
             their <a href={'https://pages.github.com/'}>GitHub Pages</a> service. For information 
             on the data which GitHub, Inc. may collect, see 
-            their <a href={'https://docs.github.com/en/github/site-policy/github-privacy-statement'}>Privacy Statement</a> (accessed 2021-04-24).
+            their <a href={'https://docs.github.com/en/github/site-policy/github-privacy-statement'}>Privacy Statement</a>.
         </p>
 
         <hr />

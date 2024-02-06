@@ -38,4 +38,3 @@ export const getProps = async (slug) => {
 export const getPaths = async () => {
     return (await getContent()).indices.map((index) => index.slug);
 }
-

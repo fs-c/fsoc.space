@@ -1,10 +1,14 @@
 import { Header } from '../_app';
 import { getContent } from '../../posts';
 
-const Post = ({ slug, title, isoDate, humanDate, description }) => (<>
-    <li><a href={process.env.__DHOW_ROUTE_PATH + '/' + slug}>
+const Post = ({ slug, title, isoDate, humanDate, description, external }) => (<>
+    <li><a href={external ? external : process.env.__DHOW_ROUTE_PATH + '/' + slug}>
         <h1>
-            <span className={'font-medium dark:text-gray-100'}>{title}</span>
+            <span className={'font-medium dark:text-gray-100 inline-flex flex-row items-center gap-2'}>
+                {external && <span class="px-2 p-[2px] text-xs dark:bg-gray-700 rounded-md h-min">EXTERNAL</span>}
+                
+                {title}
+            </span>
             
             <small className={'text-gray-500 dark:text-gray-400 ml-2'}>
                 <time datetime={isoDate}>

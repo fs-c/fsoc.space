@@ -756,7 +756,7 @@ _To be expanded..._
                     }
                 }
             }
-
+    
             throw new Error('could not find polyline');
         }
 
