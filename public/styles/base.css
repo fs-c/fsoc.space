@@ -5,12 +5,14 @@
 @layer base {
     body {
         @apply text-lg;
+
+        @apply bg-gray-100;
         @apply dark:bg-gray-800;
     }
 }
 
 @layer components {
     .container {
-        @apply max-w-2xl w-full px-4 mx-auto;
+        @apply max-w-3xl w-full px-4 mx-auto;
     }
 }

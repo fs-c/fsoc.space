@@ -2,6 +2,7 @@
 title: More Tinkering with Random Shapes
 date: 2022-10-29
 description: Thoughts and visualisations loosely related to randomly generating simple polygons.
+tags: [art?]
 ---
 
 In a [recent post](https://fsoc.space/words/drawing-squiggly-lines) I talked about generating random shapes. The goal was to generate aesthetically consistent but still random shapes with smooth curves. One of the primary challenges was generating polygons which would not self-intersect (for aesthetic reasons). To get an idea for what I'm talking about, the following is an interactive illustration of the algorithm I ended up designing and using, taken from the linked post.

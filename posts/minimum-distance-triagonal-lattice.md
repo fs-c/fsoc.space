@@ -2,6 +2,7 @@
 title: Minimum Distance Between Two Points in a Nonlinear Triagonal Lattice
 date: 2022-10-28
 description:
+tags: [art?]
 ---
 
 This is a short post, somewhat related to [this one](/words/minimum-distance-triagonal-lattice). I had a hard time figuring this out, particularly because there weren't any good search results for the obvious terms. Hopefully the post improves searchability.

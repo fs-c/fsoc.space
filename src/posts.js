@@ -5,86 +5,72 @@ import { readFile, readdir } from 'fs/promises';
 
 const contentDirectory = 'posts';
 
-const cache = { posts: [], indices: [] };
+const cache = { set: false, value: { posts: [], listedPosts: [], listedTags: [] } };
 
-const getIsoDate = (date) => date.toISOString();
-const getHumanDate = (date) => `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+const formatDate = (date) => date.toLocaleString('en-GB', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+});
 
-export const getContent = async () => {
+const getTagObjectFromString = (tagString) => ({
+    formattedTag: tagString.toUpperCase(),
+    uriSafeTag: tagString.toLowerCase().replace(/[^a-zA-Z0-9-_]/g, '')
+});
+
+export const getPostsAndTags = async () => {
+    if (cache.set) {
+        return cache.value;
+    }
+
     const files = (await readdir(contentDirectory))
         .map((p) => path.join(contentDirectory, p));
 
     const posts = [];
-    const indices = {};
 
-    // First pass: Sort files into posts and indices
     for (const filePath of files) {
         const slug = path.parse(filePath).name;
 
         const fileContent = await readFile(filePath);
-        const frontMatter = parseFrontMatter(fileContent);
+        const { data: metadata, content: rawContent } = parseFrontMatter(fileContent);
 
-        const content = smdp.parse(frontMatter.content);
+        const content = smdp.parse(rawContent);
+        const formattedDate = formatDate(metadata.date);
 
-        if (frontMatter.data.index) {
-            indices[frontMatter.data.index] = {
-                slug,
-                content,
-                ...frontMatter.data,
-                posts: []
-            };
-        } else {
-            const isoDate = getIsoDate(frontMatter.data.date);
-            const humanDate = getHumanDate(frontMatter.data.date);
-
-            posts.push({
-                path: filePath,
-                slug,
-                content,
-                ...frontMatter.data,
-                isoDate, humanDate,
-                filePath,
-            });
+        const postTagStrings = metadata.tags ?? [];
+        if (metadata.external) {
+            postTagStrings.push('external');
         }
+
+        const postTags = postTagStrings.map(getTagObjectFromString);
+        posts.push({
+            path: filePath,
+            slug,
+            content,
+            title: metadata.title,
+            description: metadata.description,
+            tags: Array.from(postTags.values()),
+            formattedDate,
+            filePath,
+            externalLink: metadata.external,
+            listed: metadata.listed !== false
+        });
     }
 
-    posts.sort((a, b) => b.date - a.date);
+    cache.value.posts = posts.sort((a, b) => b.date - a.date);
+    cache.value.listedPosts = cache.value.posts.filter((post) => post.listed);
 
-    // Second pass: Populate indices with posts based on tag
-    for (const post of posts) {
-        if (!post.tags || !post.tags.length) {
-            continue;
-        }
+    // map visible posts to [ safeTagName, tagObject ] and pass that to Map, to deduplicate
+    // by tag url component
+    cache.value.listedTags = Array.from((new Map(cache.value.listedPosts.flatMap((post) => (
+        post.tags.map((tag) => [ tag.uriSafeTag, tag ])
+    )))).values())
 
-        for (const tag of post.tags) {
-            if (indices[tag]) {
-                indices[tag].posts.push(post);
-            }
-        }
-    }
+    cache.set = true;
 
-    cache.posts = posts;
-    cache.indices = Object.values(indices);
-
-    return cache;
+    return cache.value;
 };
 
 export const getPost = async (slug) => {
-    for (const post of cache.posts) {
-        if (post.slug === slug) {
-            return post;
-        }
-    }
-
-    return (await getContent()).posts.filter((post) => post.slug === slug)[0];
+    return (await getPostsAndTags()).posts.find((post) => post.slug === slug);
 };
-
-export const getIndex = async (slug) => {
-    for (const index of cache.indices) {
-        if (index.slug === slug) {
-            return index;
-        }
-    }
-
-    return (await getContent()).indices.filter((index) => index.slug === slug)[0];
-}

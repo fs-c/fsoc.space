@@ -1,17 +1,17 @@
-import { Header } from '../_app';
+import { Header } from '../../components/';
 import { Head } from '@fsoc/dhow';
-import { getPost, getContent } from '../../posts';
+import { getPost, getPostsAndTags } from '../../posts';
 
 const githubUrl = 'https://github.com/fs-c/fsoc.space/';
 
-const Post = ({ title, description, content, humanDate, filePath }) => (<>
+const Post = ({ title, description, content, formattedDate, filePath }) => (<>
     <Head>
         <meta name={'description'} content={description} />
 
         <link href="/styles/syntax-theme.css" rel="stylesheet" />
     </Head>
 
-    <Header title={'words'} href={'/words'} />
+    <Header elements={[{ title: 'words', href: '/words' }]} />
 
     <main className={'container prose dark:prose-invert lg:prose-lg pb-8'}>
         <h1 className={'mt-4'}>
@@ -20,7 +20,7 @@ const Post = ({ title, description, content, humanDate, filePath }) => (<>
 
         <aside className={'mb-4 flex flex-row justify-between'}>
             <small>
-                Published on {humanDate}
+                Published on {formattedDate}
             </small>
 
             <small>
@@ -46,7 +46,7 @@ export const getProps = async (slug) => {
 }
 
 export const getPaths = async () => {
-    return (await getContent()).posts.map((post) => post.slug);
+    return (await getPostsAndTags()).posts.map((post) => post.slug);
 }
 
 export default Post;

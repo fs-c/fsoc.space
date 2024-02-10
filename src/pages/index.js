@@ -1,8 +1,15 @@
-import { Header } from './_app';
+const HeroHeader = () => (<>
+    <header className={'container my-4'}>
+        <picture>
+            <source srcset={'/assets/logo-white.svg'} media={'(prefers-color-scheme: dark)'} />
+            <img src={'/assets/logo-black.svg'} alt={'fsoc'} className={'mx-auto'} />
+        </picture>
+    </header>
+</>);
 
 const Home = () => {
     return (<>
-        <Header hero />
+        <HeroHeader />
 
         <main className={'flex flex-col prose dark:prose-invert prose-lg container'}>
             <p>

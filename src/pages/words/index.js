@@ -1,75 +1,71 @@
-import { Header } from '../_app';
-import { getContent } from '../../posts';
+import { Header } from '../../components/';
+import { getPostsAndTags } from '../../posts';
 
-const Post = ({ slug, title, isoDate, humanDate, description, external }) => (<>
-    <li><a href={external ? external : process.env.__DHOW_ROUTE_PATH + '/' + slug}>
-        <h1>
-            <span className={'font-medium dark:text-gray-100 inline-flex flex-row items-center gap-2'}>
-                {external && <span class="px-2 p-[2px] text-xs dark:bg-gray-700 rounded-md h-min">EXTERNAL</span>}
-                
-                {title}
-            </span>
-            
-            <small className={'text-gray-500 dark:text-gray-400 ml-2'}>
-                <time datetime={isoDate}>
-                    {humanDate}
-                </time>
-            </small>
-        </h1>
+const getPostHref = (post) => post.externalLink || `/words/${post.slug}`;
+const getTagHref = (tag) => `/words/tag/${tag.uriSafeTag}`;
 
-        <p className={'text-gray-700 dark:text-gray-300 font-light'}>
-            {description}
-        </p>
-    </a></li>
+const Pill = ({ children, active }) => (<>
+    <span className={`px-2 py-[2px] text-xs rounded-md h-min font-medium align-middle hover:bg-gray-700 hover:text-gray-200 dark:hover:bg-gray-300 dark:hover:text-gray-900 ${active ? 'bg-gray-700 text-gray-200 dark:bg-gray-300 dark:text-gray-900': 'bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-gray-200'}`}>{children}</span>
 </>);
 
-const IndexPost = ({ slug, title, posts }) => (<>
-    <Post slug={slug} title={title}
-        description={`Containing ${posts.length} posts, newest from ${posts[0].humanDate}.`}
-    />
+export const Tag = ({ tag, link, active }) => (<>
+    {link ? (
+        <a href={active ? '/words' : getTagHref(tag)}><Pill active={active}>{tag.formattedTag}</Pill></a>
+    ) : (
+        <Pill>{tag.formattedTag}</Pill>
+    )}
 </>);
 
-const Posts = ({ posts, pinnedPosts, indices }) => (<>
-    <Header title={'words'} />
+const PostEntry = (post) => {
+    const { formattedDate, title, description, tags } = post;
 
-    <main className={'container my-4 flex flex-col gap-4'}>
-        <div className={'pb-4'}>
-            <h2 className={'mb-2 dark:text-gray-400 text-gray-500 uppercase tracking-widest text-sm font-bold'}>
-                Pinned
-            </h2>
+    return (<>
+        <div className={'flex flex-col justify-stretch md:flex-row'}>
+            <div className={'md:basis-0 md:min-w-max md:flex-grow md:flex md:flex-row md:justify-end'}>
+                <small className={'text-gray-500 dark:text-gray-400 font-mono pl-4'}>
+                    <time datetime={formattedDate}>
+                        {formattedDate}
+                    </time>
+                </small>
+            </div>
 
-            <ul className={'flex flex-col space-y-4'}>
-                {indices.map((index) => <>
-                    <IndexPost {...index} />
-                </>)}
+            <a href={getPostHref(post)} className={'flex flex-col px-4 md:max-w-3xl md:w-full'}>
+                <h1 className={'font-medium dark:text-gray-100'}>                
+                    {title}
 
-                {pinnedPosts.map((post) => (<>
-                    <Post {...post} />
-                </>))}
-            </ul>
+                    {tags.map((tag) => <span className={'ml-2'}><Tag tag={tag} /></span>)}
+                </h1>
+
+                <p className={'text-gray-700 dark:text-gray-300 font-light'}>
+                    {description}
+                </p>
+            </a>
+
+            <div className={'hidden md:block md:basis-0 md:flex-grow'}></div>
         </div>
+    </>);
+};
 
-        <div>
-            <h2 className={'mb-2 dark:text-gray-400 text-gray-500 uppercase tracking-widest text-sm font-bold'}>
-                All Posts ({posts.length})
-            </h2>
+export const PostList = ({ posts }) => (<>
+    <div className={'my-4 flex flex-col gap-6 max-w-3xl w-full mx-auto md:max-w-full'}>
+        {posts.map((post) => <PostEntry {...post} />)}
+    </div>
+</>);
 
-            <ul className={'flex flex-col space-y-4'}>
-                {posts.map((post) => (<>
-                    <Post {...post} />
-                </>))}
-            </ul>
-        </div>
-    </main>
+const Posts = ({ posts, tags }) => (<>
+    <Header elements={[{ title: 'words' }]} />
+
+    <p className={'container text-gray-600 dark:text-gray-400 flex flex-row gap-2'}>
+        <span className={'mr-1'}>Filter by tag</span> {tags.map((tag) => <Tag tag={tag} link />)}
+    </p>
+
+    <PostList posts={posts} />
 </>);
 
 export const getProps = async () => {
-    const content = await getContent();
-    const posts = content.posts.filter((p) => p.listed !== false && !p.pinned);
-    const pinnedPosts = content.posts.filter((p) => p.pinned === true);
-    const indices = content.indices;
+    const { listedPosts, listedTags } = await getPostsAndTags();
 
-    return { posts, pinnedPosts, indices, title: 'fsoc.space/words' };
+    return { posts: listedPosts, tags: listedTags, title: 'fsoc.space/words' };
 }
 
 export default Posts;

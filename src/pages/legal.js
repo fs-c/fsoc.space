@@ -1,4 +1,4 @@
-import { Header } from './_app';
+import { Header } from '../components/';
 
 const address = `root@fsoc.space
 +43 699 17057679
@@ -9,7 +9,7 @@ Hittmairstraße 64
 Austria`;
 
 const Legal = () => (<>
-    <Header title={'legal'} />
+    <Header elements={[{ title: 'words', href: '/words' }, { title: 'legal' }]} />
 
     <div className={'container prose dark:prose-invert'}>
         <p>
