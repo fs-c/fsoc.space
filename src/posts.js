@@ -50,6 +50,7 @@ export const getPostsAndTags = async () => {
             title: metadata.title,
             description: metadata.description,
             tags: Array.from(postTags.values()),
+            date: metadata.date,
             formattedDate,
             filePath,
             externalLink: metadata.external,

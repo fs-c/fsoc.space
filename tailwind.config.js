@@ -3,7 +3,6 @@ module.exports = {
         removeDeprecatedGapUtilities: true,
         purgeLayersByDefault: true,
     },
-
     content: [
         // posts may contain inline html
         './posts/**/*.md',
@@ -11,7 +10,6 @@ module.exports = {
         './public/**/*.html',
         './src/**/*.js',
     ],
-
     theme: {
         extend: {
             fontFamily: {
@@ -19,10 +17,8 @@ module.exports = {
             },
         },
     },
-
     plugins: [
         require('@tailwindcss/typography'),
     ],
-
     variants: {},
 };
