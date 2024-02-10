@@ -8,7 +8,7 @@ module.exports = {
         './posts/**/*.md',
 
         './public/**/*.html',
-        './src/**/*.js',
+        './src/**/*.{js,jsx,ts,tsx}',
     ],
     theme: {
         extend: {

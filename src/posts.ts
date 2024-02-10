@@ -5,15 +5,42 @@ import { readFile, readdir } from 'fs/promises';
 
 const contentDirectory = 'posts';
 
-const cache = { set: false, value: { posts: [], listedPosts: [], listedTags: [] } };
+export interface Post {
+    slug: string;
+    content: string;
+    title: string;
+    description: string;
+    tags: Tag[],
+    date: number,
+    formattedDate: string;
+    filePath: string;
+    externalLink?: string;
+    listed: boolean;
+}
 
-const formatDate = (date) => date.toLocaleString('en-GB', {
+interface Tag {
+    formattedTag: string;
+    uriSafeTag: string;
+}
+
+interface InternalCache {
+    set: boolean;
+    value: {
+        posts: Post[],
+        listedPosts: Post[],
+        listedTags: Tag[]
+    }
+}
+
+const cache: InternalCache = { set: false, value: { posts: [], listedPosts: [], listedTags: [] } };
+
+const formatDate = (date: Date) => date.toLocaleString('en-GB', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit'
 });
 
-const getTagObjectFromString = (tagString) => ({
+const getTagObjectFromString = (tagString: string): Tag => ({
     formattedTag: tagString.toUpperCase(),
     uriSafeTag: tagString.toLowerCase().replace(/[^a-zA-Z0-9-_]/g, '')
 });
@@ -44,7 +71,6 @@ export const getPostsAndTags = async () => {
 
         const postTags = postTagStrings.map(getTagObjectFromString);
         posts.push({
-            path: filePath,
             slug,
             content,
             title: metadata.title,

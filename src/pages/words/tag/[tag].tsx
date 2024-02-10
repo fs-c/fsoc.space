@@ -1,5 +1,5 @@
 import { PostList, Tag } from '../index';
-import { Header } from '../../../components/';
+import { Header } from '../../../components';
 import { getPostsAndTags } from '../../../posts';
 
 const FilteredPostList = ({ posts, tags, currentTag }) => (<>

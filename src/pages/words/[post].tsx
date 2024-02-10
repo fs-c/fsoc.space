@@ -1,10 +1,10 @@
-import { Header } from '../../components/';
+import { Header } from '../../components';
 import { Head } from '@fsoc/dhow';
-import { getPost, getPostsAndTags } from '../../posts';
+import { getPost, getPostsAndTags, Post } from '../../posts';
 
 const githubUrl = 'https://github.com/fs-c/fsoc.space/';
 
-const Post = ({ title, description, content, formattedDate, filePath }) => (<>
+const Post = ({ title, description, content, formattedDate, filePath }: Partial<Post>) => (<>
     <Head>
         <meta name={'description'} content={description} />
 

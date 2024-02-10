@@ -1,4 +1,4 @@
-import { Header } from '../components/';
+import { Header } from '../components';
 
 const address = `root@fsoc.space
 +43 699 17057679

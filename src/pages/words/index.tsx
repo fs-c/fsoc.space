@@ -1,14 +1,14 @@
-import { Header } from '../../components/';
+import { Header } from '../../components';
 import { getPostsAndTags } from '../../posts';
 
 const getPostHref = (post) => post.externalLink || `/words/${post.slug}`;
 const getTagHref = (tag) => `/words/tag/${tag.uriSafeTag}`;
 
-const Pill = ({ children, active, hoverEffect }) => (<>
+const Pill = ({ children, active = false, hoverEffect = false }) => (<>
     <span className={`px-2 py-[2px] text-xs rounded-md h-min font-medium align-middle ${hoverEffect ? 'hover:bg-gray-700 hover:text-gray-200 dark:hover:bg-gray-300 dark:hover:text-gray-900' : ''} ${active ? 'bg-gray-700 text-gray-200 dark:bg-gray-300 dark:text-gray-900': 'bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-gray-200'}`}>{children}</span>
 </>);
 
-export const Tag = ({ tag, link, active }) => (<>
+export const Tag = ({ tag, link = false, active = false }) => (<>
     {link ? (
         <a href={active ? '/words' : getTagHref(tag)}><Pill active={active} hoverEffect={link}>{tag.formattedTag}</Pill></a>
     ) : (
@@ -23,7 +23,7 @@ const PostEntry = (post) => {
         <div className={'flex flex-col justify-stretch md:flex-row'}>
             <div className={'md:basis-0 md:min-w-max md:flex-grow md:flex md:flex-row md:justify-end'}>
                 <small className={'text-gray-500 dark:text-gray-400 font-mono pl-4'}>
-                    <time datetime={formattedDate}>
+                    <time dateTime={formattedDate}>
                         {formattedDate}
                     </time>
                 </small>

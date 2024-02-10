@@ -1,7 +1,7 @@
 const HeroHeader = () => (<>
     <header className={'container my-4'}>
         <picture>
-            <source srcset={'/assets/logo-white.svg'} media={'(prefers-color-scheme: dark)'} />
+            <source srcSet={'/assets/logo-white.svg'} media={'(prefers-color-scheme: dark)'} />
             <img src={'/assets/logo-black.svg'} alt={'fsoc'} className={'mx-auto'} />
         </picture>
     </header>
