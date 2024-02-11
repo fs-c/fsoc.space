@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charSet="utf-8"></meta><meta name="viewport" content="width=device-width, initial-scale=1"></meta><meta name="author" content="fsoc"></meta><meta name="author" content="Laurenz Weixlbaumer"></meta><link href="/styles/base.css" rel="stylesheet"></link><link href="/styles/font.css" rel="stylesheet"></link><title>Internetwache CTF 2016: filechecker</title><meta name="description" content="Writeup for the filechecker task from the Internetwache CTF 2016."></meta><link href="/styles/syntax-theme.css" rel="stylesheet"></link></head><body><div class="min-h-screen flex flex-col h-full "><header class="container border-b border-gray-300 dark:border-gray-600 mt-4 mb-4 pb-4"><div class="prose dark:prose-invert text-black dark:text-white"><a href="/">fsoc</a> / <a href="/words">words</a></div></header><main class="container prose dark:prose-invert lg:prose-lg pb-8"><h1 class="mt-4">Internetwache CTF 2016: filechecker</h1><aside class="mb-4 flex flex-row justify-between"><small>Published on 27/09/2022</small><small><a href="https://github.com/fs-c/fsoc.space/edit/workbench/posts/internetwache-ctf-2016-filechecker.md">Edit on github</a></small></aside><p>This is the <code>filechecker</code> task from the Internetwache CTF 2016, which I got from the <a href="https://github.com/N4NU/Reversing-Challenges-List/tree/master/Baby/Internetwache_CTF_2016_File_Checker">same repository</a> as the tasks from the last post.</p><p>It's an ELF binary, no non-code branches or stack shenanigans so decompilation into Binja HLIL is quite informative.</p><pre><code class="language-c">int32_t main(int32_t argc, char** argv, char** envp)
+    int32_t exit_code
+    if (password_file_exists() == 0)
+        printf(format: "Fatal error: File does not exist")
+        exit_code = 1
+    else
+        FILE* stream = fopen(filename: ".password", mode: &amp;data_4008f9)
+        if (stream == 0)
+            puts(str: "Error: Could not read file")
+            exit_code = 1
+        else
+            int32_t checksum = 0
+            for (int32_t i = 0; i s&lt; 15; i = i + 1)
+                int32_t c = fgetc(fp: stream)
+                if (feof(fp: stream) != 0)
+                    checksum = checksum | 0x1337
+                    break
+                convert_character(index: i, char_ptr: &amp;c)
+                checksum = checksum | c
+            if (checksum s&lt;= 0)
+                fclose(fp: stream)
+                puts(str: "Congrats!")
+                exit_code = 0
+            else
+                puts(str: "Error: Wrong characters")
+                exit_code = 1
+    return exit_code</code></pre><p>It checks for the existence of a file named <code>.password</code> and then iterates over its characters. Every character is transformed in some way and <code>OR</code>-ed onto a checksum. (I called the variable checksum but going by a strict definition it really isn't one. I couldn't think of a better term and I think the meaning is clear.) If that checksum is greater than zero after all characters have been examined, the password is invalid.</p><p>Right off the bat it is thus clear that the file should contain at least 15 characters, where only the first 15 are relevant. Any less than that and <code>feof()</code> would return true inside the loop body and the checksum would be tainted. It is also reasonable to guess at this point that <code>convert_character()</code> should return zero for a valid character. (I think that a negative value would also be fine, but this will turn out to be a moot point.)</p><p>Taking a look at <code>encrypt_character</code> reveals a curious (to me) construct.</p><pre><code class="language-c">uint64_t encrypt_character(int32_t index, int32_t* char_ptr)
+    int32_t var_48 = 0x12ee
+    int32_t var_44 = 0x12e0
+    int32_t var_40 = 0x12bc
+    int32_t var_3c = 0x12f1
+    int32_t var_38 = 0x12ee
+    int32_t var_34 = 0x12eb
+    int32_t var_30 = 0x12f2
+    int32_t var_2c = 0x12d8
+    int32_t var_28 = 0x12f4
+    int32_t var_24 = 0x12ef
+    int32_t var_20 = 0x12d2
+    int32_t var_1c = 0x12f4
+    int32_t var_18 = 0x12ec
+    int32_t var_14 = 0x12d6
+    int32_t var_10 = 0x12ba
+    int32_t x = (&amp;var_48)[sx.q(index)] + *char_ptr
+    int32_t y
+    int32_t temp1
+    y:temp1 = muls.dp.d(x, 0x354ac933)
+    uint64_t z = zx.q(x - ((y s&gt;&gt; 0xa) - (x s&gt;&gt; 0x1f)) * 0x1337)
+    *char_ptr = z.d
+    return z</code></pre><p>There are 15 magic numbers, that are accessed and added to the passed-in character based on its index in the password file. The appropriate value is fetched with a memory access offset from the address of the first variable. I'm certain that this file isn't handwritten assembly, and I would be surprised if the above code worked with compiler optimizations enabled.</p><p>Anyways, this modified version of the passed in character, <code>x</code>, is then multiplied by another, this time pretty large, magic number. I was originally very confused about the High-Level IL output for the multiplication so let's take a look at the disassembly.</p><pre><code class="language-asm">mov     edx, 0x354ac933
+mov     eax, ecx        ; eax now contains the modified character
+imul    edx             ; the source of confusion in HLIL</code></pre><p>I hadn't encountered <code>imul</code> before and it reminded me of something that should have been obvious: The result of a multiplication of two 32-bit variables must be stored in a 64-bit variable. The instruction in question does this by returning the lower 32 bits in <code>eax</code> and the upper 32 bits in <code>edx</code>. The meaning behind the <code>temp0:temp1</code> naming scheme of the result of the multiplication is now obvious, the first variable are the upper, the second the lower bits of the result.</p><p>Only the upper bits of the result are actually used, I've called them <code>y</code>. The final result, <code>z</code>, is then an amalgation of shifts and another multiplication. Interestingly, this multiplication doesn't use the wild syntax. Taking a look at the disassembly, that particular part corresponds to</p><pre><code class="language-asm">imul    eax, eax, 0x1337</code></pre><p>And the three-operand version of <code>imul</code> truncates its result, no second register required. At this point I decided to experiment a bit and reproduced the logic in <code>encrypt_character()</code> in C.</p><pre><code class="language-c">// add_magic is the index-dependent magic number, mult_magic is the large magic 
+// number that is multiplied onto the modified char
+
+long int x = add_magic + c;
+long int y = (x * mult_magic) &gt;&gt; 32;
+
+long long int z = x - ((y &gt;&gt; 0xa) - (x &gt;&gt; 0x1f)) * 0x1337;
+
+if (!z) {
+    printf("c(%c) i(%d)", c, (int)c);
+}</code></pre><p>It was quickly apparent that every <code>add_magic</code> had a character that produced zero as the final result. Iterating over the <code>add_magic</code>s in order and then iterating over every possible character produces the flag.</p><h2>Conclusion</h2><p>This was a fairly generic one (look at me, I'm jaded already!), but learning something new about assembly and binjas HLIL was cool. I'm kind of unhappy with my final solution of just bruteforcing the password given the algorithm, but by the time it became clear to me that bruteforcing was even an option (when I had already implemented the algorithm myself) I basically already had the flag.</p><script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script><script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script></main></div><footer class="flex flex-row justify-between prose dark:prose-invert container text-md py-3 mb-1 border-t border-gray-300 dark:border-gray-600 mt-4"><p class="m-0">Built with <a href="https://github.com/fs-c/dhow/tree/rewrite">fs-c/dhow</a>.</p><a href="/legal">imprint & privacy</a></footer></body></html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charSet="utf-8"></meta><meta name="viewport" content="width=device-width, initial-scale=1"></meta><meta name="author" content="fsoc"></meta><meta name="author" content="Laurenz Weixlbaumer"></meta><link href="/styles/base.css" rel="stylesheet"></link><link href="/styles/font.css" rel="stylesheet"></link><title>Patching an Electron Application Programmatically</title><meta name="description" content="Writing a small patcher to remove ads from an electron app with NodeJS."></meta><link href="/styles/syntax-theme.css" rel="stylesheet"></link></head><body><div class="min-h-screen flex flex-col h-full "><header class="container border-b border-gray-300 dark:border-gray-600 mt-4 mb-4 pb-4"><div class="prose dark:prose-invert text-black dark:text-white"><a href="/">fsoc</a> / <a href="/words">words</a></div></header><main class="container prose dark:prose-invert lg:prose-lg pb-8"><h1 class="mt-4">Patching an Electron Application Programmatically</h1><aside class="mb-4 flex flex-row justify-between"><small>Published on 08/09/2022</small><small><a href="https://github.com/fs-c/fsoc.space/edit/workbench/posts/patching-electron-programmatically.md">Edit on github</a></small></aside><p><strong>TL;DR</strong></p><ol><li>Find <code>app.asar</code></li><li>Extract it with <code>npx asar extract app.asar extracted/</code>,</li><li>Modify source code in <code>extracted/</code> as you please</li><li>Repackage the code with <code>npx asar pack extracted/ app.asar</code></li></ol><h2>Intro</h2><p>My objective was to remove some annoying ads from the <a href="https://www.op.gg/desktop/">OP.GG client</a>, a companion application to a game I occasionaly play. Like many other modern applications, it is built using <a href="https://www.electronjs.org/">electron</a>. These applications use web technologies like JS, HTML and CSS on top of a thin browser, pretending to be a native application.</p><p>The source code of electron applications is usually packaged inside <code>resources/app.asar</code> in the installation directory of the app. The <code>asar</code> file format is <a href="https://github.com/electron/asar">open source</a> and well documented, it is a "simple extensive tar-like archive format with indexing". But more importantly, the package used to create these archives (see previous link) can also be used to extract their contents.</p><p>Choose an electron application, as mentioned I will use the OP.GG client, and find its <code>app.asar</code> file. For me this was the default directory, i.e. <code>resources/</code>, but you might have to poke around a bit. Open a terminal in that folder and run</p><pre><code class="language-bash">$ npx asar extract app.asar extracted/</code></pre><p>and you will find the source code behind the application. Depending on the complexity of the application and the extent to which the developers expended effort to keep their code private you will get varying results. For example, when unpacking Discord's <code>app.asar</code> I only found bootstrapping code. Perhaps I'll take a look at this in more detail in the future.</p><p>Back to OP.GG, and likely to what the majority of small to medium sized electron applications will look like.</p><figure role="img"><img src="https://i.imgur.com/ON4KZEJ.png" alt=""><figcaption></figcaption></figure><p>Full client side source code, complete with comments in korean and everything.</p><h2>Go away, ads</h2><p>Now to get to the initial objective, removing the advertisements. A quick search yielded the following snippet</p><pre><code class="language-jsx">// ...
+
+return (
+    &lt;&gt;
+        {/* ... render the application ... */}
+
+        {!isOverlay &amp;&amp;
+        &lt;&gt;
+            {(!isNMP &amp;&amp; playwireAds.includes(localRegion))
+                ? &lt;Ads/&gt;
+                : &lt;&gt;
+                    {(adsenseAds.includes(localRegion))
+                        ? &lt;GlobalAds/&gt;
+                        : &lt;&gt;
+                            {(nitropayAds.includes(localRegion) &amp;&amp; adsense)
+                            ? &lt;KrAds/&gt;
+                            : &lt;NoAds/&gt;
+                            }
+                        &lt;/&gt;
+                    }
+                &lt;/&gt;
+            }
+            {isNMP &amp;&amp;
+                &lt;NMPAds/&gt;
+            }
+        &lt;/&gt;
+        }
+    &lt;/&gt;
+);</code></pre><p>which is located in <code>App.tsx</code> and obviously responsible for showing different kinds of advertisements. Taking a look at the different kinds of <code>*Ads</code> arrays revealed</p><pre><code class="language-js">const {isNMP} = require("./nmp");
+
+export const playwireAds = isNMP ? [] : ["NA"];
+export const nitropayAds = isNMP ? [] : ["KR"];
+export const adsenseAds = isNMP ? [] : ["EUW", "BR", "LAN", "LA1", "LAS", "LA2", "EUNE",
+    "JP", "OCE", "OC1", "TR", "RU", "TENCENT", "TW", "VN", "SG", "PH", "TH", "ID"];</code></pre><p>So it looks like either setting <code>isNMP</code> to true or emptying out the array initializers would do the trick. I didn't want to set <code>isNMP</code> to true because I didn't know what it stood for and was used in many other parts of the application. (Also I would have had to deal with removing <code>&lt;NMPAds/&gt;</code>, see the JSX snippet.) Getting the arrays to be empty somehow would definitely do the trick, though. The fallback in case none of the arrays included <code>localRegion</code> is <code>&lt;NoAds/&gt;</code> which was exactly what I wanted.</p><p>But just changing the above snippet wouldn't work. This was already clear the moment I saw them using TypeScript, there had to be some transpilation process&mdash;the files I was looking at weren't what was actually running.</p><p>Skimming over some of the bootstrapping code clued me in to what was going on. The <code>WindowProvider</code> in the file of the same name referenced <code>assets/react/react.html</code>, which in turn referenced <code>renderer.${hex code}.js</code>.</p><figure role="img"><img src="https://i.imgur.com/ixKDrhk.png" alt=""><figcaption></figcaption></figure><p>The file was clearly the product of a build system (<a href="https://parceljs.org/">parcel</a> to be specific, as seen from the <code>parcelRequire</code> definition). Some global searches told me that this was where the <code>.tsx</code> files I had been looking at earlier got built into&mdash;the build system kept export names intact. This is an important point, because it meant I could reliably find the <code>*Ads</code> exports from earlier inside the mangled file.</p><p>Here's the relevant part of the built file, demangled for readability and of course equivalent in functionality to the above snippet.</p><pre><code class="language-js">const { isNMP: s } = require("./nmp"),
+    e = s ? [] : ["NA"];
+exports.playwireAds = e;
+const r = s ? [] : ["KR"];
+exports.nitropayAds = r;
+const t = s ? [] : ["EUW", "BR", "LAN", "LA1", "LAS", "LA2", "EUNE",
+    "JP", "OCE", "OC1", "TR", "RU", "TENCENT", "TW", "VN", "SG", "PH", "TH", "ID"];
+exports.adsenseAds = t;</code></pre><p>This file is what is actually getting executed, so I emptied out all the arrays. Repacking is as simple as extracting, just run</p><pre><code class="language-bash">$ npx asar pack extracted/ app.asar</code></pre><p>and replace the old <code>app.asar</code> with the one you just generated. This removed the advertisements. Success! Of course, I would have to do this every time the application was updated because the patches were applied in the built file, not in the config file itself. (The config file is probably changed very rarely, the built file will change for virtually every update.) So I started looking into...</p><h2>Automation</h2><p>The asar library provided by electron is probably primarily intended to be used as a command line utility, but it also exports all of its functionality as a Node module. After having obtained the path to the <code>app.asar</code> file, one can now use it's functionality along with some custom patching code to extract, patch and repackage the found asar.</p><pre><code class="language-js">const asarPath = /* ... */;
+const extractionPath = /* ... */;
+
+await asar.extractAll(asarPath, extractionPath);
+await patch(extractionPath);
+await asar.createPackage(extractionPath, asarPath);</code></pre><p>The <code>patch</code> function isn't complicated, it just looks for the file it is supposed to patch, reads its contents and runs some RegEx replaces over it.</p><pre><code class="language-js">const patch = async (unpackedPath) =&gt; {
+    const reactPath = path.join(unpackedPath, '\\assets\\react\\');
+
+    const rendererFile = (await fs.readdir(reactPath))
+        .filter((e) =&gt; e.startsWith('renderer') &amp;&amp; e.endsWith('.js'))[0];
+    const rendererPath = path.join(reactPath, rendererFile);
+
+    let renderer = await fs.readFile(rendererPath, { encoding: 'utf8' });
+
+    renderer = renderer.replace(/Terms of Use/g, 'T3rms 0f Us3'); // :)
+
+    // these are the strings used in renderer/utils/ads*.js
+    // a more robust solution would be to look for the exports themselves and replace those
+    renderer = renderer.replace(/\["NA","KR"\]/g, '[]');
+    renderer = renderer.replace(/\["NA"\]/g, '[]');
+    renderer = renderer.replace(/\["KR"\]/g, '[]');
+    renderer = renderer.replace(/\["EUW","BR","LAN","LA1","LAS","LA2","EUNE","JP","OCE","OC1","TR","RU","TENCENT","TW","VN","SG","PH","TH","ID"\]/g, "[]");
+
+    await fs.writeFile(rendererPath, renderer);
+};</code></pre><p>Then it's just a matter of making the file executable by adding</p><pre><code class="language-js">#!/usr/bin/env node</code></pre><p>at the top and amending the <code>package.json</code> to include a <code>bin</code> field like</p><pre><code class="language-js">{
+    // ...
+    "bin": "src/index.mjs",
+    // ...
+}</code></pre><p>After publishing, running the patcher is as convenient as</p><pre><code class="language-bash">$ npx @fsoc/opgg-adblock</code></pre><p>You can take a look at the final product over at <a href="https://github.com/fs-c/opgg-adblock">fs-c/opgg-adblock</a>.</p><script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script><script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script></main></div><footer class="flex flex-row justify-between prose dark:prose-invert container text-md py-3 mb-1 border-t border-gray-300 dark:border-gray-600 mt-4"><p class="m-0">Built with <a href="https://github.com/fs-c/dhow/tree/rewrite">fs-c/dhow</a>.</p><a href="/legal">imprint & privacy</a></footer></body></html>

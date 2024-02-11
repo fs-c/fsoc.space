@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charSet="utf-8"></meta><meta name="viewport" content="width=device-width, initial-scale=1"></meta><meta name="author" content="fsoc"></meta><meta name="author" content="Laurenz Weixlbaumer"></meta><link href="/styles/base.css" rel="stylesheet"></link><link href="/styles/font.css" rel="stylesheet"></link><title>Building a Brainfuck Interpreter</title><meta name="description" content="A look inside a basic C99 implementation of an interpreter for the esoteric programming language brainfuck, created in 1993."></meta><link href="/styles/syntax-theme.css" rel="stylesheet"></link></head><body><div class="min-h-screen flex flex-col h-full "><header class="container border-b border-gray-300 dark:border-gray-600 mt-4 mb-4 pb-4"><div class="prose dark:prose-invert text-black dark:text-white"><a href="/">fsoc</a> / <a href="/words">words</a></div></header><main class="container prose dark:prose-invert lg:prose-lg pb-8"><h1 class="mt-4">Building a Brainfuck Interpreter</h1><aside class="mb-4 flex flex-row justify-between"><small>Published on 14/06/2018</small><small><a href="https://github.com/fs-c/fsoc.space/edit/workbench/posts/building-a-brainfuck-interpreter.md">Edit on github</a></small></aside><blockquote><p><strong>Brainfuck</strong> is an <a href="https://en.wikipedia.org/wiki/Esoteric_programming_language">esoteric programming language</a> created in 1993 by <a href="https://en.wikipedia.org/w/index.php?title=Urban_M%C3%BCller&action=edit&redlink=1">Urban Müller</a>, and notable for its extreme minimalism. The language consists of only eight simple commands and an <a href="https://en.wikipedia.org/wiki/Instruction_pointer">instruction pointer</a>. While it is fully <a href="https://en.wikipedia.org/wiki/Turing_completeness">Turing complete</a>, it is not intended for practical use, but to challenge and amuse <a href="https://en.wikipedia.org/wiki/Programmers">programmers</a>. Brainfuck simply requires one to break commands into microscopic steps.</p><p></p><p>From the <a href="https://en.wikipedia.org/wiki/Brainfuck">Wikipedia Article</a> on brainfuck</p></blockquote><p>Created only for amusement and as a challenge to its creator (namely to implement the smallest possible compiler), both creating compilers and interpreters for, and writing actual programs in it, are an interesting and enjoyable exercise even now.</p><p>The former will be the focus here, for I’ve been toying around with implementing both an interpreter (written in C) and a brainfuck to C compiler (also in C). For someone who is just starting out on the journey of learning C these were formidable challenges, and I hope to be able to share some of the insights gained from them.</p><p>That is probably best done by diving right into code, so let’s first get the basic skeleton out of the way:</p><pre><code class="language-c">#include &lt;stdio.h&gt;
+
+#define MAX_LENGTH 9999
+
+int main(int argc, char **argv) {
+	int cls[MAX_LENGTH];	// Cells.
+	int ins[MAX_LENGTH];	// Instructions.
+
+	int ilen = 0;           // Number of instructions.
+
+	// Pointers to currently active cell and instruction, respectively.
+	int *ptr = cls;
+	int *iptr = ins;
+
+	return 0;
+}</code></pre><p>These are almost all the variables we’ll need, but it doesn‘t really reveal any of the program structure just yet. Before getting to that we’ll have to get the reading of the brainfuck code to interpret out of the way, so let’s expand what we have so far with some file streaming and reading logic.</p><pre><code class="language-c">int main(int argc, char **argv) {
+	if (argc &lt; 2) {
+		puts("expected arguments");
+		return 1;
+	}
+
+	/* ... */
+
+	FILE stream, *fopen();
+
+	// Open the file given as first argument with read permissions.
+	stream = fopen(argv[1], "r");
+
+	// Read the brainfuck to execute from the stream.
+	while (ilen &lt; MAX_LENGTH &amp;&amp; (ins[ilen] = getc(stream)) != EOF)
+		ilen++;
+
+	fclose(stream);
+
+	return 0;
+}</code></pre><p>So we now accept a single (required) argument which is to be a file or a path to one, and read it into <code>ins</code>. Afterwards we close the stream to tie up any loose ends and to free up memory.</p><p>Time to get to the meat of the matter: processing the brainfuck code. The most obvious solution would be to have a <code>for</code> loop go over every character to evaluate it, but we‘ll be using a <code>while</code> loop. The reason for this will become apparent soon, but let me foreshadow a bit: The <code>[</code> and <code>]</code> characters, used to loop, will have to move <code>iptr</code> around. While a <code>for</code> loop would work in theory, this gets more obvious the way it is implemented here.</p><p>Something that might also go unnoticed and cause confusion down the road is cell initialization. The brainfuck specification requires that all cells be initialized to zero - which is quite reasonable, output would be unpredictable, otherwise.</p><p>With those minor problems out of the way, the code is fairly simple:</p><pre><code class="language-c">int main(int argc, char **argv) {
+	/* ... */
+
+	// Initialize all cells to zero.
+	memset(cls, 0, MAX_LENGTH);
+
+	// While iptr points to a character in ins, handle the char. 
+	while ((iptr - ins) &lt; ilen) {
+		switch (*iptr) {
+		case '+':
+			// Increase the value of the current cell.
+			++*ptr;
+			break;
+		case '-':
+			// Decrease.
+			--*ptr;
+			break;
+		case '&gt;':
+			// Move the pointer forwards by one.
+			++ptr;
+			break;
+		case '&lt;':
+			// Backwards.
+			--ptr;
+			break;
+		case '.':
+			// Output the character at the current cell.
+			putchar(*ptr);
+			break;
+		case ',':
+			// Read a single character from stdin into the current cell.
+			*ptr = getchar();
+			break;
+		}
+
+		// Move to the next instruction.
+		iptr++;
+	}
+
+	putchar('\n');
+
+	return 0;
+}</code></pre><p>Now, while this doesn’t cover all of brainfuck, it <em>does</em> allow us to play around with some basic brainfuck code and to test out what we’ve done so far.</p><p>So, if you go ahead and compile and run this, you’ll already be able to try some simple stuff and see the interpreter in action.</p><pre><code class="language-bash">$ echo "&gt;&gt; ++ &lt;&lt; &gt;&gt; ." &gt; bf.txt
+$ gcc main.c &amp;&amp; ./a.out bf.txt
+2</code></pre><p>The <code>&gt;</code>s and <code>&lt;</code>s are just there for demonstration purposes, they don’t actually do anything meaningful here. Go ahead and try something like <code>, ++ .</code>, both input and output should already operate as expected.</p><p>Now, to implement the looping, I feel like it is best to go through the two loop characters in reverse order - first <code>]</code> (which “closes” a loop), then <code>[</code> (“opening” a loop).</p><p>The reason for this is that, at first execution, the <code>[</code> will usually be skipped - to be more exact, it is skipped ( = moves to the next instruction without doing anything) if the value at the current cell is nonzero.</p><p>This is the exact opposite of <code>]</code>s bahaviour, which will only act if the value at the current cell is nonzero. If that condition is fulfilled, it will move the instruction pointer back to the command <em>after</em> the matching <code>[</code>. So, unless you are using it to purposefully skip a block of code, the <code>[</code> will only be relevant as a guide for the <code>]</code> and only very rarely execute its logic.</p><p>Naturally, if <code>]</code>s condition (current cell nonzero) is not fulfilled it will move the instruction pointer forwards, instead of backwards to the matching closing bracket.</p><p>Now, getting to the logic of <code>[</code> , if the current cell is zero it will move the instruction pointer to the command <em>after</em> the matching <code>]</code>, essentially skipping the block of code within the two brackets.</p><p>Now, this might seem rather intimidating, maybe even counter-intuitive, but the code for it is fairly simple once you’ve wrapped your head around it.</p><pre><code class="language-c">// Keep count of open bracket pairs.
+int brk = 0;
+
+/* ...while... */
+
+switch (*iptr) {
+/* ... */
+case '[':
+	if (*ptr != 0)
+		break;
+
+	++iptr;
+
+	// Jump forwards to matching closing brace.
+	while (brk &gt; 0 || *iptr != ']') {
+		if (*iptr == '[')
+			brk++;
+		if (*iptr == ']')
+			brk--;
+
+		++iptr;
+	}
+
+	break;
+
+case ']':
+	if (*ptr == 0 &amp;&amp; ptr++)
+		break;
+
+	--iptr;
+
+	// Jump backwards to matching opening brace.
+	while (brk &gt; 0 || *iptr != '[') {
+		if (*iptr == '[')
+			brk--;
+		if (*iptr == ']')
+			brk++;
+
+		--iptr;
+	}
+
+	--iptr;
+	break; 
+}</code></pre><p>This is a full implementation of the looping in brainfuck, and it looks like quite the handful at first.</p><p>Lets look at one of these loops in more detail, to explore how they work:</p><pre><code class="language-c">while (brk &gt; 0 || *iptr != ']') {
+	if (*iptr == '[')
+		brk++;
+	if (*iptr == ']')
+		brk--;
+
+	++iptr;
+}</code></pre><p>The condition is the crucial element here, more specifically the <code>||</code>. The whole loop can be described as <em>“While there are open brackets, do stuff to get them to go away. Now, if there are no open brackets, and the current instruction is not the closing bracket we are looking for, do stuff to get it to be the one.”</em></p><p>This “stuff” that is being done is really simple. First come the checks that allow us to ignore “child bracket-pairs” - brackets that are inside the pair we are searching in. After these, just increment the instruction pointer, moving to the next instruction.</p><p>Now, having implemented the looping, we are essentially done. The interpreter is fully implemented, and the last thing left over for us to do is testing.</p><p>My go-to brainfuck snippet to test if my loop implementations work, is the following: <code>, [ -&gt; +&lt; ] . </code>. It will, in essence, copy a single character from stdin to stdout by looping from 0 to the value of the character, and incrementing the next cell by one for every loop execution.</p><p>The code to this article can be found in <a href="https://github.com/fs-c/brainfuck">fs-c/brainfuck</a>. Fittingly, there's even a JavaScript version!</p><script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script><script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script></main></div><footer class="flex flex-row justify-between prose dark:prose-invert container text-md py-3 mb-1 border-t border-gray-300 dark:border-gray-600 mt-4"><p class="m-0">Built with <a href="https://github.com/fs-c/dhow/tree/rewrite">fs-c/dhow</a>.</p><a href="/legal">imprint & privacy</a></footer></body></html>
