@@ -45,7 +45,7 @@ const getTagObjectFromString = (tagString: string): Tag => ({
     uriSafeTag: tagString.toLowerCase().replace(/[^a-zA-Z0-9-_]/g, '')
 });
 
-export const getPostsAndTags = async () => {
+const getInternalCache = async () => {
     if (cache.set) {
         return cache.value;
     }
@@ -98,6 +98,27 @@ export const getPostsAndTags = async () => {
     return cache.value;
 };
 
-export const getPost = async (slug) => {
-    return (await getPostsAndTags()).posts.find((post) => post.slug === slug);
+export const getPost = async (slug: string) => {
+    const { posts } = await getInternalCache();
+    return posts.find((post) => post.slug === slug);
 };
+
+export const getAllPosts = async () => {
+    const { posts } = await getInternalCache();
+    return posts;
+}
+
+export const getListedPosts = async () => {
+    const { listedPosts } = await getInternalCache();
+    return listedPosts;
+};
+
+export const getListedTags = async () => {
+    const { listedTags } = await getInternalCache();
+    return listedTags;
+};
+
+export const getListedPostsAndTags = async () => {
+    const { listedPosts, listedTags } = await getInternalCache();
+    return { listedPosts, listedTags };
+}

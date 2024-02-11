@@ -9,7 +9,7 @@ Hittmairstraße 64
 Austria`;
 
 const Legal = () => (<>
-    <Header elements={[{ title: 'words', href: '/words' }, { title: 'legal' }]} />
+    <Header elements={[{ title: 'legal' }]} />
 
     <div className={'container prose dark:prose-invert'}>
         <p>

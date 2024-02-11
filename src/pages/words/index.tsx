@@ -1,5 +1,5 @@
 import { Header } from '../../components';
-import { getPostsAndTags } from '../../posts';
+import { getListedPostsAndTags } from '../../posts';
 
 const getPostHref = (post) => post.externalLink || `/words/${post.slug}`;
 const getTagHref = (tag) => `/words/tag/${tag.uriSafeTag}`;
@@ -63,8 +63,7 @@ const Posts = ({ posts, tags }) => (<>
 </>);
 
 export const getProps = async () => {
-    const { listedPosts, listedTags } = await getPostsAndTags();
-
+    const { listedPosts, listedTags } = await getListedPostsAndTags();
     return { posts: listedPosts, tags: listedTags, title: 'fsoc.space/words' };
 }
 

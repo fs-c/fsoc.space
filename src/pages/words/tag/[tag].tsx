@@ -1,6 +1,6 @@
 import { PostList, Tag } from '../index';
 import { Header } from '../../../components';
-import { getPostsAndTags } from '../../../posts';
+import { getListedPostsAndTags, getListedTags } from '../../../posts';
 
 const FilteredPostList = ({ posts, tags, currentTag }) => (<>
     <Header elements={[{ title: 'words', href: '/words' }, { title: currentTag.formattedTag.toLowerCase() }]} />
@@ -15,20 +15,21 @@ const FilteredPostList = ({ posts, tags, currentTag }) => (<>
 </>);
 
 export const getPaths = async () => {
-    return (await getPostsAndTags()).listedTags.map(({ uriSafeTag }) => uriSafeTag);
+    const listedTags = await getListedTags();
+    return listedTags.map(({ uriSafeTag }) => uriSafeTag);
 }
 
 export const getProps = async (uriSafeTag) => {
-    const { posts, listedTags: tags } = await getPostsAndTags();
-    const tag = tags.find((tag) => tag.uriSafeTag === uriSafeTag);
+    const { listedPosts, listedTags } = await getListedPostsAndTags();
 
-    if (!tag) {
+    const currentTag = listedTags.find((tag) => tag.uriSafeTag === uriSafeTag);
+    if (!currentTag) {
         throw new Error(`invalid tag '${uriSafeTag}'`)
     }
 
-    const filteredPosts = posts.filter((post) => post.tags.find((postTag) => postTag.uriSafeTag === tag.uriSafeTag));
+    const filteredPosts = listedPosts.filter((post) => post.tags.find((postTag) => postTag.uriSafeTag === currentTag.uriSafeTag));
 
-    return { posts: filteredPosts, tags, currentTag: tag, title: 'fsoc.space/words' };
+    return { posts: filteredPosts, tags: listedTags, currentTag, title: 'fsoc.space/words' };
 };
 
 export default FilteredPostList;
