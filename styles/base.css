@@ -1234,6 +1234,9 @@ video {
 .flex {
   display: flex;
 }
+.inline-flex {
+  display: inline-flex;
+}
 .table {
   display: table;
 }
@@ -1245,6 +1248,9 @@ video {
 }
 .hidden {
   display: none;
+}
+.h-4 {
+  height: 1rem;
 }
 .h-\[400px\] {
   height: 400px;
@@ -1258,6 +1264,9 @@ video {
 }
 .min-h-screen {
   min-height: 100vh;
+}
+.w-4 {
+  width: 1rem;
 }
 .w-full {
   width: 100%;
