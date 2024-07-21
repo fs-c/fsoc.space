@@ -2,79 +2,88 @@ import * as visualization from '/blog-modules/shapes/visualization.mjs';
 import * as shapes from '/blog-modules/shapes/shapes.mjs';
 import * as utils from '/blog-modules/shapes/utils.mjs';
 
-{
-    // const draw
-
-    const numberOfShapes = 10;
-
-    const svgElement = document.getElementById('random-points');
-    const center = utils.getCenter(svgElement);
-
-    const pathsAndPoints = [];
+const generatePathsAroundCircle = (
+    numberOfShapes,
+    center,
+    { randomizeCenter = 0, randomizeRadius = [100, 100] } = {}
+) => {
+    const paths = [];
 
     for (let i = 0; i < numberOfShapes; i++) {
-        // no offset to avoid segments where the animation folds into itself
-        const points = shapes
-            .generatePointsAroundCircle(7, { offset: 0 })
-            .map((point) => shapes.relToAbs(center, point));
+        const randomizedCenter = utils.randomizePoint(center, randomizeCenter);
 
-        pathsAndPoints.push({
-            path: visualization.getSmoothPath(points),
-            points,
-        });
+        const points = shapes
+            .generatePointsAroundCircle(5, {
+                // no offset to avoid segments where the animation folds into itself
+                offset: 0,
+                radius: utils.randomInt(...randomizeRadius),
+            })
+            .map((point) => shapes.relToAbs(randomizedCenter, point));
+
+        paths.push(visualization.getSmoothPath(points));
     }
 
     // add the first path to the end to make the animation loop cleanly, not great because it will
     // look like the shape is not moving for the last animation time slice
-    pathsAndPoints.push(pathsAndPoints[0]);
+    paths.push(paths[0]);
 
-    const animatedElement = document.getElementById('random-points-animate');
-    animatedElement.setAttribute(
-        'values',
-        pathsAndPoints.map((it) => it.path).join(';')
+    return paths;
+};
+
+{
+    const parentSvgElement = document.getElementById('simple-single-animation');
+    const center = utils.getCenter(parentSvgElement);
+
+    const paths = generatePathsAroundCircle(20, center, {
+        randomizeRadius: [50, 100],
+    });
+
+    const animatedElement = document.getElementById(
+        'simple-single-animation-animate'
     );
+    animatedElement.setAttribute('values', paths.join(';'));
+}
 
-    console.log(pathsAndPoints);
+{
+    const parentSvgElement = document.getElementById('multiple-animation');
+    const center = utils.getCenter(parentSvgElement);
 
-    const durationMs =
-        parseInt(
-            document
-                .getElementById('random-points-animate')
-                .getAttribute('dur')
-                .slice(0, -1), // slice off the 's' at the end
-            10
-        ) * 1000;
-    const durationPerShapeMs = durationMs / numberOfShapes;
+    const fillColors = [
+        'fill-green-500 dark:fill-purple-900 stroke-transparent opacity-70 blur-2xl',
+        'fill-blue-500 dark:fill-blue-500 stroke-transparent opacity-70 blur-2xl',
+        'fill-purple-500 dark:fill-green-300 stroke-transparent opacity-70 blur-2xl',
+    ];
 
-    const drawVisualizations = (curIndex, nextIndex) => {
-        const points = pathsAndPoints[curIndex].points;
-        const nextPoints = pathsAndPoints[nextIndex].points;
+    const numberOfBlobs = 3;
+    for (let i = 0; i < numberOfBlobs; i++) {
+        const parentPath = visualization.addSVGElement(
+            parentSvgElement,
+            'path',
+            {
+                class: fillColors[i],
+            }
+        );
+        const animatedElement = visualization.addSVGElement(
+            parentPath,
+            'animate',
+            {
+                attributeName: 'd',
+                dur: '50s',
+                repeatCount: 'indefinite',
+                values: '',
+            }
+        );
 
-        const cleanupFns = [
-            visualization.drawMarkers(svgElement, points),
-            visualization.drawMarkers(svgElement, nextPoints, { index: false }),
-        ];
+        const randomizedCenter =
+            i === 0 ? center : utils.randomizePoint(center, 50);
 
-        for (let i = 0; i < points.length; i++) {
-            const line = visualization.drawLine(
-                svgElement,
-                points[i],
-                nextPoints[i]
-            );
+        const paths = generatePathsAroundCircle(20, randomizedCenter, {
+            randomizeRadius: [
+                50 + (numberOfBlobs - i) * 10,
+                100 + (numberOfBlobs - i) * 30,
+            ],
+        });
 
-            cleanupFns.push(line);
-        }
-
-        return () => cleanupFns.forEach((fn) => fn());
-    };
-
-    let curIndex = 0;
-    let cleanup = drawVisualizations(curIndex, curIndex + 1);
-    setInterval(() => {
-        cleanup();
-        curIndex = (curIndex + 1) % numberOfShapes;
-
-        const nextIndex = (curIndex + 1) % numberOfShapes;
-        cleanup = drawVisualizations(curIndex, nextIndex);
-    }, durationPerShapeMs);
+        animatedElement.setAttribute('values', paths.join(';'));
+    }
 }

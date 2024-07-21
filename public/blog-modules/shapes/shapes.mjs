@@ -57,3 +57,16 @@ export const generatePointsAroundCircle = (
 
     return points;
 };
+
+export const generateRandomPoints = (total, area, padding = 0) => {
+    const points = [];
+
+    for (let i = 0; i < total; i++) {
+        points.push([
+            randomInt(padding - area[0], area[0] - padding),
+            randomInt(padding - area[1], area[1] - padding),
+        ]);
+    }
+
+    return points;
+};

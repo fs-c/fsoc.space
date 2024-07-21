@@ -13,7 +13,11 @@ const getBezierDescription = (cp1, cp2, end) =>
 
 // create a new svg element of the given type with the given attributes
 // and add it to the new parent
-export const addSVGElement = (parent, type, { children, ...attributes }) => {
+export const addSVGElement = (
+    parent,
+    type,
+    { children, ...attributes } = {}
+) => {
     const element = document.createElementNS(namespace, type);
 
     for (const attribute in attributes) {
@@ -22,28 +26,17 @@ export const addSVGElement = (parent, type, { children, ...attributes }) => {
 
     parent.appendChild(element);
 
-    return () => element.remove();
-};
-
-export const drawLine = (element, start, end, attributes = {}) => {
-    return addSVGElement(element, 'line', {
-        x1: start[0],
-        y1: start[1],
-        x2: end[0],
-        y2: end[1],
-        class: 'stroke-gray-500',
-        ...attributes,
-    });
+    return element;
 };
 
 // draw markers at the given absolute points
 export const drawMarkers = (element, points, attributes = {}) => {
-    const cleanupFns = [];
+    const addedElements = [];
 
     for (let i = 0; i < points.length; i++) {
         const point = points[i];
 
-        cleanupFns.push(
+        addedElements.push(
             addSVGElement(element, 'circle', {
                 cx: point[0],
                 cy: point[1],
@@ -55,7 +48,7 @@ export const drawMarkers = (element, points, attributes = {}) => {
 
         if (attributes.index !== false) {
             const text = document.createElementNS(namespace, 'text');
-            cleanupFns.push(() => text.remove());
+            addedElements.push(text);
 
             text.setAttribute('x', point[0] + 9);
             text.setAttribute('y', point[1] - 4);
@@ -74,7 +67,9 @@ export const drawMarkers = (element, points, attributes = {}) => {
         }
     }
 
-    return () => cleanupFns.forEach((fn) => fn());
+    console.log(addedElements);
+
+    return () => addedElements.forEach((el) => el.remove());
 };
 
 // draw a polygon through the given absolute points

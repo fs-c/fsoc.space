@@ -7,7 +7,9 @@ module.exports = {
         // posts may contain inline html
         './posts/**/*.md',
 
-        './public/**/*.html',
+        // modules supporting posts may define styles as well
+        './public/**/*.{html,mjs}',
+
         './src/**/*.{js,jsx,ts,tsx}',
     ],
     theme: {
@@ -17,8 +19,6 @@ module.exports = {
             },
         },
     },
-    plugins: [
-        require('@tailwindcss/typography'),
-    ],
+    plugins: [require('@tailwindcss/typography')],
     variants: {},
 };
