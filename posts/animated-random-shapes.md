@@ -1,6 +1,6 @@
 ---
 title: Animated Random Shapes
-date: 2024-21-07
+date: 2024-07-21
 description: Animating randomly generated (SVG) shapes for no good reason
 tags: [art?]
 ---
