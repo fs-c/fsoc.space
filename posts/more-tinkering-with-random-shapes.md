@@ -819,7 +819,7 @@ _To be expanded..._
 
                 addSVGElement(this.element, 'path', {
                     d: `M ${start[0]} ${start[1]} Q ${middle[0]} ${middle[1]} ${end[0]} ${end[1]}`,
-                    class: 'fill-transparent stroke-indigo-500 stroke-[4]',
+                    class: 'fill-transparent stroke-indigo-500 stroke-4',
                 });
             }
 
@@ -829,7 +829,7 @@ _To be expanded..._
 
                 addSVGElement(this.element, 'line', {
                     x1: l1[0], x2: l2[0], y1: l1[1], y2: l2[1],
-                    class: 'stroke-gray-500 stroke-[4]',
+                    class: 'stroke-gray-500 stroke-4',
                 });
             };
         }

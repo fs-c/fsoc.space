@@ -7,7 +7,7 @@ tags: [art?]
 
 Some time ago I wrote [Drawing Squiggly Lines](/words/drawing-squiggly-lines), which describes how to generate blobs with some aesthetic properties, in particular with a focus on dynamically generating background shapes. But every time I tried to use these dynamic shapes in a project I felt like I would prefer just having a static shape. This is mostly because random shapes just don't look great consistently, even when limiting the randomness substantially (and at some point you limit it so much that you might as well have not bothered with it in the first place).
 
-But one area where it really doesn't matter if a shape doesn't look great once in a while is when when cycling through multiple in an animation (because it will soon be replaced anyways), in particular when a blur is applied (because you can't see it that well in the first place). So this post explores animated random shapes.
+But one area where it really doesn't matter if a shape doesn't look great once in a while is when when cycling through multiple in an animation (because it will soon be replaced anyways), in particular when a blur-sm is applied (because you can't see it that well in the first place). So this post explores animated random shapes.
 
 This idea is inspired by design elements such as
 
