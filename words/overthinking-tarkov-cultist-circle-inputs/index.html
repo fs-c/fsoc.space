@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charSet="utf-8"></meta><meta name="viewport" content="width=device-width, initial-scale=1"></meta><meta name="author" content="fsoc"></meta><meta name="author" content="Laurenz Weixlbaumer"></meta><link href="/styles/base.css" rel="stylesheet"></link><link href="/styles/font.css" rel="stylesheet"></link><title>Overthinking Tarkov Cultist Circle Inputs</title><meta name="description" content="Using complex technology to solve simple problems"></meta><link href="/styles/syntax-theme.css" rel="stylesheet"></link></head><body><div class="min-h-screen flex flex-col h-full "><header class="container border-b border-gray-300 dark:border-gray-600 mt-4 mb-4 pb-4"><div class="prose dark:prose-invert text-black dark:text-white"><a href="/">fsoc</a> / <a href="/words">words</a></div></header><main class="container prose dark:prose-invert lg:prose-lg pb-8"><h1 class="mt-4">Overthinking Tarkov Cultist Circle Inputs</h1><aside class="mb-4 flex flex-row justify-between"><small>Published on 07/02/2025</small><small><a href="https://github.com/fs-c/fsoc.space/edit/workbench/posts/overthinking-tarkov-cultist-circle-inputs.md">Edit on github</a></small></aside><p><strong>TL;DR</strong>: I used a LP solver to find the optimal inputs for the Tarkov cultist circle, using current flea market prices obtained through <a href="https://tarkov.dev/">tarkov.dev</a>. <a href="https://tarkov-cco.pages.dev/">Here's the website</a>, the code is on <a href="https://github.com/fs-c/tarkov-cco">GitHub</a>.</p><figure role="img"><img src="/assets/posts/tarkov-cco-landing-1.png" alt="Screenshot of the website, on the left are the optimal solutions, best is top left. On the right is a searchable list of all items that were considered, with base and flea market price."><figcaption>Screenshot of the website, on the left are the optimal solutions, best is top left. On the right is a searchable list of all items that were considered, with base and flea market price.</figcaption></figure><p><a href="https://www.escapefromtarkov.com">Tarkov</a> (a game) has this mechanic where you can input some items into a "cultist circle", wait for a while, and then receive some items in return. What items you get out depends on the value of the items you put in.</p><p>There <a href="https://escapefromtarkov.fandom.com/wiki/Hideout#Cultist_Circle">are some patterns to this</a>, the one that is important here is the following: If the items put in exceed a total base value of 400k, there is a chance that the resulting items are ones that are needed for a current quest. But the base value of an item may be quite different from its flea market (player to player market) value, so I wanted to optimize for that difference.</p><h3>Getting the Data</h3><p>This is trivial if you know where to look, since the <a href="https://tarkov.dev/api/">tarkov.dev API</a> provides all data that is needed in a nice, free GraphQL API. The query would look something like this:</p><pre><code class="language-typescript">await fetch("https://api.tarkov.dev/graphql", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    query: `{
+        items {
+            id
+            name
+            basePrice
+            lastLowPrice
+        }
+    }`,
+  }),
+});</code></pre><p>This will give you a list of all items in the game, with their base price and last low price (they also offer some other fields for market price, you may want to experiment some more).</p><p>At this point we can already filter the list to narrow the problem space and make it easier for our solver later. In particular, exclude items</p><ul><li>above/below a certain base value (in principle this means we lose optimality, but e.g. setting a min base price of 30k can exclude a significant number of items, and they would be unlikely to be part of an optimal solution)</li><li>that can't be used as inputs (e.g. posters)</li><li>that have weird compound base values (armors with plates, weapon presets)</li><li>whose value depends on durability, since we don't have that data for our flea market prices (e.g. keys/keycards)</li></ul><p>Using filters along those lines I could reduce the list to <500 items, which made the problem solvable in milliseconds.</p><h3>Solving the Problem</h3><p>This was a bit of a journey. I started out with a simple greedy algorithm (which an AI suggested to me), but it was much too slow. So I looked around for optimization problem solvers, and found a couple that were promising. For using these, it was useful to define the problem a little more formally:</p><ol><li><strong>Goal</strong>: Minimize the sum of the actual market prices of the items that we choose. (To put into the circle.)</li><li><strong>Constraint</strong>: The sum of the base values of the items that we choose must exceed 400k.</li><li><strong>Constraint</strong>: No more than 5 items may be chosen.</li><li><strong>Bounds</strong>: The number of each item must be positive (and may not exceed 5 of course, but that's already covered by the constraint).</li></ol><p>Initially I was going to use <a href="https://github.com/lovasoa/highs-js">highs.js</a>, a JS wrapper for the <a href="https://github.com/ERGO-Code/HiGHS">HiGHS</a> linear programming solver. But it turns out that the API is not very nice (required me to generate the problem as a string in CPLEX LP format, which is awkward to work with), and sometimes the results were just wrong: I kept getting a negative number of some items in the "optimal" solution, which violated the bounds. When I compiled the most recent version of HiGHS, it was working as expected, but I didn't get anywhere when I tried to make highs.js use that.</p><p>So I switched to <a href="https://github.com/jvail/glpk.js/">glpk.js</a>, which is a JS wrapper for the <a href="https://www.gnu.org/software/glpk/">GLPK</a> linear programming solver. This one had a nicer API (even though the documentation is not great), and it finally worked as expected. In the end I got the relevant code down to a few dozen lines.</p><pre><code class="language-typescript">let glpk: ReturnType&lt;typeof GLPK&gt; | undefined;
+
+async function getSolution(
+  items: ItemMetadata[],
+  minimumBasePriceSum: number,
+  maximumNumberOfItems: number
+): Promise&lt;{ item: ItemMetadata; count: number }[]&gt; {
+  if (!glpk) {
+    glpk = await GLPK();
+  }
+
+  const glpkResult = await glpk.solve({
+    name: "LP",
+    objective: {
+      direction: glpk.GLP_MIN,
+      name: "objective",
+      vars: items.map((item) =&gt; ({
+        name: item.id,
+        coef: item.lastLowPrice,
+      })),
+    },
+    subjectTo: [
+      {
+        name: "minimumBasePriceConstraint",
+        vars: items.map((item) =&gt; ({
+          name: item.id,
+          coef: item.basePrice,
+        })),
+        bnds: {
+          type: glpk.GLP_LO,
+          lb: minimumBasePriceSum,
+          ub: Infinity,
+        },
+      },
+      {
+        name: "numberOfItemsConstraint",
+        vars: items.map((item) =&gt; ({ name: item.id, coef: 1 })),
+        bnds: {
+          type: glpk.GLP_UP,
+          lb: 0,
+          ub: maximumNumberOfItems,
+        },
+      },
+    ],
+    generals: items.map((item) =&gt; item.id),
+  });
+
+  const solution: { item: ItemMetadata; count: number }[] = [];
+
+  for (const key in glpkResult.result.vars) {
+    const value = glpkResult.result.vars[key];
+    if (value &gt; 0) {
+      const item = items.find((item) =&gt; item.id === key);
+      if (!item) {
+        console.warn("item not found", key);
+        continue;
+      }
+
+      solution.push({
+        item,
+        count: value,
+      });
+    }
+  }
+
+  return solution;
+}</code></pre><p>But of course market prices can change quite rapidly. I was playing around with iterating back in time and calculating the optimal inputs for the past 12 hours or something, but that didn't work out well. In the end I just went with getting the "top X" solutions, by successively excluding items from the solution which appeared in previous solutions.</p><pre><code class="language-typescript">export async function getBestSolutions(
+  items: ItemMetadata[],
+  minimumBasePriceSum: number,
+  maximumNumberOfItems: number,
+  numberOfSolutions: number
+): Promise&lt;Solution[]&gt; {
+  const solutions: { item: ItemMetadata; count: number }[][] = [];
+  const excludedItemIds: string[] = [];
+  for (let i = 0; i &lt; numberOfSolutions; i++) {
+    const filteredItems = items.filter(
+      (item) =&gt; !excludedItemIds.includes(item.id)
+    );
+
+    try {
+      const solution = await getSolution(
+        filteredItems,
+        minimumBasePriceSum,
+        maximumNumberOfItems
+      );
+
+      solutions.push(solution);
+      excludedItemIds.push(...solution.map(({ item }) =&gt; item.id));
+    } catch (e) {
+      console.warn("got an error while running solver", e);
+    }
+  }
+  return solutions;
+}</code></pre><p>This can pretty quickly lead to some very bad solutions, so it's important to also display the total market price of the solution when displaying the results.</p><h3>Appendix</h3><p>As mentioned above, the full code for the site is on <a href="https://github.com/fs-c/tarkov-cco">GitHub</a> and you can find the code for the solver in the <code>src/solver.ts</code> file. It's <a href="https://tarkov-cco.pages.dev/">hosted here</a>.</p><script src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script><script src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script></main></div><footer class="flex flex-row justify-between prose dark:prose-invert container text-md py-3 mb-1 border-t border-gray-300 dark:border-gray-600 mt-4"><p class="m-0">Built with <a href="https://github.com/fs-c/dhow/tree/rewrite">fs-c/dhow</a>.</p><a href="/legal">imprint & privacy</a></footer></body></html>
