@@ -34,7 +34,7 @@ Accordingly, when hooking these functions we get the following output for every 
 
 ![](https://i.imgur.com/APibLGu.png)
 
-So osu! is reading the `FileDescription` and appears to be checking it against a blacklist. To confirm this theory I used [Resource Hacker](http://www.angusj.com/resourcehacker/) to change the version info of x32dbg.
+So osu! is reading the `FileDescription` and appears to be checking it against a blacklist. To confirm this theory I used [Resource Hacker](http://www.angusj.com/resourcehacker/) or [Resource Cracker](https://www.pelock.com/products/resource-cracker) to change the version info of x32dbg.
 
 ![](https://i.imgur.com/RqcOlg3.png)
 
